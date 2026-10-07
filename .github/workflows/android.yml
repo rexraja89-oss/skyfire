@@ -1,0 +1,75 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'icons/**'
+      - 'tools/**'
+      - 'version.json'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Bundle the game
+        run: |
+          mkdir -p app/www
+          cp index.html manifest.webmanifest version.json app/www/
+          cp -r icons app/www/
+          echo "VERSION_NAME=$(python3 -c "import json;print(json.load(open('version.json'))['version'])")" >> "$GITHUB_ENV"
+
+      - name: Create the Capacitor Android project
+        working-directory: app
+        run: |
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          echo '{"appId":"com.rexraja.skyfire","appName":"Skyfire Squadron","webDir":"www","android":{"backgroundColor":"#0a1220"}}' > capacitor.config.json
+          npx cap add android
+          npx cap sync android
+
+      - name: Icon, splash, fullscreen and version
+        run: |
+          pip install --quiet pillow
+          python3 tools/android_patch.py app/android "${{ github.run_number }}" "${VERSION_NAME}.${{ github.run_number }}"
+
+      - name: Build APK
+        working-directory: app/android
+        run: |
+          mkdir -p ~/.android
+          cp ../../tools/debug.keystore ~/.android/debug.keystore
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+          cp app/build/outputs/apk/debug/app-debug.apk ../../Skyfire-Squadron.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Skyfire Squadron ${{ env.VERSION_NAME }} (build ${{ github.run_number }})
+          body: |
+            Install on Android: open this page on your phone, tap **Skyfire-Squadron.apk**, then allow "Install unknown apps" for your browser if asked.
+            Permanent link to the newest build: https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk
+          files: Skyfire-Squadron.apk
+          make_latest: true
