@@ -25,10 +25,12 @@ A.flat=(cv,len,wid)=>{const T3=THREE,t=new T3.CanvasTexture(cv);t.encoding=T3.sR
 A.swap=(group,cv,len,wid)=>{for(const ch of group.children)ch.visible=false;const m=A.flat(cv,len,wid);m.userData.art=1;group.userData.flat=1;group.add(m);return m;};
 // player jets: art/jet_<plane>.png
 A.have=new Set();
+// per-picture extras: exhaust nozzles as fractions of the picture from its centre (x right, y toward the tail)
+const META={jet_falcon:{nozzles:[[-.05,.4],[.05,.4]],nozzleR:2.2},jet_viper:{nozzles:[[-.2,.417],[.2,.417]],nozzleR:2.8}};
 A.applyJets=async()=>{for(const k in PLANES){if(!A.have.has('jet_'+k))continue;const cv=await A.load('jet_'+k);if(!cv)continue;const g=MODELS['pl_'+k];if(!g)continue;
   // fit inside the jet's box: span up to S×1.75, length up to L×1.4 (logic px)
   const J=PLANES[k].jet,f=Math.min(J.S*1.75/cv.width,J.L*1.4/cv.height),w=cv.width*f,l=cv.height*f;
-  A.swap(g,cv,l*K,w*K);J.flameY=l/2-2;A.list.push('jet_'+k);}};
+  A.swap(g,cv,l*K,w*K);J.flameY=l/2-2;J.artW=w;J.artL=l;const M=META['jet_'+k];if(M){J.nozzles=M.nozzles;J.nozzleR=M.nozzleR;}A.list.push('jet_'+k);}};
 // art/list.json names the pictures that exist (so the game never asks for missing files)
 // hangar cards: art/card_<plane>.jpg|png, shown as a framed picture on the jet's hangar card
 A.cards={};

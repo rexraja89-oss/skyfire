@@ -1,8 +1,8 @@
 {
-  "build": 13,
-  "version": "4.2",
+  "build": 14,
+  "version": "4.3",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Rex's realistic Falcon artwork"
+    "Rex's red Viper and HD engine flames"
   ]
 }

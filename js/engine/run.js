@@ -127,7 +127,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  if(SF.fx.shake>0)cx.translate(rnd(-4,4)*SF.fx.shake*1.6,rnd(-4,4)*SF.fx.shake*1.6);
  SF.fx.drawBack();SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
  cx.globalCompositeOperation='lighter';
- if(p.alive&&PLM&&PLM.visible){const J=p.pl.jet,n=J.eng||1,f=.8+Math.sin(R.t*50)*.2+Math.min(.4,Math.max(0,-p.vy)/900);for(let i=0;i<n;i++){const ex=px+(n===1?0:(i-.5)*J.fw*1.2);pdg(ex,py+(J.flameY||J.L/2)+4,10*f,'#ff9d2e');pdg(ex,py+(J.flameY||J.L/2)+2,5,'#fff3c4');}}
+ if(p.alive&&PLM&&PLM.visible&&p.dying<=0)SF.thrust.draw(R,px,py);
  cx.globalCompositeOperation='source-over';
  SF.boss.draw(R,A);SF.weapons.draw(R,A);SF.enemies.drawFlash(A);SF.fx.drawFront();SF.enemies.drawBullets(A);
  if(p.burst){const b=p.burst,a=1-b.t/SF.BAL.special.expandTime;pj(b.x,b.y);cx.globalCompositeOperation='lighter';cx.strokeStyle=`rgba(255,220,140,${.3+.6*a})`;cx.lineWidth=(6+10*a)*PS;cx.beginPath();cx.ellipse(PX,PY,b.r*PS,b.r*PS*.85,0,0,TAU);cx.stroke();
