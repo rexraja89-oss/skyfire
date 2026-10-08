@@ -27,5 +27,9 @@ A.have=new Set();
 A.applyJets=async()=>{for(const k in PLANES){if(!A.have.has('jet_'+k))continue;const cv=await A.load('jet_'+k);if(!cv)continue;const g=MODELS['pl_'+k];if(!g)continue;
   A.swap(g,cv,PLANES[k].jet.L*K*1.08);A.list.push('jet_'+k);}};
 // art/list.json names the pictures that exist (so the game never asks for missing files)
-A.init=()=>fetch('art/list.json?v='+BUILD).then(r=>r.ok?r.json():[]).catch(()=>[]).then(l=>{A.have=new Set(l||[]);return A.applyJets();}).catch(e=>console.warn('art',e));
+// hangar cards: art/card_<plane>.jpg|png, shown as a framed picture on the jet's hangar card
+A.cards={};
+A.applyCards=()=>{for(const f of A.have){const m=/^card_(\w+)\.(jpg|png)$/.exec(f);if(!m||!PLANES[m[1]])continue;const im=new Image();
+  im.onload=()=>{A.cards[m[1]]=im;if(typeof PV!=='undefined')delete PV[m[1]];if(state==='hangar'&&typeof renderHangar==='function')renderHangar();};im.src='art/'+f+'?v='+BUILD;}};
+A.init=()=>fetch('art/list.json?v='+BUILD).then(r=>r.ok?r.json():[]).catch(()=>[]).then(l=>{A.have=new Set(l||[]);A.applyCards();return A.applyJets();}).catch(e=>console.warn('art',e));
 })();

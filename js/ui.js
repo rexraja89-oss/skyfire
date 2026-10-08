@@ -4,7 +4,8 @@ const SCREENS=['title','select','hangar','settings','pause','result','records','
 function show(name){SCREENS.forEach(s=>$(s).hidden=s!==name);$('hud').hidden=!(name==='play'||name==='pause');}
 const PV={};
 function preview(k){if(PV[k])return PV[k];const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');g.translate(64,64);
- if(PLANES[k]){const s=SP[k];const f=Math.min(110/s.width,110/s.height);g.drawImage(s,-s.width*f/2,-s.height*f/2,s.width*f,s.height*f);}
+ if(PLANES[k]&&SF.art.cards[k]){const im=SF.art.cards[k],f=Math.max(128/im.width,128/im.height),w=im.width*f,h=im.height*f;g.save();g.beginPath();g.roundRect?g.roundRect(-64,-64,128,128,14):g.rect(-64,-64,128,128);g.clip();g.drawImage(im,-w/2,-h/2,w,h);g.restore();}
+ else if(PLANES[k]){const s=SP[k];const f=Math.min(110/s.width,110/s.height);g.drawImage(s,-s.width*f/2,-s.height*f/2,s.width*f,s.height*f);}
  else if(DRONES[k]){const s=SP[k];for(const d of[-28,28])g.drawImage(s,d-s.width*1.1/2,-s.height*1.1/2,s.width*1.1,s.height*1.1);}
  else if(WEAPONS[k]){g.globalCompositeOperation='lighter';const gl=(x,y,r,c)=>g.drawImage(glow(c),x-r,y-r,r*2,r*2);
   if(k==='vulcan')for(const x of[-14,0,14])for(let y=-40;y<40;y+=26)g.drawImage(SP.pv,x-6,y-16,12,32);

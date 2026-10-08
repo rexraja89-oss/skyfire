@@ -19,7 +19,7 @@ const STAGES=[
  {name:'Magma Citadel',place:'Volcanic fortress',biome:'volcano',brief:'This is their last stronghold, built on a live volcano. Every enemy type is here.',boss:{name:'Inferno Throne',kind:'wing',hull:'#3a2420'},enemies:['fighter','fighter2','heli','tank','aa','bomber','drone','hornet','aegis','lancer','hydra','wraith','sower','mender','blink','sam','artillery','dome'],land:[30,370],weather:'embers',reward:'phantom',key:40},
 ];
 const PLANES={
- falcon:{name:'Falcon',desc:'Balanced all-rounder. Reliable and easy to fly.',hp:100,spd:1,dmg:1,fire:1,body:'#dfe5ec',accent:'#1fb5a8',jet:{L:48,S:44,sweep:.55,wl:.36,chord:.38,tip:.1,fw:5,tailS:.36,fins:1}},
+ falcon:{name:'Falcon',desc:'Balanced all-rounder. Reliable and easy to fly.',hp:100,spd:1,dmg:1,fire:1,body:'#dfe5ec',accent:'#1fb5a8',jet:{L:48,S:44,sweep:.55,wl:.36,chord:.38,tip:.1,fw:5,tailS:.36,fins:1,eng:2}},
  viper:{name:'Viper',desc:'Light delta interceptor. Very fast and quick on the trigger.',hp:80,spd:1.3,dmg:1.05,fire:1.15,body:'#c42433',accent:'#ffd23f',jet:{L:50,S:38,sweep:.95,wl:.3,chord:.56,tip:.05,fw:4.5,tailS:0,canard:1}},
  titan:{name:'Titan',desc:'Heavy armoured gunship with an extra bomb bay.',hp:150,spd:.85,dmg:1.12,fire:1,bombs:1,body:'#5d6b45',accent:'#ff9d2e',jet:{L:52,S:56,sweep:.22,wl:.38,chord:.32,tip:.16,fw:7,tailS:.4,eng:2}},
  phantom:{name:'Phantom',desc:'Stealth ace. +25% damage and a stronger gear magnet.',hp:115,spd:1.15,dmg:1.25,fire:1.05,mag:1.4,body:'#2a2e36',accent:'#a46bff',jet:{L:50,S:50,sweep:.8,wl:.24,chord:.6,tip:.2,fw:6,tailS:0,fins:1}},

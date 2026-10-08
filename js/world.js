@@ -445,7 +445,7 @@ function buildModels(){
  MODELS.bulwark=bulwarkModel();
  MODELS.tower=towerModel();MODELS.radar=radarModel();MODELS.depot=depotModel();MODELS.mast=mastModel();MODELS.bunker=bunkerModel();MODELS.factory=factoryModel();MODELS.stack=stackModel();MODELS.gate=gateModel();
  MODELS.tank=tankModel('#59633f');MODELS.aa=aaModel();MODELS.truck=truckModel();MODELS.boat=boatModel();MODELS.sam=samModel();MODELS.artillery=artyModel();MODELS.dome=domeModel();
- for(const k in PLANES){const p=PLANES[k];MODELS['pl_'+k]=jetModel(p.jet,p.body,p.accent);}
+ for(const k in PLANES){const p=PLANES[k];MODELS['pl_'+k]=k==='falcon'&&typeof falconModel==='function'?falconModel(p.jet):jetModel(p.jet,p.body,p.accent);}
  for(const k in DRONES)MODELS['dr_'+k]=playerDrone(k);}
 const POOL={};
 function acquire(type){const pool=POOL[type]||(POOL[type]=[]);let m=pool.pop();
