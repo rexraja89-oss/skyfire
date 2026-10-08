@@ -1,6 +1,6 @@
 # Skyfire Transformation Plan
 
-**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) Checkpoint 3 (formations, ground combat, pickups, combo) and Checkpoint 4 (stage engine, missions, campaign on the new engine) are done. Rex asked to run Checkpoints 4-8 back to back and test only the finished, polished version. Checkpoint 5 (10 part-based bosses, 10 mini-bosses, boss presentation) is done. Checkpoint 6 (upgrade hangar, medal tiers, achievements, sortie orders, save v3) is done. Next: Checkpoint 7.
+**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) Checkpoint 3 (formations, ground combat, pickups, combo) and Checkpoint 4 (stage engine, missions, campaign on the new engine) are done. Rex asked to run Checkpoints 4-8 back to back and test only the finished, polished version. Checkpoint 5 (10 part-based bosses, 10 mini-bosses, boss presentation) is done. Checkpoint 6 (upgrade hangar, medal tiers, achievements, sortie orders, save v3) is done. Checkpoint 7 (briefing/loadout screen, animated results, HUD objectives, damage trail, transitions) is done. Next: Checkpoint 8.
 
 **Goal:** turn Skyfire from a good-looking prototype into a polished, replayable vertical arcade shooter. It should match the depth and feel of the best games in the genre, using only original Skyfire code, content, names, art and sound.
 
@@ -451,7 +451,7 @@ Deliverable: this file. **Stop for approval.**
   - upgrade animation and sound
 - **Stop.**
 
-### Checkpoint 7: HUD + menus + presentation
+### Checkpoint 7: HUD + menus + presentation ✅ done (v3.7, build 10)
 - HUD:
   - animated score
   - combo meter

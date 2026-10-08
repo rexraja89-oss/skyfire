@@ -1,6 +1,6 @@
 'use strict';
 // ================= UI =================
-const SCREENS=['title','select','hangar','settings','pause','result','records'];
+const SCREENS=['title','select','hangar','settings','pause','result','records','brief'];
 function show(name){SCREENS.forEach(s=>$(s).hidden=s!==name);$('hud').hidden=!(name==='play'||name==='pause');}
 const PV={};
 function preview(k){if(PV[k])return PV[k];const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');g.translate(64,64);
@@ -45,7 +45,7 @@ function renderSelect(){const mk_=save.mode;
  SF.prog.sortieRefresh();$('sortie').innerHTML='<h3>Today\'s sortie orders</h3>'+save.sortie.list.map(o=>`<div class="sortie ${o.done?'done':''}"><span>${o.done?'✓':'◦'} ${SF.prog.sortieText(o)}</span><b>${o.done?'Done':Math.floor(o.p)+'/'+o.goal}</b></div>`).join('')+`<p class="hint" style="text-align:left">Each order pays <i class="cog s"></i> ${fmt(SF.SORTIE_REWARD.gears)} and <i class="core s"></i> ${SF.SORTIE_REWARD.cores}. New orders every day.</p>`;
  $('stageList').innerHTML=STAGES.map((s,i)=>{const lock=i>=save.prog[mk_],objs=SF.missions.forStage(i,mk_),got=SF.missions.saved(i,mk_),b=save.best[mk_][i],t=SF.prog.savedTier(i,mk_),T=SF.MEDAL_TIERS[t];
   return`<button class="stagec" data-s="${i}" ${lock?'disabled':''}><span class="num">${lock?'🔒':i+1}</span><b>${s.name}</b><small>${s.place}</small><div class="meta"><span class="stars">${objs.map(o=>`<span style="opacity:${got[o.id]?1:.25}">★</span>`).join('')}</span>${T?`<span class="tier" style="color:${T.color}">${T.name.toUpperCase()}</span>`:''}</div>${b?`<small>Best ${fmt(b)}</small>`:''}</button>`;}).join('');
- $('stageList').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sfx('ui');startRun(+b.dataset.s,mk_);});}
+ $('stageList').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sfx('ui');openBrief(+b.dataset.s,mk_);});}
 function renderSettings(){document.querySelectorAll('.tog[data-k]').forEach(b=>{const k=b.dataset.k,on=!!save[k];b.classList.toggle('on',on);b.textContent=k==='hq'?(on?'High':'Smooth'):(on?'On':'Off');});
  $('sensBtn').textContent='×'+(save.sens||1).toFixed(1);$('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');}
 document.querySelectorAll('.tog[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;save[k]=!save[k];store();sfx('ui');renderSettings();
@@ -56,7 +56,9 @@ function go(name){sfx('ui');if(name==='title')return goTitle();state=name;if(nam
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
 $('goPlay').onclick=()=>{audioOn();go('select');};$('goRecords').onclick=()=>{audioOn();go('records');};$('goRange').onclick=()=>{sfx('ui');SF.range.start();};$('goHangar').onclick=()=>{audioOn();go('hangar');};$('goSettings').onclick=()=>{audioOn();go('settings');};
 $('hTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{hTab=b.dataset.t;sfx('ui');renderHangar();});
-$('resHangar').onclick=()=>{clearRun();showPlayerModel();go('hangar');};$('resMenu').onclick=()=>{clearRun();showPlayerModel();go('select');};
+$('resHangar').onclick=()=>{clearRun();showPlayerModel();const r=SF.run.lastResult;if(r)briefAt={si:r.won&&r.si+1<STAGES.length?r.si+1:r.si,mode:r.mode};hangarReturn=r?'brief':'';go('hangar');};$('resMenu').onclick=()=>{clearRun();showPlayerModel();go('select');};
+$('resRetry').onclick=()=>{const r=SF.run.lastResult;if(r)startRun(r.si,r.mode);};
+$('hBack').onclick=()=>{if(hangarReturn==='brief'&&briefAt){hangarReturn='';openBrief(briefAt.si,briefAt.mode);}else go('title');};
 $('wGears').onclick=()=>{SF.wallet.grant('gears',10000,'workshop');SF.wallet.grant('cores',100,'workshop');sfx('power');$('wGears').textContent='Added ✓';setTimeout(()=>$('wGears').textContent='+10k gears, +100 cores',900);};
 $('wMax').onclick=()=>{for(const k in save.wl)save.wl[k]=MAXL;for(const k in save.dl)save.dl[k]=MAXL;for(const k in SF.UPGRADES.parts)save.parts[k]=MAXL;store();sfx('power');$('wMax').textContent='All maxed ✓';};
 $('wUnlock').onclick=()=>{for(const m of MODES)save.prog[m.k]=STAGES.length;for(const s of STAGES)save.own[s.reward]=1;store();sfx('power');$('wUnlock').textContent='Everything open ✓';};
@@ -72,7 +74,7 @@ $('saveIn').onclick=()=>{let t=null;try{t=window.prompt('Paste your save code:')
  catch(e){flashBtn('saveIn','Invalid code','Restore');}};
 let resetArm=0;$('wReset').onclick=()=>{if(!resetArm){resetArm=1;$('wReset').textContent='Tap again to wipe everything';setTimeout(()=>{resetArm=0;$('wReset').textContent='Reset all progress';},3000);return;}
  save=fresh();store();resetArm=0;$('wReset').textContent='Reset all progress';renderSettings();};
-function pause(){if(state!=='run')return;pausedFrom=state;state='pause';$('quit').textContent=SF.R&&SF.R.kind==='range'?'Leave Test Range':'Leave mission (keep gears)';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}
+function pause(){if(state!=='run')return;pausedFrom=state;state='pause';renderPauseObj();$('quit').textContent=SF.R&&SF.R.kind==='range'?'Leave Test Range':'Leave mission (keep gears)';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}
 $('pauseBtn').onclick=pause;
 $('resume').onclick=()=>{state=pausedFrom||'run';pausedFrom='';show('play');last=performance.now();};
 $('quit').onclick=()=>{pausedFrom='';if(SF.R&&SF.R.kind==='range'){goTitle();return;}state='run';SF.run.finish(false,true);};
@@ -117,3 +119,23 @@ function renderRecords(){const S=save.stats,got=Object.keys(save.ach).length;
  $('recStats').innerHTML=rows.map(([l,v])=>`<div class="stat"><span>${l}</span><b>${fmt(v||0)}</b></div>`).join('');
  $('recAchT').textContent=`Achievements · ${got}/${SF.ACHIEVEMENTS.length}`;
  $('recAch').innerHTML=SF.ACHIEVEMENTS.map(A=>{const have=!!save.ach[A.id],p=Math.min(1,(S[A.stat]||0)/A.goal);return `<div class="ach ${have?'got':''}"><div><b>${A.name}</b><p>${A.desc}</p>${have?'':`<span class="bar"><i style="width:${p*100}%"></i></span>`}</div><small>${A.cores?`<i class="core s"></i> ${A.cores}`:''}${A.gears?` <i class="cog s"></i> ${fmt(A.gears)}`:''}</small></div>`;}).join('');}
+
+// ---------- mission briefing + loadout ----------
+let briefAt=null,hangarReturn='';
+function objRows(list,R){return list.map(o=>{const st=o.state;return `<div class="obj ${st==='ok'?'ok':st==='no'?'no':''}"><i>${st==='ok'?'★':st==='no'?'✕':'☆'}</i><span>${o.text}</span>${o.prog?`<em>${o.prog}</em>`:''}</div>`;}).join('');}
+function openBrief(si,mode){briefAt={si,mode};const st=STAGES[si],objs=SF.missions.forStage(si,mode),got=SF.missions.saved(si,mode),t=SF.prog.savedTier(si,mode),T=SF.MEDAL_TIERS[t],done=objs.filter(o=>got[o.id]).length;
+ $('brName').textContent=`${si+1} · ${st.name}`;$('brSub').textContent=`${st.place.toUpperCase()} · ${MODES.find(m=>m.k===mode).name.toUpperCase()}`;$('brText').textContent=st.brief;
+ const next=SF.MEDAL_TIERS.find((M,i)=>i>t&&(i>0||t<0));
+ $('brTier').innerHTML=(T?`Medal: <b style="color:${T.color}">${T.name.toUpperCase()}</b>`:'No medal yet')+(next?` · Next: <b style="color:${next.color}">${next.name.toUpperCase()}</b> ${next.objectives>done?`(complete ${next.objectives-done} more objective${next.objectives-done>1?'s':''})`:'(clear the mission)'}`:' · Top medal earned');
+ $('brObj').innerHTML=objRows(objs.map(o=>({text:o.T.text(o.v),state:got[o.id]?'ok':''})));
+ const pl=PLANES[save.plane],wp=WEAPONS[save.weapon],dr=DRONES[save.drone];
+ $('brLoad').innerHTML=`<div class="ld"><img src="${preview(save.plane)}" alt=""><b>${pl.name}</b><small>Jet</small></div><div class="ld"><img src="${preview(save.weapon)}" alt=""><b>${wp.name}</b><small>Hangar Lv ${save.wl[save.weapon]|0}</small></div><div class="ld">${dr?`<img src="${preview(save.drone)}" alt="">`:'<div style="height:56px;display:grid;place-items:center;color:var(--dim)">—</div>'}<b>${dr?dr.name:'No drones'}</b><small>${dr?'Hangar Lv '+(save.dl[save.drone]|0):'Support'}</small></div>`;
+ $('brGo').onclick=()=>{sfx('ui');vib(15);startRun(si,mode);};$('brHangar').onclick=()=>{hangarReturn='brief';go('hangar');};
+ state='brief';show('brief');}
+// ---------- pause: live objective progress ----------
+function renderPauseObj(){const R=SF.R;if(!R||R.kind!=='stage'||!R.objs){$('pauseObj').innerHTML='';return;}
+ $('pauseObj').innerHTML=objRows(R.objs.map(o=>{const pr=o.T&&o.T.progress?Math.round(o.T.progress(R,o.v)*100)+'%':o.type==='combo'?`${R.combo.best}/${o.v}`:o.type==='score'?`${fmt(R.score)}`:'';return {text:o.T?o.T.text(o.v):o.id,state:o.done?'ok':o.failed?'no':'',prog:o.done||o.failed?'':pr};}));}
+// ---------- results: what to improve next ----------
+function upgradeTip(){const c=[];for(const k in SF.UPGRADES.parts)c.push(['parts',k,SF.UPGRADES.parts[k].name]);if(save.own[save.weapon])c.push(['weapons',save.weapon,WEAPONS[save.weapon].name]);if(save.drone&&save.own[save.drone])c.push(['drones',save.drone,DRONES[save.drone].name]);
+ let best=null;for(const [kind,k,name] of c){const cost=SF.prog.cost(kind,k);if(cost&&SF.wallet.canAfford(cost)&&(!best||cost.gears<best.cost.gears))best={kind,k,name,cost,l:SF.prog.level(kind,k)};}
+ return best;}

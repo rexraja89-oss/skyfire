@@ -97,6 +97,14 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 .reward small{color:var(--saffron);letter-spacing:.2em;font-size:11px;font-weight:700}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
 .hint{color:var(--dim);font-size:12px;text-align:center;margin:0}
+.screen:not([hidden]) .box{animation:scrIn .28s ease-out}@keyframes scrIn{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+.brcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.brcard small{color:var(--saffron);letter-spacing:.18em;font-weight:700;font-size:11px}.brcard p{margin:6px 0 0;color:#c9d6e3;font-size:13.5px;line-height:1.45}
+#brTier{margin-top:8px;font-size:12px;color:var(--dim)}#brTier b{letter-spacing:.12em}
+.objlist{display:flex;flex-direction:column;gap:5px}.obj{display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:13px}
+.obj.ok{border-color:var(--saffron);color:#ffe3ad}.obj.no{opacity:.55;text-decoration:line-through}.obj i{font-style:normal;width:16px;text-align:center}.obj em{margin-left:auto;font-style:normal;color:var(--dim);font-variant-numeric:tabular-nums;font-size:12px}
+#resMedals .medal{animation:objIn .4s ease-out both}@keyframes objIn{0%{opacity:0;transform:translateX(-18px)}100%{opacity:1;transform:none}}
+.loadout{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ld{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center;font-size:12px}.ld img{width:54px;height:54px;object-fit:contain;display:block;margin:0 auto 2px}.ld b{display:block;font-size:12.5px}.ld small{color:var(--dim)}
+.tip{display:flex;gap:10px;align-items:center;background:rgba(43,209,192,.1);border:1px solid var(--teal);border-radius:12px;padding:9px 12px;font-size:13px}.tip button{margin-left:auto;padding:.45em .7em;font-size:13px}
 .sorties{display:flex;flex-direction:column;gap:5px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
 .sorties h3{margin:0 0 2px}.sortie{display:flex;justify-content:space-between;gap:8px;font-size:13px}.sortie b{color:var(--dim);font-variant-numeric:tabular-nums}.sortie.done{color:var(--good)}.sortie.done b{color:var(--good)}
 .tier{font-size:10px;font-weight:700;letter-spacing:.12em}
@@ -113,8 +121,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 #hud{position:absolute;inset:0;pointer-events:none}
 #hudTop{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:max(8px,env(safe-area-inset-top)) 10px 0}
 #hpBox{flex:1;display:flex;flex-direction:column;gap:3px}
-#hpWrap{height:9px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.18);border-radius:5px;overflow:hidden}
-#hp{height:100%;width:100%;background:linear-gradient(90deg,#1fa99b,#5ff0e0);transition:width .15s}
+#hpWrap{position:relative;height:9px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.18);border-radius:5px;overflow:hidden}
+#hpTrail{position:absolute;left:0;top:0;height:100%;width:100%;background:#fff4c8;transition:width .6s ease-in .25s}
+#hp{position:relative;height:100%;width:100%;background:linear-gradient(90deg,#1fa99b,#5ff0e0);transition:width .12s}
+#objRow{margin-left:auto;font-family:var(--ui);font-size:13px;letter-spacing:2px;color:rgba(255,255,255,.35)}#objRow i{font-style:normal}#objRow i.ok{color:#ffd27a;text-shadow:0 0 6px #ff9d2e}#objRow i.no{color:#ff6d84}
+#hudS.pulse{animation:spulse .35s ease-out}@keyframes spulse{0%{transform:scale(1.25);color:#ffd27a}100%{transform:scale(1)}}
 #hp.low{background:linear-gradient(90deg,#c2263f,#ff6d84)}
 #scoreRow{display:flex;align-items:baseline;gap:8px;font-family:var(--display);font-size:18px;text-shadow:0 2px 0 rgba(0,0,0,.6);font-variant-numeric:tabular-nums}
 #hudChain{font-size:13px;color:var(--saffron)}
@@ -157,7 +168,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 
   <div id="hud" hidden>
     <div id="hudTop">
-      <div id="hpBox"><div id="hpWrap"><div id="hp"></div></div><div id="scoreRow"><span id="hudS">0</span><span id="hudChain"></span></div></div>
+      <div id="hpBox"><div id="hpWrap"><div id="hpTrail"></div><div id="hp"></div></div><div id="scoreRow"><span id="hudS">0</span><span id="hudChain"></span><span id="objRow"></span></div></div>
       <div id="hudGears"><i class="cog"></i><span id="hudG">0</span></div>
       <button id="pauseBtn" aria-label="Pause">II</button>
     </div>
@@ -194,7 +205,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 
   <section id="hangar" class="screen" hidden>
     <div class="box">
-      <div class="head"><h2>Hangar</h2><div class="bank"><i class="cog"></i><span id="bankH">0</span><i class="core s"></i><span id="coreH" style="font-size:15px">0</span></div><button class="back" data-go="title">Back</button></div>
+      <div class="head"><h2>Hangar</h2><div class="bank"><i class="cog"></i><span id="bankH">0</span><i class="core s"></i><span id="coreH" style="font-size:15px">0</span></div><button class="back" id="hBack">Back</button></div>
       <div class="tabs" id="hTabs"><button data-t="planes" class="on">Jets</button><button data-t="weapons">Weapons</button><button data-t="parts">Systems</button><button data-t="drones">Drones</button></div>
       <div id="hList" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
@@ -226,6 +237,19 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
     </div>
   </section>
 
+  <section id="brief" class="screen" hidden>
+    <div class="box">
+      <div class="head"><h2 id="brName">Mission</h2><button class="back" data-go="select">Back</button></div>
+      <div class="brcard"><small id="brSub"></small><p id="brText"></p><div id="brTier"></div></div>
+      <h3>Objectives</h3>
+      <div id="brObj" class="objlist"></div>
+      <h3>Loadout</h3>
+      <div id="brLoad" class="loadout"></div>
+      <button id="brHangar">Change loadout / upgrades</button>
+      <button class="primary" id="brGo" style="font-size:18px;padding:.85em">LAUNCH</button>
+    </div>
+  </section>
+
   <section id="records" class="screen" hidden>
     <div class="box">
       <div class="head"><h2>Records</h2><button class="back" data-go="title">Back</button></div>
@@ -238,6 +262,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
   <section id="pause" class="screen" hidden>
     <div class="box">
       <h2 style="text-align:center">Paused</h2>
+      <div id="pauseObj" class="objlist"></div>
       <button class="primary" id="resume">Resume</button>
       <div class="set"><div>Sound effects</div><button class="tog" data-k="sfx"></button></div>
       <div class="set"><div>Music</div><button class="tog" data-k="music"></button></div>
@@ -253,8 +278,9 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
       <div class="stat"><span>Gears collected</span><b id="resG">0</b></div>
       <div class="stat"><span>Enemies downed</span><b id="resK">0%</b></div>
       <div id="resMedals" style="display:flex;flex-direction:column;gap:6px"></div>
-      <div class="row"><button id="resHangar">Hangar</button><button class="primary" id="resNext">Next mission</button></div>
-      <button id="resMenu">Mission list</button>
+      <div id="resTip"></div>
+      <div class="row"><button id="resHangar">Upgrades</button><button class="primary" id="resNext">Next mission</button></div>
+      <div class="row"><button id="resRetry">Fly again</button><button id="resMenu">Mission list</button></div>
     </div>
   </section>
 
@@ -264,8 +290,8 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Version info stays here (CI checks BUILD against version.json). The game code lives in js/ and is loaded in order below.
-const BUILD=9,VERSION='3.6';
-const NOTES=['New Hangar: every upgrade has 10 levels and shows what you have now and what the next level gives','New jet systems: Repair nanites heal you while you avoid hits','Medal tiers for every mission and mode: Spark, Flare, Blaze and Skyfire, each paying gears and Cores','31 achievements and a new Records screen with your lifetime stats','Daily sortie orders: three new goals every day for bonus gears and a Core','Locked jets, weapons and drones can be unlocked early with Cores (they still unlock free as mission rewards)','Your earlier upgrades were refunded as gears so you can rebuild with the new system','Save backup: a damaged save restores itself from a backup copy'];
+const BUILD=10,VERSION='3.7';
+const NOTES=['Mission briefing before every flight: the story, your objectives, the next medal to earn and your loadout','Results screen counts up your score, ticks off objectives one by one and suggests the upgrade you can afford next','Objective stars on the HUD, and full live progress on the pause screen','Health bar shows a trail of the damage you just took','Smoother screen transitions'];
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
  var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','config/upgrades','config/achievements','save','economy','progression','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];

@@ -1,8 +1,8 @@
 {
-  "build": 9,
-  "version": "3.6",
+  "build": 10,
+  "version": "3.7",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "new upgrade hangar, medal tiers, achievements and daily sortie orders"
+    "mission briefings, animated results and a clearer HUD"
   ]
 }

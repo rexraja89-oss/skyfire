@@ -39,6 +39,7 @@ SF.on('kill',({e})=>{if(R)R.typeKills[e.type]=(R.typeKills[e.type]||0)+1;});
 SF.on('formationClear',()=>{if(R)R.formationsCleared++;});
 SF.on('setupClear',()=>{if(R)R.setupsCleared++;});
 SF.on('pickup',()=>{if(R)R.pickups++;});
+SF.on('bonus',()=>{if(!R)return;const el=$('hudS');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse');});
 SF.on('levelUp',({lvl})=>{if(!R)return;if(lvl===SF.BAL.weapon.maxLevel)say('maxlv','Weapon at maximum power!',1,20);else if(lvl===5)say('lv5','Weapon level five. Feel that?',1,60);});
 SF.on('specialReady',()=>{if(R)sfx('ui');});
 SF.on('playerDown',()=>{if(!R)return;if(R.respawn)say('rdown','Down! Respawning. You keep most of your weapon power.',2,8);else say('down',"We're hit! Ejecting. I've got you, Rex.",3,0);});
@@ -82,19 +83,22 @@ function showResults(r){$('resTitle').textContent=r.won?'Mission complete':r.qui
  $('resS').textContent=fmt(r.score)+(r.nb&&r.score>0?' · NEW BEST':' · best '+fmt(r.best));
  $('resG').textContent=fmt(r.gears)+(r.bonus?' + '+fmt(r.bonus)+' objectives':'')+(r.cores?` · +${r.cores} cores`:'');
  $('resK').textContent=(r.spawned?Math.round(r.kills/r.spawned*100):0)+'% · best combo '+r.combo;
- $('resMedals').innerHTML=r.objs.map(o=>`<div class="medal ${o.done||o.had?'got':''} ${o.fresh?'new':''}">${o.done||o.had?'★':'☆'} ${o.text}</div>`).join('');
+ $('resMedals').innerHTML=r.objs.map((o,i)=>`<div class="medal ${o.done||o.had?'got':''} ${o.fresh?'new':''}" style="animation-delay:${.25+i*.18}s">${o.done||o.had?'★':'☆'} ${o.text}</div>`).join('');
+ const tip=upgradeTip();$('resTip').innerHTML=tip?`<div class="tip"><span>You can afford <b>${tip.name} Lv ${tip.l+1}</b></span><button id="tipGo">Upgrade</button></div>`:'';if(tip)$('tipGo').onclick=()=>$('resHangar').onclick();
+ {const el=$('resS'),tgt=r.score,suf=(r.nb&&r.score>0?' · NEW BEST':' · best '+fmt(r.best)),t0=performance.now();const tick=()=>{const f=Math.min(1,(performance.now()-t0)/900),v=Math.floor(tgt*(1-Math.pow(1-f,3)));el.textContent=fmt(v)+(f>=1?suf:'');if(f<1&&state==='result')requestAnimationFrame(tick);};tick();}
  let rw='';if(r.reward)rw+=`<div class="reward"><img src="${preview(r.reward)}" alt=""><div><small>REWARD UNLOCKED</small><div style="font-size:17px;font-weight:700">${REWARD_NAME(r.reward)}</div><div class="hint" style="text-align:left">Equip it in the Hangar.</div></div></div>`;
  for(const t of r.msgs)rw+=`<div class="reward"><div class="orb"></div><div><small>NEW MODE</small><div style="font-size:17px;font-weight:700">${t}</div></div></div>`;
  const P=r.prog||{};if(P.tier>=0){const T=SF.MEDAL_TIERS[P.tier],nw=P.tier>P.prevTier;rw=`<div class="tierbox" style="border-color:${T.color}"><small style="color:var(--dim);letter-spacing:.2em;font-weight:700">${nw?'NEW MEDAL':'MEDAL'}</small><b style="color:${T.color}">${T.name.toUpperCase()}</b>${nw&&(P.tierGears||P.tierCores)?`<small><i class="cog s"></i> ${fmt(P.tierGears)}${P.tierCores?` <i class="core s"></i> ${P.tierCores}`:''}</small>`:''}</div>`+rw;}
  for(const A of P.ach||[])rw+=`<div class="reward"><div class="orb"></div><div><small>ACHIEVEMENT</small><div style="font-size:16px;font-weight:700">${A.name}</div><div class="hint" style="text-align:left">${A.desc}${A.cores?` · +${A.cores} cores`:''}</div></div></div>`;
  for(const o of P.sortie||[])rw+=`<div class="reward"><div class="orb"></div><div><small>SORTIE ORDER COMPLETE</small><div style="font-size:15px;font-weight:700">${SF.prog.sortieText(o)}</div><div class="hint" style="text-align:left">+${fmt(SF.SORTIE_REWARD.gears)} gears · +${SF.SORTIE_REWARD.cores} core</div></div></div>`;
  $('resReward').innerHTML=rw;
- const next=r.won&&r.si+1<STAGES.length;$('resNext').textContent=next?'Next mission':'Fly again';$('resNext').onclick=()=>Rn.start({kind:'stage',si:next?r.si+1:r.si,mode:r.mode});
+ const next=r.won&&r.si+1<STAGES.length;$('resNext').textContent=next?'Next mission':'Try again';$('resRetry').hidden=!next;$('resNext').onclick=()=>{if(next)openBrief(r.si+1,r.mode);else Rn.start({kind:'stage',si:r.si,mode:r.mode});};
  show('result');}
 // ---------- HUD ----------
 function updHud(force){const p=R.p,h=R.hud,f=p.hp/p.max;
  const set=(k,v,fn)=>{if(force||h[k]!==v){h[k]=v;fn(v);}};
- set('hp',Math.round(f*200),()=>{$('hp').style.width=(f*100)+'%';$('hp').classList.toggle('low',f<.3);});
+ set('hp',Math.round(f*200),()=>{$('hp').style.width=(f*100)+'%';$('hpTrail').style.width=(f*100)+'%';$('hp').classList.toggle('low',f<.3);});
+ set('obj',R.objs?R.objs.map(o=>o.done?1:o.failed?2:0).join(''):'',v=>$('objRow').innerHTML=v.split('').map(c=>c==='1'?'<i class="ok">★</i>':c==='2'?'<i class="no">✕</i>':'<i>☆</i>').join(''));
  set('s',Math.floor(R.shown),v=>$('hudS').textContent=fmt(v));
  set('g',R.gears,v=>$('hudG').textContent=fmt(v));
  set('lv',p.lvl+':'+save.weapon,()=>{const L=SF.weapons.def().levels;$('weapName').textContent=SF.weapons.def().name+' · Lv '+p.lvl+'/'+L.length;
