@@ -27,6 +27,7 @@
 html,body{margin:0;height:100%;background:var(--night);color:var(--ink);font-family:var(--ui);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 #stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);overflow:hidden;background:#000}
 #stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 85% 75% at 50% 50%,transparent 60%,rgba(0,0,0,.32) 100%)}
 button,.btn{font-family:var(--ui);font-weight:700;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:.75em 1em;font-size:15px;cursor:pointer;text-decoration:none;text-align:center;display:inline-block}
 button:active,.btn:active{transform:translateY(1px) scale(.99)}
 button:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
@@ -165,6 +166,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <div id="stage">
   <canvas id="gl" aria-hidden="true"></canvas>
   <canvas id="game" aria-label="Game area"></canvas>
+  <div id="vig" aria-hidden="true"></div>
 
   <div id="hud" hidden>
     <div id="hudTop">
@@ -294,7 +296,7 @@ const BUILD=10,VERSION='3.7';
 const NOTES=['Mission briefing before every flight: the story, your objectives, the next medal to earn and your loadout','Results screen counts up your score, ticks off objectives one by one and suggests the upgrade you can afford next','Objective stars on the HUD, and full live progress on the pause screen','Health bar shows a trail of the damage you just took','Smoother screen transitions'];
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
- var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','config/upgrades','config/achievements','save','economy','progression','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
+ var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','config/upgrades','config/achievements','save','economy','progression','assets/kaykit','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
  F.forEach(function(f){var s=document.createElement('script');s.src='js/'+f+'.js?v='+BUILD;s.async=false;s.onerror=function(){var l=document.getElementById('loading');l.hidden=false;l.textContent='Could not load game files. Check your connection and reopen.';};document.body.appendChild(s);});
 })();
 </script>

@@ -108,12 +108,12 @@ function stepAuras(){for(const e of pool.live){e.buff=0;e.domed=0;}
   if(A.dome){const r2=A.dome.range**2;for(const e of pool.live)if(e!==s&&e.ground&&(e.x-s.x)**2+(e.y-s.y)**2<r2)e.domed=Math.max(e.domed||0,A.dome.reduce);}}}
 // ---------- damage pipeline ----------
 En.hit=(e,dmg,src)=>{if(!e.alive||e.untargetable)return 0;const A=e.d.abilities||{};
- if(e.invuln){if(Math.random()<.25&&src&&src.x!==undefined)SF.fx.spark(src.x,src.y||e.y,'#c9d2db',1);return 0;}
+ if(e.invuln){sfx('deflect');if(Math.random()<.25&&src&&src.x!==undefined)SF.fx.spark(src.x,src.y||e.y,'#c9d2db',1);return 0;}
  if(e.guard)dmg*=1-e.guard;
  if(e.domed)dmg*=1-e.domed;
  if(A.bunker&&!e.open)dmg*=1-A.bunker.armor;
  if(A.guarded&&e.kids&&e.kids.some(k=>k.alive))dmg*=1-A.guarded.reduce;
- if(A.frontArmor&&src&&src.x!==undefined&&!src.special){if(Math.abs(src.x-e.x)<e.r*A.frontArmor.sideFrac){dmg*=1-A.frontArmor.reduce;e.armorT=.08;if(Math.random()<.3)SF.fx.spark(src.x,e.y+e.r*.6,'#c9d2db',1);}}
+ if(A.frontArmor&&src&&src.x!==undefined&&!src.special){if(Math.abs(src.x-e.x)<e.r*A.frontArmor.sideFrac){dmg*=1-A.frontArmor.reduce;e.armorT=.08;sfx('deflect');if(Math.random()<.3)SF.fx.spark(src.x,e.y+e.r*.6,'#c9d2db',1);}}
  if(e.sh>0){e.sh-=dmg;e.shHit=.12;e.lastHit=e.t;if(e.sh>=0)return 0;dmg=-e.sh;e.sh=0;SF.fx.spark(e.x,e.y,'#9fe8ff',6);sfx('zap');}
  e.hp-=dmg;e.flash=.06;if(e.hp<=0)En.kill(e,src);return dmg;};
 En.kill=(e,src)=>{if(!e.alive)return;e.alive=false;const d=e.d,R=En.R,A=d.abilities||{},size=d.size||1;

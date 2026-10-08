@@ -23,7 +23,7 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
  gz3=0;updTerrain(true);resetCopilot();WX.length=0;
  $('bombBtn').classList.add('sp');$('bombL').textContent='SKYBURST';$('pwPips').classList.add('lv');
- state='run';show('play');musicStop();musicStart(R.st.key);
+ state='run';show('play');musicSet('combat',R.st.key);
  if(kind==='range')say('range','Test Range. Formations, ground targets and power-ups are all live. Chain your kills to build the combo.',3,0);
  else{say('brief',`${R.st.name}. ${R.st.brief}`,3,0);if(mode!=='easy')say('mode',`${MD===SF.DIFFICULTY.hard?'Hard':'Extreme'} mode. They have more of everything. Stay sharp.`,1,0);}
  updHud(true);};
@@ -78,14 +78,14 @@ Rn.finish=(won,quit)=>{if(!R)return;if(R.kind==='range'){goTitle();return;}
  SF.wallet.grant('gears',gears,'mission');SF.wallet.grant('gears',bonus,'objectives');if(cores)SF.wallet.grant('cores',cores,'firstClear');store();
  const res={won,quit,score:Math.floor(R.score),best,nb,gears,bonus,cores,kills:R.kills,spawned:R.spawned,objs,reward,msgs,si,mode,combo:R.combo.best,time:R.t};
  res.prog=SF.prog.onRunEnd(R,res);
- Rn.lastResult=res;Rn.stop();state='result';showResults(res);try{speechSynthesis.cancel();}catch(e){}if(reward&&save.voice)speak(`New hardware unlocked: ${REWARD_NAME(reward)}.`);musicStop();musicStart(45);};
+ Rn.lastResult=res;Rn.stop();state='result';showResults(res);try{speechSynthesis.cancel();}catch(e){}if(reward&&save.voice)speak(`New hardware unlocked: ${REWARD_NAME(reward)}.`);musicSet(res.won?'win':'calm',45);};
 function showResults(r){$('resTitle').textContent=r.won?'Mission complete':r.quit?'Mission aborted':'Shot down';$('resTitle').style.color=r.won?'':'var(--danger)';
  $('resS').textContent=fmt(r.score)+(r.nb&&r.score>0?' · NEW BEST':' · best '+fmt(r.best));
  $('resG').textContent=fmt(r.gears)+(r.bonus?' + '+fmt(r.bonus)+' objectives':'')+(r.cores?` · +${r.cores} cores`:'');
  $('resK').textContent=(r.spawned?Math.round(r.kills/r.spawned*100):0)+'% · best combo '+r.combo;
  $('resMedals').innerHTML=r.objs.map((o,i)=>`<div class="medal ${o.done||o.had?'got':''} ${o.fresh?'new':''}" style="animation-delay:${.25+i*.18}s">${o.done||o.had?'★':'☆'} ${o.text}</div>`).join('');
  const tip=upgradeTip();$('resTip').innerHTML=tip?`<div class="tip"><span>You can afford <b>${tip.name} Lv ${tip.l+1}</b></span><button id="tipGo">Upgrade</button></div>`:'';if(tip)$('tipGo').onclick=()=>$('resHangar').onclick();
- {const el=$('resS'),tgt=r.score,suf=(r.nb&&r.score>0?' · NEW BEST':' · best '+fmt(r.best)),t0=performance.now();const tick=()=>{const f=Math.min(1,(performance.now()-t0)/900),v=Math.floor(tgt*(1-Math.pow(1-f,3)));el.textContent=fmt(v)+(f>=1?suf:'');if(f<1&&state==='result')requestAnimationFrame(tick);};tick();}
+ {const el=$('resS'),tgt=r.score,suf=(r.nb&&r.score>0?' · NEW BEST':' · best '+fmt(r.best)),t0=performance.now();const tick=()=>{const f=Math.min(1,(performance.now()-t0)/900),v=Math.floor(tgt*(1-Math.pow(1-f,3)));el.textContent=fmt(v)+(f>=1?suf:'');if(f<1)sfx('count',Math.floor(f*12));if(f<1&&state==='result')requestAnimationFrame(tick);};tick();}
  let rw='';if(r.reward)rw+=`<div class="reward"><img src="${preview(r.reward)}" alt=""><div><small>REWARD UNLOCKED</small><div style="font-size:17px;font-weight:700">${REWARD_NAME(r.reward)}</div><div class="hint" style="text-align:left">Equip it in the Hangar.</div></div></div>`;
  for(const t of r.msgs)rw+=`<div class="reward"><div class="orb"></div><div><small>NEW MODE</small><div style="font-size:17px;font-weight:700">${t}</div></div></div>`;
  const P=r.prog||{};if(P.tier>=0){const T=SF.MEDAL_TIERS[P.tier],nw=P.tier>P.prevTier;rw=`<div class="tierbox" style="border-color:${T.color}"><small style="color:var(--dim);letter-spacing:.2em;font-weight:700">${nw?'NEW MEDAL':'MEDAL'}</small><b style="color:${T.color}">${T.name.toUpperCase()}</b>${nw&&(P.tierGears||P.tierCores)?`<small><i class="cog s"></i> ${fmt(P.tierGears)}${P.tierCores?` <i class="core s"></i> ${P.tierCores}`:''}</small>`:''}</div>`+rw;}

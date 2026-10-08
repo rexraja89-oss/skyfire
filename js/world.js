@@ -80,7 +80,7 @@ function envCube(B,sd){const N=64,faces=[];const dirs=[[1,0,0],[-1,0,0],[0,1,0],
   faces.push(c);}
  const t=new T3.CubeTexture(faces);t.encoding=T3.sRGBEncoding;t.needsUpdate=true;return t;}
 function fitCamera(aspect){camera.fov=40;camera.aspect=aspect;camera.updateProjectionMatrix();
- const tilt=24*Math.PI/180;camera.position.set(0,Math.cos(tilt),Math.sin(tilt));camera.lookAt(0,0,0);camera.updateMatrixWorld();
+ const tilt=30*Math.PI/180;camera.position.set(0,Math.cos(tilt),Math.sin(tilt));camera.lookAt(0,0,0);camera.updateMatrixWorld();
  const v=new T3.Vector3();const hit=(nx,ny)=>{v.set(nx,ny,.5).unproject(camera).sub(camera.position).normalize();const t=-camera.position.y/v.y;return camera.position.clone().addScaledVector(v,t);};
  const bl=hit(-1,-1),tp=hit(0,1),bt=hit(0,-1),s=(W*K)/(2*Math.abs(bl.x));
  H=Math.round(clamp((bt.z-tp.z)*s/K,600,1300));
@@ -130,23 +130,25 @@ const BIOME={
  harbor:{sky:['#4f8fd0','#ffcf9e','#c79c7a'],fog:'#f2c9a2',fogN:.9,sun:['#ffd2a0',2.4],sunDir:[-.45,.5,-.75],hemi:['#bcd5ff','#6b5a40',.55],exp:1.05,water:{c:'#1d6e95',op:.9},wl:0,clouds:5,
   HF(x,z){const c=-9+2.5*Math.sin(z*.012)+1.2*Math.sin(z*.041),d=c-x;let h=d>0?.8+Math.min(2.2,d*.22)+fbm(x*.06,z*.06,3)*.7:-.6-Math.min(6,-d*.16);
    if(x<-30)h+=mtn(x,z,30);if(x>48)h=Math.max(h,mtn(x,z,22,48,95)-4);return h;},
-  P:{low:'#5f8f48',mid:'#6f9a52',m0:1,m1:4,high:'#6b6b5a',h0:8,h1:16,rock:'#7a6e60',snow:24,sand:1,wl:.6,sandc:'#e0cf9f',deep:'#2a5560'},
-  props(R,z0,put,HF){for(let z=z0-2;z>z0-TL;z-=4.4+R()*1.6){const x=-15-R()*6;if(HF(x,z)>.6)put(R()<.75?'house':'ware',x,z,1+R()*.4,R()*.4-.2,pick(['#f2e6d0','#e8d8c0','#dfe6ea','#f4d6b8']),1,0);}
+  P:{low:'#5f8f48',mid:'#6f9a52',m0:1,m1:4,high:'#6b6b5a',h0:8,h1:16,rock:'#7a6e60',snow:24,sand:1,wl:.6,sandc:'#e0cf9f',deep:'#2a5560'},uses:['kk_building_A','kk_building_E'],
+  props(R,z0,put,HF){for(let z=z0-2;z>z0-TL;z-=4.4+R()*1.6){const x=-15-R()*6;if(HF(x,z)>.6){if(R()<.45)put(pick(['kk_building_A','kk_building_E']),x,z,2.4+R()*.5,Math.floor(R()*4)*Math.PI/2,null);else put(R()<.75?'house':'ware',x,z,1+R()*.4,R()*.4-.2,pick(['#f2e6d0','#e8d8c0','#dfe6ea','#f4d6b8']),1,0);}}
    for(let i=0;i<260;i++){const x=-24-R()*70,z=z0-R()*TL,h=HF(x,z);if(h>.9&&h<14)put(h>6?'pine':'round',x,z,.8+R()*.6,R()*6,h>6?'#2f5a2b':'#4d8a3c');}
    for(let i=0;i<3;i++){const z=z0-10-R()*(TL-20),c=-9+2.5*Math.sin(z*.012)+1.2*Math.sin(z*.041);put('pier',c+3,z,1,0,'#7b6248',1,0,[7,1,1]);}
    for(let i=0;i<30;i++){const x=48+R()*50,z=z0-R()*TL;if(HF(x,z)>1)put('rock',x,z,1+R()*2,R()*6,'#8a7e70');}}},
  farm:{sky:['#4a90e2','#cfe3f5','#a8b890'],fog:'#d6e4ee',fogN:1,sun:['#fff1d6',2.6],sunDir:[-.35,.8,-.4],hemi:['#cfe3ff','#5a6a3a',.55],exp:1,wl:-60,clouds:6,
   HF(x,z){let h=.6+fbm(x*.025,z*.025,3)*1.6+mtn(x,z,20,30,90)*.8;const r=Math.abs(x-4);if(r<4)h=lerp(.6,h,sst(1.6,4,r));return h;},
   P:{low:'#6f9a45',mid:'#7fa04a',m0:2,m1:6,high:'#5c7a40',h0:8,h1:14,rock:'#7d7466'},
+  uses:['kk_watertower','kk_car_sedan','kk_car_hatchback'],
   cf(o,x,z,h,sl){const fx=Math.floor((x+600)/7),fzz=Math.floor((z+9000)/9),u=hash2(fx,fzz),crops=['#c9b458','#9bb55a','#6f9a45','#d8c27a','#8a6e45','#5f8a3a','#b9a24c','#a5c06a'];
    if(h<4.5&&Math.abs(x)<60){mixc(o,lc(crops[Math.floor(u*crops.length)]),lc(crops[Math.floor(u*crops.length)]),0);const ex=((x+600)/7)%1,ez=((z+9000)/9)%1;if(ex<.07||ez<.06)mixc(o,o,lc('#3e6a30'),.7);}
    const r=Math.abs(x-4);if(r<2.2)mixc(o,o,lc('#45433f'),1);else if(r<3.2)mixc(o,o,lc('#8a8270'),.7);},
   props(R,z0,put,HF){for(let i=0;i<180;i++){const fx=Math.floor((R()*120-60+600)/7),zz=z0-R()*TL;const x=fx*7-600+(R()<.5?0:R()*7);if(Math.abs(x-4)<3)continue;put('round',x,zz,.6+R()*.5,R()*6,pick(['#3e7a34','#4d8a3c','#56913f']));}
-   for(let k=0;k<3;k++){const z=z0-8-R()*(TL-16),sd=R()<.5?-1:1,x=4+sd*(7+R()*6);put('house',x,z,1.2,0,'#efe6d6');put('barn',x+sd*3.5,z-3,1.3,Math.PI/2,null);put('silo',x-sd*3,z+2,1,0,null);for(let j=0;j<5;j++)put('round',x+rnd(-7,7),z+rnd(-7,7),.7,R()*6,'#3e7a34');}
-   for(let i=0;i<120;i++){const x=(R()<.5?-1:1)*(35+R()*55),z=z0-R()*TL,h=HF(x,z);if(h>4&&h<16)put('pine',x,z,.9+R()*.5,R()*6,'#2f5a2b');}}},
- desert:{sky:['#3f86d6','#f7dcb0','#d9b27a'],fog:'#f0d6a8',fogN:.95,sun:['#fff0c8',2.1],sunDir:[-.55,.6,-.45],hemi:['#c6d6f0','#8a6030',.45],exp:.88,wl:-60,clouds:2,
+   for(let k=0;k<3;k++){const z=z0-8-R()*(TL-16),sd=R()<.5?-1:1,x=4+sd*(7+R()*6);put('house',x,z,1.2,0,'#efe6d6');put('barn',x+sd*3.5,z-3,1.3,Math.PI/2,null);put('silo',x-sd*3,z+2,1,0,null);if(R()<.5)put('kk_watertower',x+sd*1,z+6,2.6,R()*6,null);for(let j=0;j<5;j++)put('round',x+rnd(-7,7),z+rnd(-7,7),.7,R()*6,'#3e7a34');}
+   for(let i=0;i<120;i++){const x=(R()<.5?-1:1)*(35+R()*55),z=z0-R()*TL,h=HF(x,z);if(h>4&&h<16)put('pine',x,z,.9+R()*.5,R()*6,'#2f5a2b');}
+   for(let i=0;i<3;i++){const d=R()<.5?1:-1;put(pick(['kk_car_sedan','kk_car_hatchback']),4+d*1,z0-R()*TL,1.5,d>0?0:Math.PI,null);}}},
+ desert:{sky:['#3f86d6','#f7dcb0','#d9b27a'],fog:'#e8c898',fogN:1.1,sun:['#fff0c8',2.3],sunDir:[-.55,.55,-.45],hemi:['#c6d6f0','#7a5028',.35],exp:.8,wl:-60,clouds:2,
   HF(x,z){let h=.4+(2.6*Math.abs(Math.sin(x*.09+z*.025+fbm(x*.03,z*.03,2)*2.5))+fbm(x*.06,z*.06,3)*1.2)*sst(4,12,Math.abs(x+6));let m=mtn(x,z,24,30,80);m=Math.floor(m/3.5)*3.5+(m%3.5)*.25;h+=m;if(Math.abs(x+6)<3.5)h=Math.min(h,.4);return h;},
-  P:{low:'#c99a5e',mid:'#dcae70',m0:.8,m1:2.6,high:'#c46a3c',h0:3.5,h1:6,rock:'#a8553a'},
+  P:{low:'#b8854a',mid:'#d29e5e',m0:.8,m1:2.6,high:'#b85a30',h0:3.5,h1:6,rock:'#a8553a'},
   cf(o,x,z,h,sl){if(h>3){const b=Math.floor(h/3.5)%3;mixc(o,o,lc(['#b45a36','#d88a52','#9a4a30'][b]),.85);}const r=Math.abs(x+6);if(r<3.4)mixc(o,o,lc('#3a3b3e'),1);else if(r<4.6)mixc(o,o,lc('#b89a6a'),.6);},
   props(R,z0,put,HF){for(let i=0;i<140;i++){const x=R()*140-70,z=z0-R()*TL;if(Math.abs(x+6)<4.5)continue;put(R()<.5?'cactus':'rock',x,z,.6+R()*.7,R()*6,R()<.5?'#5f7d3a':'#b08a5a');}
    for(let i=0;i<2;i++){const x=(R()<.5?-1:1)*(12+R()*14),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
@@ -160,11 +162,14 @@ const BIOME={
  port:{sky:['#6b7f96','#c3ccd4','#5a6068'],fog:'#aab4bd',fogN:.7,sun:['#e9eef5',1.7],sunDir:[-.35,.8,-.45],hemi:['#c8d2dc','#3a3f45',.75],exp:1.05,water:{c:'#2a4a5a',op:.93},wl:0,clouds:8,
   HF(x,z){const q=10+.8*Math.sin(z*.02);let h=x<q?.8:-5;if(x<-30)h+=mtn(x,z,24);if(x>55)h=Math.max(h,mtn(x,z,18,55,95)-4);return h;},
   P:{low:'#7d8287',mid:'#7d8287',m0:3,m1:6,high:'#6a6e66',h0:6,h1:12,rock:'#6c6a66',sand:1,wl:.4,sandc:'#7d8287',deep:'#203038'},
+  uses:['kk_building_A','kk_building_C','kk_building_E','kk_building_G','kk_car_sedan','kk_car_taxi','kk_car_hatchback'],
   cf(o,x,z,h,sl){if(h<1.2&&h>.5){const q=10+.8*Math.sin(z*.02);if(Math.abs(x-q)<1.6)mixc(o,o,lc('#c8b040'),.8);}},
   props(R,z0,put,HF){const cs=['#c0392b','#2e86c1','#27ae60','#f39c12','#8e44ad','#d35400','#16a085','#7f8c8d','#e6e6e6'];
    for(let z=z0-1.5;z>z0-TL;z-=3.4){if(R()<.12){put('ware',-12,z-3,1,0,'#9aa3aa',1,0,[22,3.5,6]);z-=6;continue;}for(let x=-23;x<6;x+=2.8){if(R()<.15)continue;const n=1+Math.floor(R()*3);for(let k=0;k<n;k++)put('cont',x,z,1,Math.PI/2,pick(cs),1,k*1.05);}}
    for(let z=z0-6;z>z0-TL;z-=14+R()*6){const q=10+.8*Math.sin(z*.02);put('crane',q-2,z,1,0,null);}
-   for(let i=0;i<20;i++){const x=-40-R()*40,z=z0-R()*TL,h=HF(x,z);if(h>2)put('pine',x,z,1,R()*6,'#3a5a3a');}}},
+   for(let i=0;i<20;i++){const x=-40-R()*40,z=z0-R()*TL,h=HF(x,z);if(h>2)put('pine',x,z,1,R()*6,'#3a5a3a');}
+   for(let z=z0-3;z>z0-TL;z-=7+R()*5)put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),-29+R()*2,z,4.6+R()*1.2,Math.floor(R()*4)*Math.PI/2,null);
+   for(let i=0;i<4;i++){const z=z0-R()*TL,q=10+.8*Math.sin(z*.02);put(pick(['kk_car_sedan','kk_car_taxi','kk_car_hatchback']),q-3.5,z,1.5,R()<.5?0:Math.PI,null);}}},
  islands:{sky:['#2f8ee0','#d8f0ff','#6fc0d0'],fog:'#cdeefa',fogN:1,sun:['#fff6e0',2.8],sunDir:[-.3,.85,-.3],hemi:['#d0ecff','#3a8a90',.65],exp:1,water:{c:'#11849e',op:.78},wl:0,clouds:6,
   HF(x,z){const n=fbm(x*.022+3,z*.022,4);let h=(n-.16)*22+sst(35,95,Math.abs(x))*16*(.4+n);return Math.max(-7,Math.min(h,26));},
   P:{low:'#e8d9a6',mid:'#4f9a4a',m0:.8,m1:2,high:'#2e6a30',h0:4,h1:9,rock:'#7a7060',sand:1,wl:.2,sandc:'#f0e2b0',deep:'#d8cfa0'},
@@ -184,9 +189,11 @@ const BIOME={
  city:{sky:['#05070f','#1a2440','#0a0c14'],fog:'#121a2c',fogN:.8,sun:['#9fb4ff',.7],sunDir:[-.3,.8,-.5],hemi:['#3a4a7a','#151020',.55],exp:1.25,wl:-60,clouds:3,night:1,
   HF(x,z){let h=.3;if(Math.abs(x)>45)h+=mtn(x,z,18,45,90)*.7;return h;},
   P:{low:'#25262b',mid:'#2a2b30',m0:2,m1:5,high:'#1a1c22',h0:6,h1:12,rock:'#2a2a2e'},
+  uses:['kk_building_A','kk_building_C','kk_building_E','kk_building_G','kk_car_sedan','kk_car_taxi','kk_car_hatchback'],
   cf(o,x,z,h,sl){const rx=((x+30)%16+16)%16,rz=((z+9000)%18+18)%18;if(rx<3.2||rz<3.2)mixc(o,o,lc('#4a4232'),1);},
   props(R,z0,put,HF){const bz=Math.ceil((z0+9000)/18)*18-9000;for(let bzz=bz;bzz>z0-TL-18;bzz-=18)for(let bx=-46;bx<46;bx+=16){const x0=bx+3.4,z1=bzz-.3;if(R()<.1){for(let k=0;k<5;k++)put('round',x0+R()*11,z1-R()*12,.7,R()*6,'#2c5a33');continue;}
-    for(let ix=0;ix<2;ix++)for(let iz=0;iz<2;iz++){const w=5+R()*.8,d=6+R()*.8,x=x0+ix*6.2+w/2,z=z1-iz*7-d/2;if(z>z0||z<z0-TL)continue;const hh=(2+R()*R()*16)*(Math.abs(x)<26?1:1.3);put('build',x,z,1,0,pick(['#8a93a8','#a8a29a','#7d8696','#b8b4ac','#6e7a8e']),1,0,[w,hh,d]);}}
+    for(let ix=0;ix<2;ix++)for(let iz=0;iz<2;iz++){const w=5+R()*.8,d=6+R()*.8,x=x0+ix*6.2+w/2,z=z1-iz*7-d/2;if(z>z0||z<z0-TL)continue;const hh=(2+R()*R()*16)*(Math.abs(x)<26?1:1.3);if(hh<7&&R()<.6){put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),x,z,Math.min(w,d),Math.floor(R()*4)*Math.PI/2,null);continue;}put('build',x,z,1,0,pick(['#8a93a8','#a8a29a','#7d8696','#b8b4ac','#6e7a8e']),1,0,[w,hh,d]);}}
+   for(let i=0;i<10;i++){const car=pick(['kk_car_sedan','kk_car_taxi','kk_car_hatchback']),d=R()<.5?1:-1;if(R()<.5){const x=-30+16*Math.floor(R()*6)+1.6+d*.8;put(car,x,z0-R()*TL,1.4,d>0?0:Math.PI,null);}else{const z=Math.ceil((z0+9000)/18)*18-9000-18*Math.floor(R()*6)+1.6+d*.8;if(z<=z0&&z>z0-TL)put(car,R()*90-45,z,1.4,d*Math.PI/2,null);}}
    for(let z=Math.ceil((z0+9000)/9)*9-9000;z>z0-TL;z-=9)for(const x of[-28,-12,4,20,36]){put('lamp',x+1.4,z,1,0,null,1,1.2);}}},
  volcano:{sky:['#2a0a08','#a0401a','#3a1a10'],fog:'#4a1c10',fogN:.75,sun:['#ff9a5a',1.8],sunDir:[-.4,.5,-.75],hemi:['#a05040','#200808',.6],exp:1.15,lava:1,wl:-.6,clouds:4,
   HF(x,z){const lr=-5+9*Math.sin(z*.01)+3*Math.sin(z*.033);let h=1+fbm(x*.04,z*.04,4)*2+mtn(x,z,40,30,85);h-=2.8*Math.exp(-(((x-lr)/2.8)**2));return h;},
@@ -236,7 +243,19 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  const bg=new T3.BoxGeometry(1,1,1);bg.translate(0,.5,0);const uv=bg.attributes.uv;for(let i=8;i<16;i++)uv.setXY(i,.01,.99);
  bg.setAttribute('color',new T3.BufferAttribute(new Float32Array(bg.attributes.position.count*3).fill(1),3));
  cityMat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.6,metalness:.3,emissiveMap:wt,emissive:col('#ffffff'),emissiveIntensity:1.4});
- PROPS.build={geo:bg,mat:cityMat,cap:420};}
+ PROPS.build={geo:bg,mat:cityMat,cap:420};
+ // CC0 KayKit City Builder Bits models (js/assets/kaykit.js): low-rise buildings, cars, street lights, water tower
+ if(typeof SF!=='undefined'&&SF.KK){kkMat=new T3.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.7,metalness:.05});
+  kkMat.onBeforeCompile=sh=>{sh.uniforms.kkGlow=KKGLOW;sh.fragmentShader='uniform float kkGlow;\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n totalEmissiveRadiance+=vColor*kkGlow*smoothstep(.08,.3,vColor.b-vColor.r);');};
+  const caps={building_A:40,building_C:40,building_E:40,building_G:40,car_sedan:60,car_taxi:40,car_hatchback:60,watertower:6};
+  for(const k in caps)if(SF.KK[k])PROPS['kk_'+k]={geo:kkGeo(k),mat:kkMat,cap:caps[k]};}}
+// decode a KayKit mesh: footprint normalised to 1 unit (largest of x/z), base at y=0, centred on x/z
+let kkMat;const KKGLOW={value:0};
+function kkGeo(name){const D=SF.KK[name],b=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)).buffer;
+ const q=new Int16Array(b(D.p)),c8=new Uint8Array(b(D.c)),ix=new Uint16Array(b(D.i)),n=D.v,f=1/Math.max(D.sz[0],D.sz[2]);
+ const pos=new Float32Array(n*3),cl=new Float32Array(n*3);
+ for(let i=0;i<n;i++){for(let a=0;a<3;a++){const t=(q[i*3+a]+32768)/65535;pos[i*3+a]=(a===1?t*D.sz[1]:(t-.5)*D.sz[a])*f;cl[i*3+a]=Math.pow(c8[i*3+a]/255,2.2);}}
+ const g=new T3.BufferGeometry();g.setAttribute('position',new T3.BufferAttribute(pos,3));g.setAttribute('color',new T3.BufferAttribute(cl,3));g.setIndex(new T3.BufferAttribute(ix,1));g.computeVertexNormals();return g;}
 // ---------- terrain tiles ----------
 const TW=240,TL=110,NX=80,NZT=36,NT=5;let TZ0=80;
 const TER={g:new T3.Group(),tiles:[],mat:null,water:null,lava:null};
@@ -299,7 +318,7 @@ function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;LV
  if(B.lava)TER.lava.position.y=GY+B.wl;
  // instanced props per tile
  const used={};const probe=(type)=>{used[type]=1;};B.props(srng(1),0,(type)=>probe(type),B.HF);
- if(st.biome==='city'){used.build=1;used.lamp=1;used.round=1;}
+ if(st.biome==='city'){used.build=1;used.lamp=1;used.round=1;}for(const k of B.uses||[])if(PROPS[k])used[k]=1;for(const k in used)if(!PROPS[k])delete used[k];KKGLOW.value=B.night?.9:0;
  for(const t of TER.tiles){for(const k in t.inst){TER.g.remove(t.inst[k]);t.inst[k].dispose();}t.inst={};
   for(const k in used){const P=PROPS[k];const im=new T3.InstancedMesh(P.geo,P.mat,P.cap);for(let i=0;i<P.cap;i++)im.setColorAt(i,tmpC.set(0xffffff));im.count=0;im.castShadow=!P.noShadow;im.frustumCulled=false;TER.g.add(im);t.inst[k]=im;}}
  gz3=0;TZ0=C3.z+30;updTerrain(true);

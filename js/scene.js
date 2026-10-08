@@ -28,7 +28,7 @@ function syncEnv(dt,tnow){
 // top-down gameplay camera (shake in seconds of remaining shake)
 function gameCam(shake,zoom=1){fill.intensity=0;camera.position.set(0,C3.y*zoom,C3.z*zoom);camera.lookAt(0,0,0);
  if(shake>0){camera.position.x+=rnd(-.5,.5)*shake*2.2;camera.position.z+=rnd(-.5,.5)*shake*2.2;}
- scene.fog.near=230;scene.fog.far=560*(LV.B.fogN||1);
+ {const fd=Math.hypot(C3.y,C3.z)/141.8;scene.fog.near=240*fd;scene.fog.far=580*fd*(LV.B.fogN||1);}
  sun.position.copy(LV.sunDir).multiplyScalar(220).add(new T3.Vector3(0,GY,(C3.Zt+C3.Zb)/2*C3.t));sun.target.position.set(0,GY,(C3.Zt+C3.Zb)/2*C3.t);}
 function drawWeather(){if(WX.length&&LV.si>=0){const w=STAGES[LV.si].weather;if(w==='snow'){cx.fillStyle='rgba(255,255,255,.85)';for(const q of WX){cx.beginPath();cx.arc(q.x,q.y,q.r,0,TAU);cx.fill();}}
   else if(w==='rain'){cx.strokeStyle='rgba(190,210,230,.35)';cx.lineWidth=1;cx.beginPath();for(const q of WX){cx.moveTo(q.x,q.y);cx.lineTo(q.x+q.vx*.03,q.y+q.vy*.03);}cx.stroke();}

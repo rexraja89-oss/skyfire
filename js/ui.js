@@ -49,9 +49,9 @@ function renderSelect(){const mk_=save.mode;
 function renderSettings(){document.querySelectorAll('.tog[data-k]').forEach(b=>{const k=b.dataset.k,on=!!save[k];b.classList.toggle('on',on);b.textContent=k==='hq'?(on?'High':'Smooth'):(on?'On':'Off');});
  $('sensBtn').textContent='×'+(save.sens||1).toFixed(1);$('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');}
 document.querySelectorAll('.tog[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;save[k]=!save[k];store();sfx('ui');renderSettings();
- if(k==='music'){if(save.music){audioOn();musicStart(SF.R?STAGES[SF.R.si].key:45);}else musicStop();}
+ if(k==='music'){if(save.music){audioOn();musicStart(SF.R?STAGES[SF.R.si].key:45,state==='run'?'combat':'calm');}else musicStop();}
  if(k==='hq'){applyQuality();resize();}if(k==='voice'&&!save.voice)try{speechSynthesis.cancel();}catch(e){}});
-function goTitle(){if(SF.R)SF.run.stop();state='title';clearRun();showPlayerModel();$('bankT').textContent=fmt(SF.wallet.balance('gears'));$('coreT').textContent=fmt(SF.wallet.balance('cores'));show('title');resetCopilot();WX.length=0;}
+function goTitle(){if(SF.R)SF.run.stop();state='title';clearRun();showPlayerModel();$('bankT').textContent=fmt(SF.wallet.balance('gears'));$('coreT').textContent=fmt(SF.wallet.balance('cores'));show('title');resetCopilot();musicSet('calm',45);WX.length=0;}
 function go(name){sfx('ui');if(name==='title')return goTitle();state=name;if(name==='select')renderSelect();if(name==='hangar')renderHangar();if(name==='settings')renderSettings();if(name==='records')renderRecords();show(name);}
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
 $('goPlay').onclick=()=>{audioOn();go('select');};$('goRecords').onclick=()=>{audioOn();go('records');};$('goRange').onclick=()=>{sfx('ui');SF.range.start();};$('goHangar').onclick=()=>{audioOn();go('hangar');};$('goSettings').onclick=()=>{audioOn();go('settings');};

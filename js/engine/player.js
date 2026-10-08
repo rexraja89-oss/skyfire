@@ -28,14 +28,14 @@ const P=SF.player={
   if(p.burst)P.stepBurst(R,dt);
   const rg=save.parts.regen|0;if(rg&&p.hp<p.max&&R.t-(p.lastHit||-99)>b.regenDelay)p.hp=Math.min(p.max,p.hp+b.regenPerLevel*rg*dt);},
  hurt(R,dmg){const p=R.p,b=B();if(save.god||p.inv>0||!p.alive||p.dying>0)return false;
-  const sh=R.eff&&R.eff.shield;if(sh&&sh.hits>0){sh.hits--;p.inv=.6;SF.fx.ring(p.x,p.y,30,'#38c8ff',.35);SF.fx.spark(p.x,p.y,'#bff4ff',8);sfx('zap');SF.emit('shieldHit',{left:sh.hits});return true;}
+  const sh=R.eff&&R.eff.shield;if(sh&&sh.hits>0){sh.hits--;p.inv=.6;SF.fx.ring(p.x,p.y,30,'#38c8ff',.35);SF.fx.spark(p.x,p.y,'#bff4ff',8);sfx('shieldHit');SF.emit('shieldHit',{left:sh.hits});return true;}
   p.lastHit=R.t;p.hp-=dmg*SF.dm('enemyDamage');R.hits=(R.hits||0)+1;p.inv=b.iframes;p.hurtT=.35;SF.fx.hurt=.35;SF.fx.addShake(b.hitShake);SF.fx.spark(p.x,p.y,'#ffffff',10,1.3);sfx('hurt');vib(40);
   SF.emit('playerHit',{dmg});
   if(p.hp<=0){p.hp=0;P.die(R);}return true;},
  die(R){const p=R.p,b=B();p.alive=false;p.dying=b.deathTime;p.deaths++;R.slow=b.deathSlowmo;SF.fx.explode(p.x,p.y,2.6);SF.fx.flash=.35;SF.fx.addShake(.6);sfx('boom');vib(200);
   p.beam=null;SF.emit('playerDown',{});},
  respawn(R){const p=R.p,b=B();p.alive=true;p.hp=p.max;p.inv=b.respawnInv;p.x=p.tx=W/2;p.y=p.ty=lyAt(.8);p.ox=p.x;p.oy=p.y;p.vx=p.vy=0;
-  p.lvl=Math.max(SF.weapons.startLevel(),p.lvl-SF.BAL.weapon.deathLevelLoss);SF.emit('respawn',{});},
+  p.lvl=Math.max(SF.weapons.startLevel(),p.lvl-SF.BAL.weapon.deathLevelLoss);sfx('respawn');SF.emit('respawn',{});},
  heal(R,f){const p=R.p;p.hp=Math.min(p.max,p.hp+p.max*f);},
  // ---- Skyburst special ----
  addMeter(R,v){const p=R.p,s=S();if(p.charges>=s.maxCharges){p.meter=s.meterMax;return;}p.meter+=v;

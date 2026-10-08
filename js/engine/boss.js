@@ -76,7 +76,7 @@ Bs.step=(R,dt)=>{for(let i=Bs.list.length-1;i>=0;i--){const B=Bs.list[i];B.ox=B.
  // phases (never go back)
  for(let k=D.phases.length-1;k>B.phase;k--)if(cond(B,D.phases[k].when)){for(let j=B.phase+1;j<=k;j++){const ph=D.phases[j];for(const a of ph.attacks||[])B.attacks.push(Object.assign({t:.8},a));if(ph.rage)B.rage=ph.rage;if(ph.sink)B.sink=ph.sink;if(ph.tilt)B.tilt=ph.tilt;
    if(ph.say&&j>0)say('bph'+j+B.id,ph.say,2,0);if(ph.banner)R.banner={t:ph.banner,l:1.6,sub:D.name.toUpperCase()};}
-  if(B.phase>=0){SF.fx.addShake(.45);sfx('warn');SF.fx.flash=Math.max(SF.fx.flash,.15);}B.phase=k;break;}
+  if(B.phase>=0){SF.fx.addShake(.45);sfx('phase');SF.fx.flash=Math.max(SF.fx.flash,.15);}B.phase=k;break;}
  // part vulnerability, guards, shields, sway
  const shields=B.parts.some(q=>q.P.shield&&q.e.alive);
  for(const q of B.parts){if(!q.e.alive)continue;const P=q.P;

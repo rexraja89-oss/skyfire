@@ -31,7 +31,7 @@ Wp.fire=(R,dt)=>{const p=R.p;if(!p.alive||p.dying>0)return;const D=Wp.def(),row=
    else if(D.kind==='orb'){const arc=row.spread*Math.PI/180;for(let i=0;i<n;i++){const a=-Math.PI/2+(n>1?(i/(n-1)-.5)*arc:0);shot('p',p.x,p.y-24,Math.cos(a)*row.speed,Math.sin(a)*row.speed,row.dmg*dm,7*row.size,row,{splash:row.splash});}}
    sfx(D.sfx);}}
  // side weapons from hangar parts and drones
- const ml=save.parts.missile;if(ml>0){const M=SF.SIDEARMS.missile;p.mc-=dt;if(p.mc<=0){p.mc=M.interval(ml);for(const sd of[-1,1])shot('m',p.x+sd*12,p.y+4,sd*120,-120,M.dmg(ml)*dm,4,null,{t:0});}}
+ const ml=save.parts.missile;if(ml>0){const M=SF.SIDEARMS.missile;p.mc-=dt;if(p.mc<=0){p.mc=M.interval(ml);sfx('missile');for(const sd of[-1,1])shot('m',p.x+sd*12,p.y+4,sd*120,-120,M.dmg(ml)*dm,4,null,{t:0});}}
  for(const d of R.drones){const lv=save.dl[R.drone]||0;
   if(R.drone==='shielddrone'){const S=SF.SIDEARMS.shielddrone;d.a+=dt*3.2;d.x=p.x+Math.cos(d.a)*S.orbit;d.y=p.y+Math.sin(d.a)*S.orbit;const rr=S.radius(lv),eb=SF.enemies.ebPool.live;
    for(let i=eb.length-1;i>=0;i--){const b=eb[i];if((b.x-d.x)**2+(b.y-d.y)**2<rr*rr){SF.fx.spark(b.x,b.y,'#bff4ff',3);SF.enemies.ebPool.kill(b);}}
