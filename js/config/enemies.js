@@ -52,6 +52,9 @@ SF.ENEMIES={
  hydra:{name:'Hydra',model:'hydra',hp:22,r:19,score:600,gears:4,charge:6,size:1.5,abilities:{split:{into:'drone',count:3,speed:150}},
   move:{type:'sine',speed:48,amp:60,freq:.8},
   fire:{pattern:'fan',every:1.7,first:1,speed:160,bullet:'pellet',count:3,spread:25}},
+ hornet:{name:'Hornet',model:'hornet',hp:16,r:18,score:500,gears:4,charge:5,size:1.5,
+  move:{type:'hover',y:.2,hold:9,sway:50},
+  fire:{pattern:'fan',every:3,first:1.4,speed:125,bullet:'missile',count:2,spread:70}},
  drone:{name:'Drone',model:'drone',hp:3,r:11,score:120,gears:1,charge:2,size:.8,ram:14,dieOnRam:1,
   move:{type:'kamikaze',speed:125,accel:1.4,giveUp:7},fire:{pattern:'none'}},
  lancer:{name:'Lancer',model:'lancer',hp:12,r:15,score:500,gears:3,charge:5,size:1,
@@ -65,6 +68,30 @@ SF.ENEMIES={
 };
 // Test Range script (Checkpoints 2-3 only; the stage director replaces it in Checkpoint 4).
 // f = formation (with enemy type), g = ground setup (x = anchor as a fraction of the width), w = loose wave.
+// ORION's first-sighting lines (said once per run the first time a type appears)
+SF.INTROS={
+ hornet:'Hornet gunships. They launch homing missiles, so keep moving or shoot them down.',
+ aegis:'Aegis fighters carry energy shields. Break the blue shield first. It recharges if you stop firing.',
+ lancer:'Lancer snipers! When you see a red targeting line, get out of it.',
+ hydra:'Hydra craft split into drones when destroyed. Be ready.',
+ wraith:'Wraith stealth fighters. They cannot be hit while cloaked. Strike when they shimmer into view.',
+ sower:'Sower minelayers. Their mines burst into bullet rings. Shoot the mines before they blow.',
+ tender:'A Tender is repairing enemy craft. Take it out first!',
+ blink:'Blink teleporters. They jump around and fire bullet rings. Hit them between jumps.',
+ hawk:'Hawks! They lock on and dive straight at you. Watch for the orange line and sidestep.',
+ bulwark:'Bulwark gunships have armoured noses. Hit them from the sides.',
+ wingleader:'A Wing-leader is commanding that squadron. Down the leader and the rest scatter.',
+ brute:'Heavy Brute inbound. It soaks up damage and carries repair kits.',
+ radar:'Radar on the ground. Everything near it fires faster. Knock it out early.',
+ mortar:'Mortars are targeting you. Move when you see the red circle.',
+ commsMast:'A comms mast. If its light keeps blinking it will call reinforcements.',
+ depot:'Fuel depots. One shot sets off the whole yard.',
+ bunker:'Bunkers. Their armour only opens when they fire.',
+ shieldDome:'A shield generator is protecting the ground units around it. Destroy it to drop their shields.',
+ factory:'A factory. Its chimneys launch drones and its gate sends out armour. Take the parts out first.',
+ missileBattery:'Missile batteries on the ground. Expect homing missiles from below.',
+ boat:'Enemy gunboats on the water.',
+};
 SF.RANGE_SCRIPT=[
  {f:'vDrop',enemy:'dart'},{f:'pincer',enemy:'swift'},{g:'outpost',x:.3},{f:'snake',enemy:'dart'},
  {f:'lineHover',enemy:'gunboat'},{g:'convoy',road:1},{f:'wedgeLeader'},{f:'crossing',enemy:'swift'},

@@ -164,7 +164,6 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
       <div class="bank"><i class="cog"></i><span id="bankT">0</span><i class="core"></i><span id="coreT">0</span></div>
       <button class="primary" id="goPlay" style="font-size:18px;padding:.85em">PLAY</button>
       <div class="row"><button id="goHangar">Hangar</button><button id="goSettings">Settings</button></div>
-      <button id="goRange" class="teal">Test Range <span style="font-weight:600;font-size:12px;opacity:.8">· new engine preview</span></button>
       <div class="row" id="getApp"><button id="installBtn" class="teal" hidden>Install app</button><a id="apkLink" class="btn" hidden href="https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk">Download Android APK</a></div>
       <p class="hint">Drag anywhere to fly. Guns fire on their own.</p>
     </div>
@@ -205,6 +204,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
           <button id="wUnlock">Unlock everything</button>
           <button id="wGod" class="tog">Invincible: off</button>
         </div>
+        <button id="goRange">Test Range (practice)</button>
         <button id="wReset">Reset all progress</button>
       </div>
       <h3>What's new · <span id="verTxt"></span></h3>
@@ -241,11 +241,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Version info stays here (CI checks BUILD against version.json). The game code lives in js/ and is loaded in order below.
-const BUILD=6,VERSION='3.3';
-const NOTES=['Test Range now has enemy formations: V, wedge, snake, pincer, crossfire, loops, halo rings and more, with a bonus for wiping out a whole formation','Ground combat: gun towers, convoys, radar (boosts nearby enemy fire), fuel depots that chain-explode, comms masts that call reinforcements, bunkers, shield generators and a factory with destructible parts','New power-ups: Overdrive, Shield, Score ×2, gear caches, rare medal chips, plus repair and Skyburst charge, with timers on the HUD','Combo meter: chain kills to raise your score multiplier up to ×6, with bonuses for quick kills, formations, ground sites and staying untouched','Test Range moves to the Golden Fields so there is land for ground targets'];
+const BUILD=7,VERSION='3.4';
+const NOTES=['All 10 missions rebuilt on the new engine as designed stages: an intro, formations, ground assaults, a mini-boss, a special event in every stage, then the boss','4 objectives per mission and mode, with live checkmarks in flight and gear rewards for each new one','Each stage and mode has its own difficulty: Hard and Extreme add extra enemies and extra waves, not just tougher armour','Bosses are now built from destructible parts: shoot off their weapons to silence them, then crack the core','First clears pay Cores','Test Range moved to Settings > Rex\'s Workshop']
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
- var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/economy','save','economy','world','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/range','legacy','ui','main'];
+ var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/bosses','config/stages','config/economy','save','economy','world','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
  F.forEach(function(f){var s=document.createElement('script');s.src='js/'+f+'.js?v='+BUILD;s.async=false;s.onerror=function(){var l=document.getElementById('loading');l.hidden=false;l.textContent='Could not load game files. Check your connection and reopen.';};document.body.appendChild(s);});
 })();
 </script>

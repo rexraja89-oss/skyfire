@@ -1,6 +1,6 @@
 # Skyfire Transformation Plan
 
-**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) and Checkpoint 3 (formations, ground combat, pickups, combo) are done. Next: Checkpoint 4.
+**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) Checkpoint 3 (formations, ground combat, pickups, combo) and Checkpoint 4 (stage engine, missions, campaign on the new engine) are done. Rex asked to run Checkpoints 4-8 back to back and test only the finished, polished version. Next: Checkpoint 5.
 
 **Goal:** turn Skyfire from a good-looking prototype into a polished, replayable vertical arcade shooter. It should match the depth and feel of the best games in the genre, using only original Skyfire code, content, names, art and sound.
 
@@ -427,7 +427,7 @@ Deliverable: this file. **Stop for approval.**
   - popups that scale with value
 - Test Range gains formation and ground scenarios. **Stop.**
 
-### Checkpoint 4: stage engine + missions + progression hook-up
+### Checkpoint 4: stage engine + missions + progression hook-up ✅ done (v3.4, build 7)
 - Director runs timelines by scroll distance: zones, events, mini-boss, boss, reward. Includes a checkpoint marker for debug jumps.
 - Author all 10 stages in the new format using the INTRO → … → BOSS → REWARD arc, with environment zones per stage (for example, harbour → open sea → cliffs).
 - `difficulty.js` stage × mode tables with gameplay-based `extra` rules.

@@ -1,8 +1,8 @@
 {
-  "build": 6,
-  "version": "3.3",
+  "build": 7,
+  "version": "3.4",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "formations, ground combat, new power-ups and the combo meter in the Test Range"
+    "all 10 missions rebuilt as designed stages with objectives"
   ]
 }

@@ -18,6 +18,7 @@ SF.ECON={
   cores:{name:'Cores',kind:'premium',icon:'core'}, // rare: limited gameplay drip + optional purchase
  },
  // gameplay sources of Cores (amounts used from Checkpoint 6; listed here so the full free supply is visible)
+ objectiveGears:{base:120,perStage:40}, // gears for completing an objective the first time (× mode reward)
  coreSources:{firstClear:3,medalTier:[0,1,2,3,5],achievement:[2,10],sortieOrder:1,bossFirstKill:2},
  // products: id -> what it grants. type: consumable (can buy again) | nonconsumable (owned forever, restorable)
  products:{

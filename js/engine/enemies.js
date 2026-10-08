@@ -13,11 +13,11 @@ let gid=1;En.newGroup=()=>gid++;
 // ---------- spawning ----------
 En.spawn=(type,o={})=>{const d=SF.ENEMIES[type];if(!d){console.warn('unknown enemy',type);return null;}
  if(pool.live.length>=BAL().caps.enemies)return null;const e=pool.get();if(!e)return null;
- const hp=d.hp*BAL().mul.enemyHp*(o.hpMul||1);
- Object.assign(e,{type,d,mv:null,x:W/2,y:-30,vx:0,vy:0,t:0,st:0,stT:0,hp,max:hp,r:d.r,alive:true,flash:0,armorT:0,ft:0,delay:0,group:0,fgroup:0,shots:0,burst:0,burstT:0,
+ const hp=d.hp*SF.dm('enemyHp')*(o.hpMul||1);
+ Object.assign(e,{type,d,mv:null,invuln:false,guard:0,x:W/2,y:-30,vx:0,vy:0,t:0,st:0,stT:0,hp,max:hp,r:d.r,alive:true,flash:0,armorT:0,ft:0,delay:0,group:0,fgroup:0,shots:0,burst:0,burstT:0,
   fireT:d.fire&&d.fire.first!==undefined?d.fire.first:rnd(.6,1.4),hd:Math.PI/2,rot:0,roll:0,ang:Math.PI/2,untargetable:false,cloaked:false,sh:0,shMax:0,shHit:0,lastHit:-9,
   side:0,x0:0,ty:0,tx:0,lockX:0,la:0,vol:0,jumps:0,tp:0,healT:0,m:null,scatter:false,leave:false,ground:!!d.ground,parent:null,kids:null,dx:0,dy:0,
-  buff:0,domed:false,open:false,spawnT:0,called:false,smokeT:0,seen:-1,path:null,ps:0,slot:null,spin:0,then:'',hold:0},o);
+  buff:0,domed:false,wx0:20,wx1:W-20,open:false,spawnT:0,called:false,smokeT:0,seen:-1,path:null,ps:0,slot:null,spin:0,then:'',hold:0},o);
  e.ox=e.x;e.oy=e.y;e.x0=o.x0!==undefined?o.x0:e.x;
  const A=d.abilities||{};if(A.shield){e.shMax=e.sh=hp*A.shield.mult;}
  if(A.spawner)e.spawnT=A.spawner.first||A.spawner.every;
@@ -26,7 +26,7 @@ En.spawn=(type,o={})=>{const d=SF.ENEMIES[type];if(!d){console.warn('unknown ene
 // enemy bullet
 const ebCap=()=>BAL().caps.eb[save.hq?0:1];
 En.shoot=(x,y,a,spd,kind)=>{if(ebPool.live.length>=ebCap())return null;const B=SF.BULLETS[kind]||SF.BULLETS.pellet,b=ebPool.get();if(!b)return null;
- const s=spd*BAL().mul.bulletSpeed;b.x=b.ox=x;b.y=b.oy=y;b.vx=Math.cos(a)*s;b.vy=Math.sin(a)*s;b.k=kind;b.B=B;b.r=B.r;b.dmg=B.dmg;b.life=B.life||0;return b;};
+ const s=spd*SF.dm('bulletSpeed');b.x=b.ox=x;b.y=b.oy=y;b.vx=Math.cos(a)*s;b.vy=Math.sin(a)*s;b.k=kind;b.B=B;b.r=B.r;b.dmg=B.dmg;b.life=B.life||0;return b;};
 // ---------- movement modules ----------
 const MOVE={
  none(){},
@@ -36,7 +36,7 @@ const MOVE={
  hover(e,m,dt){if(!e.ty)e.ty=lyAt(m.y)+rnd(-30,30);if(e.t<m.hold){e.y+=(e.ty-e.y)*Math.min(1,1.6*dt);if(m.sway)e.x+=Math.sin(e.t*.9)*m.sway*dt;}else{e.vy=Math.min(150,e.vy+120*dt);e.y+=e.vy*dt;}e.hd=Math.PI/2;e.rot=clamp(Math.cos(e.t*.9)*.15,-.2,.2);},
  drift(e,m,dt){if(!e.ty)e.ty=lyAt(m.y);if(e.t<m.hold){e.y+=Math.min(m.speed*dt,Math.max(0,e.ty-e.y)*1.2*dt+m.speed*.15*dt);e.x=e.x0+Math.sin(e.t*.5)*m.sway;}else e.y+=m.speed*dt;e.hd=Math.PI/2;},
  sine(e,m,dt){e.y+=m.speed*dt;e.x=e.x0+Math.sin(e.t*m.freq+(e.ph||0))*m.amp;e.hd=Math.PI/2;},
- hawk(e,m,dt,R){if(e.st===0){if(!e.ty)e.ty=lyAt(m.y)+rnd(-25,25);e.y+=(e.ty-e.y)*2.4*dt;e.x+=(R.p.x-e.x)*.9*dt;if(e.t>1.3){e.st=1;e.stT=m.lock;e.lockX=R.p.x;e.lockY=R.p.y;sfx('lance');}}
+ hawk(e,m,dt,R){if(e.st===0){if(!e.ty)e.ty=lyAt(m.y)+rnd(-25,25);e.y+=(e.ty-e.y)*2.4*dt;e.x+=(R.p.x-e.x)*.9*dt;if(e.t>1.3){e.st=1;e.stT=m.lock*Math.max(SF.DIFF_MIN_TELE,SF.BAL.run.tele||1);e.lockX=R.p.x;e.lockY=R.p.y;sfx('lance');}}
   else if(e.st===1){e.stT-=dt;e.x+=Math.sin(e.t*60)*.6;if(e.stT<=0){e.st=2;const a=Math.atan2(e.lockY-e.y,e.lockX-e.x);e.vx=Math.cos(a)*m.dive;e.vy=Math.sin(a)*m.dive;}}
   else{e.x+=e.vx*dt;e.y+=e.vy*dt;}e.hd=e.st===2?Math.atan2(e.vy,e.vx):Math.PI/2;},
  kamikaze(e,m,dt,R){const a=aimA(e,R),sp=(m.speed||130)*(e.scatter?1.6:1);e.vx+=(Math.cos(a)*sp-e.vx)*dt*(m.accel||1.4);e.vy+=(Math.sin(a)*sp-e.vy)*dt*(m.accel||1.4);if(e.t>(m.giveUp||7))e.vy=Math.max(e.vy,120);e.x+=e.vx*dt;e.y+=e.vy*dt;e.rot+=dt*4;e.hd=Math.atan2(e.vy,e.vx);},
@@ -54,6 +54,8 @@ const MOVE={
    else{e.vx=Math.cos(q.a)*m.speed;e.vy=Math.sin(q.a)*m.speed;e.mv={type:'exit'};}}},
  // ground: scrolls with the landscape
  ground(e,m,dt){e.y+=SCROLL*dt;},
+ patrol(e,m,dt){e.y+=SCROLL*m.scroll*dt;if(!e.vx)e.vx=(Math.random()<.5?-1:1)*m.vx;e.x+=e.vx*dt;if(e.x<e.wx0||e.x>e.wx1)e.vx=-e.vx;e.x=clamp(e.x,e.wx0,e.wx1);e.hd=e.vx>0?0:Math.PI;
+  if(Math.random()<dt*12)SF.fx.add('w',e.x-Math.sign(e.vx)*18,e.y+rnd(-3,3),0,SCROLL*m.scroll,1.2,'#ffffff',rnd(2,4));},
  convoy(e,m,dt){e.y+=(SCROLL+m.vy)*dt;e.hd=Math.PI/2;},
  attached(e,m,dt){const p=e.parent;if(p&&p.alive){e.x=p.x+e.dx;e.y=p.y+e.dy;}else e.y+=SCROLL*dt;},
 };
@@ -67,7 +69,7 @@ function firePattern(e,R){const f=e.d.fire,a=aimA(e,R),k=f.bullet||'pellet';e.an
   case 'ring':{const n=f.count,o=e.t;for(let i=0;i<n;i++)En.shoot(e.x,e.y,o+i*TAU/n,f.speed,k);break;}
   case 'spiral':{for(let i=0;i<f.arms;i++)En.shoot(e.x,e.y,e.t*2.1+i*TAU/f.arms,f.speed,k);break;}
   case 'mines':if(e.x>20&&e.x<W-20){En.spawn(f.spawn,{x:e.x,y:e.y+10});sfx('mine');}break;
-  case 'mortar':R.marks.push({x:R.p.x,y:R.p.y,t:f.delay,m:f.delay,r:f.radius,dmg:f.damage});sfx('mine');break;}}
+  case 'mortar':{const dl=f.delay*Math.max(SF.DIFF_MIN_TELE,SF.BAL.run.tele||1);R.marks.push({x:R.p.x,y:R.p.y,t:dl,m:dl,r:f.radius,dmg:f.damage});sfx('mine');break;}}}
 En.firePattern=firePattern;
 function stepFire(e,dt,R){const f=e.d.fire;if(!f||f.pattern==='none'||e.scatter)return;
  if(e.burst>0){e.burstT-=dt;if(e.burstT<=0){e.burst--;e.burstT=f.gap;e.ang=aimA(e,R);En.shoot(e.x,e.y+(e.ground?0:10),e.ang,f.speed,f.bullet);}}
@@ -76,9 +78,9 @@ function stepFire(e,dt,R){const f=e.d.fire;if(!f||f.pattern==='none'||e.scatter)
  if(f.on)return; // fired by an ability (reveal / arrive / open)
  if(!fireY(e)||e.cloaked)return;
  if(f.maxShots&&e.shots>=f.maxShots)return;
- e.fireT-=dt*BAL().mul.enemyFire*(1+e.buff);if(e.fireT<=0){e.fireT=f.every*rnd(.85,1.15);e.shots++;firePattern(e,R);}}
+ e.fireT-=dt*SF.dm('enemyFire')*(1+e.buff);if(e.fireT<=0){e.fireT=f.every*rnd(.85,1.15);e.shots++;firePattern(e,R);}}
 function stepSniper(e,f,dt,R){ // aim (telegraph line) -> needle volley -> re-aim -> leave
- if(e.st===0){e.fireT-=dt;if(e.fireT<=0&&fireY(e)){e.st=1;e.stT=f.aim;e.la=aimA(e,R);sfx('lance');}}
+ if(e.st===0){e.fireT-=dt;if(e.fireT<=0&&fireY(e)){e.st=1;e.stT=f.aim*Math.max(SF.DIFF_MIN_TELE,SF.BAL.run.tele||1);e.la=aimA(e,R);sfx('lance');}}
  else if(e.st===1){e.stT-=dt;if(e.stT<=0){for(let i=0;i<f.count;i++)En.shoot(e.x+Math.cos(e.la)*(18+i*16),e.y+Math.sin(e.la)*(18+i*16),e.la,f.speed,f.bullet);e.vol++;e.st=2;e.stT=.35;}}
  else if(e.st===2){e.stT-=dt;if(e.stT<=0){if(e.vol>=f.volleys){e.st=3;e.leave=true;}else{e.st=0;e.fireT=1.2;e.x0=clamp(e.x+rnd(-90,90),40,W-40);}}}
  if(e.st===0&&e.x0)e.x+=(e.x0-e.x)*2*dt;if(e.leave)e.y-=130*dt;e.hd=e.st===1||e.st===2?e.la:Math.PI/2;}
@@ -106,6 +108,8 @@ function stepAuras(){for(const e of pool.live){e.buff=0;e.domed=0;}
   if(A.dome){const r2=A.dome.range**2;for(const e of pool.live)if(e!==s&&e.ground&&(e.x-s.x)**2+(e.y-s.y)**2<r2)e.domed=Math.max(e.domed||0,A.dome.reduce);}}}
 // ---------- damage pipeline ----------
 En.hit=(e,dmg,src)=>{if(!e.alive||e.untargetable)return 0;const A=e.d.abilities||{};
+ if(e.invuln){if(Math.random()<.25&&src&&src.x!==undefined)SF.fx.spark(src.x,src.y||e.y,'#c9d2db',1);return 0;}
+ if(e.guard)dmg*=1-e.guard;
  if(e.domed)dmg*=1-e.domed;
  if(A.bunker&&!e.open)dmg*=1-A.bunker.armor;
  if(A.guarded&&e.kids&&e.kids.some(k=>k.alive))dmg*=1-A.guarded.reduce;
@@ -130,7 +134,7 @@ const chainQ=[];function setTimeoutChain(o,dmg){chainQ.push({o,dmg,t:.12});}
 En.remove=e=>{if(e.alive){e.alive=false;SF.emit('escape',{e});}if(e.m){release(e.m);e.m=null;}pool.kill(e);};
 En.reset=()=>{for(const e of pool.live)if(e.m){release(e.m);e.m=null;}pool.clear();ebPool.clear();grid.reset();chainQ.length=0;};
 // ---------- step ----------
-En.step=(R,dt)=>{const p=R.p,L=pool.live,mv=BAL().mul.enemySpeed,pad=BAL().enemy.offscreenPad,GB=BAL().ground;
+En.step=(R,dt)=>{const p=R.p,L=pool.live,mv=SF.dm('enemySpeed'),pad=BAL().enemy.offscreenPad,GB=BAL().ground;
  for(let i=chainQ.length-1;i>=0;i--){const c=chainQ[i];c.t-=dt;if(c.t<=0){chainQ.splice(i,1);if(c.o.alive)En.hit(c.o,c.dmg,{special:1,chain:1});}}
  stepAuras();
  for(let i=L.length-1;i>=0;i--){const e=L[i];if(!e.alive)continue;e.ox=e.x;e.oy=e.y;
@@ -145,7 +149,7 @@ En.step=(R,dt)=>{const p=R.p,L=pool.live,mv=BAL().mul.enemySpeed,pad=BAL().enemy
   // ram the player (air units only)
   if(!e.ground&&p.alive&&p.dying<=0&&!e.untargetable&&(e.x-p.x)**2+(e.y-p.y)**2<(e.r*.8+BAL().player.hitR+4)**2){
    if(SF.player.hurt(R,e.d.ram||BAL().player.collideDamage)){if(e.d.dieOnRam)En.kill(e);else En.hit(e,BAL().enemy.collideRam,null);}}
-  if(e.alive&&(e.y>H+pad||e.x<-pad-60||e.x>W+pad+60||(e.y<-260&&e.t>6)))En.remove(e);}
+  if(e.alive&&!e.d.bossPart&&(e.y>H+pad||e.x<-pad-60||e.x>W+pad+60||(e.y<-260&&e.t>6)))En.remove(e);}
  // grid for player bullets
  grid.reset();for(const e of L)if(e.alive&&!e.delay&&!e.untargetable&&e.y>-40)grid.add(e,e.x,e.y,e.r+10);
  // mortar marks
@@ -160,9 +164,9 @@ En.step=(R,dt)=>{const p=R.p,L=pool.live,mv=BAL().mul.enemySpeed,pad=BAL().enemy
   if(b.y<-40||b.y>H+30||b.x<-60||b.x>W+60)ebPool.kill(b);}
  for(const bm of R.beams)bm.t-=dt;prune(R.beams,b=>b.t>0);};
 // ---------- 3D sync ----------
-En.sync=(A,dt)=>{for(const e of pool.live){if(!e.alive)continue;if(!e.m)e.m=acquire(e.d.model);const m=e.m;m.visible=!e.delay;if(!m.visible)continue;
+En.sync=(A,dt)=>{for(const e of pool.live){if(!e.alive||!e.d.model)continue;if(!e.m)e.m=acquire(e.d.model);const m=e.m;m.visible=!e.delay;if(!m.visible)continue;
  const x=e.ox+(e.x-e.ox)*A,y=e.oy+(e.y-e.oy)*A,T=e.d.model;place(m,x,y,e.ground,T==='mine'?-.5:0);if(e.d.scale)m.scale.multiplyScalar(e.d.scale);
- const a=e.hd!==undefined?e.hd:Math.PI/2+(e.rot||0);m.rotation.set(0,e.ground&&e.d.move.type!=='convoy'?0:yawFrom(a),e.ground?0:e.roll);
+ const a=e.hd!==undefined?e.hd:Math.PI/2+(e.rot||0);m.rotation.set(0,e.ground&&e.d.move.type!=='convoy'&&e.d.move.type!=='patrol'?0:yawFrom(a),e.ground?0:e.roll);
  if(T==='drone'||T==='sower'||T==='hydra'||T==='mine')m.rotation.y=e.rot;
  if(T==='heli'||T==='hornet'||T==='mender')m.rotation.set(.12,yawFrom(Math.PI/2),e.rot);
  for(const r of m.R.rotor)r.rotation.y+=dt*30;if(m.R.trot)m.R.trot.rotation.x+=dt*40;

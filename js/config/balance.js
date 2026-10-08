@@ -51,3 +51,6 @@ SF.BAL={
  },
  ground:{wreckSmoke:4,smokeBelow:.5},
 };
+// per-run difficulty multipliers (set from difficulty.js when a stage starts) combined with the balance-panel multipliers
+SF.BAL.run={};
+SF.dm=k=>SF.BAL.mul[k]*(SF.BAL.run[k]||1);

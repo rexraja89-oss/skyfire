@@ -32,7 +32,8 @@ Fm.reset=()=>{Fm.groups={};};
 // spawn('vDrop',{enemy:'dart', x:-.2, mirror:true, hpMul})
 Fm.spawn=(name,o={})=>{const F=SF.FORMATIONS[name];if(!F){console.warn('unknown formation',name);return 0;}
  const id=newGroup('air',F.name,W/2,0);
- for(const g of F.groups){const mirror=!!(g.mirror^!!o.mirror),shift=(g.x||0)+(o.x||0),P=compile(g.path,mirror,shift),n=g.count,speed=g.speed;
+ for(const g of F.groups){const mirror=!!(g.mirror^!!o.mirror),shift=(g.x||0)+(o.x||0),P=compile(g.path,mirror,shift),ex=o.extra||0,
+  n=g.stream?g.count+ex:Math.min(g.count+ex,SF.SHAPES[g.shape].length),speed=g.speed;
   for(let i=0;i<n;i++){const type=(g.enemies&&g.enemies[i])||g.enemy||o.enemy||'dart',common={group:id,path:P,ps:0,then:g.then||'',hold:g.hold||0,mv:{type:'path',speed},hpMul:o.hpMul};
    let e;
    if(g.stream){const q0=Fm.sample(P,0);e=SF.enemies.spawn(type,Object.assign(common,{x:q0.x,y:q0.y,delay:(g.delay||0)+i*g.gap}));}

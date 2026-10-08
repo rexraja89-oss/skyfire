@@ -6,7 +6,7 @@ function fresh(){return{ver:2,gears:0,god:false,sfx:true,music:true,voice:true,v
  own:{falcon:1,vulcan:1},plane:'falcon',weapon:'vulcan',drone:'',
  wl:{vulcan:0,spread:0,flamer:0,laser:0,plasma:0},dl:{gundrone:0,laserdrone:0,shielddrone:0},
  parts:{armor:0,engine:0,missile:0,magnet:0,bomb:0},
- cores:0,ent:{},txn:{},sens:1,range:{best:0}};}
+ cores:0,ent:{},txn:{},sens:1,range:{best:0},obj:{easy:{},hard:{},extreme:{}}};}
 function load(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY));}catch(e){}
  const s=fresh();if(!d||typeof d!=='object')return s;
  if(!d.ver){ // migrate v1 (6-stage version) without wiping

@@ -6,10 +6,10 @@ Rex works from a Samsung S22 Ultra only (no laptop/PC). He tests every change by
 ## Project layout
 - `index.html` — page shell: CSS, screen markup, `BUILD`/`VERSION`/`NOTES`, and a small loader that loads `js/` files in order (no build step). three.js **r128** comes from cdnjs (global `THREE` build); the APK workflow bundles a local copy so the app works offline. Everything else (terrain, models, textures, sound) is generated in code.
 - `js/` — the game, as plain classic scripts sharing one global scope (top-level `const`/`function` are visible to later files; new-engine modules live under the `SF` namespace). Load order is the list in `index.html`.
-  - `js/config/` — **all tunable data**: `balance.js` (global tunables + balance multipliers), `weapons.js` (10-level tables), `enemies.js` (air enemy archetypes + Test Range script), `ground.js` (ground targets + setups), `formations.js` (paths, shapes, formations), `pickups.js` (pickup types + drop tables), `economy.js` (currencies, products, entitlements, fair-play rules). Tune here, not in engine code.
-  - `js/engine/` — new engine (player, weapons, enemies incl. ground, formations, pickups, scoring/combo, fx, Test Range). `js/legacy.js` is the old campaign, kept until the stage engine replaces it (Checkpoint 4).
+  - `js/config/` — **all tunable data**: `balance.js` (global tunables + balance multipliers), `weapons.js` (10-level tables), `enemies.js` (air enemy archetypes + Test Range script), `ground.js` (ground targets + setups), `formations.js` (paths, shapes, formations), `pickups.js` (pickup types + drop tables), `stages.js` (the 10 stage timelines + objectives), `difficulty.js` (stage × mode table), `missions.js` (objective types), `bosses.js` (boss/mini-boss data), `economy.js` (currencies, products, entitlements, fair-play rules). Tune here, not in engine code.
+  - `js/engine/` — new engine: `run.js` (a flight: mission or Test Range, results, rewards), `director.js` (stage timelines), `boss.js` (part-based boss engine), `missions.js`, plus player, weapons, enemies (air + ground), formations, pickups, scoring/combo, fx.
   - `js/economy.js` — `SF.wallet` (gears/cores), `SF.ent` (entitlements), `SF.billing` (pluggable store provider). Gameplay must only ask the wallet/entitlements; never put prices or payment calls in gameplay code. Google Play Billing will be a new provider registered with `SF.billing.register()`.
-  - `js/world.js` (3D world + models), `audio.js`, `copilot.js` (ORION), `save.js`, `ui.js`, `main.js` (fixed 60 Hz loop + boot).
+  - `js/world.js` (3D world + models), `scene.js` (app state, weather, menu camera, overlay helpers), `audio.js`, `copilot.js` (ORION), `save.js`, `ui.js`, `main.js` (fixed 60 Hz loop + boot).
 - `SKYFIRE_TRANSFORMATION_PLAN.md` — the checkpoint plan for the big rebuild.
 - `manifest.webmanifest`, `sw.js`, `icons/` — installable app (PWA) + offline support.
 - `version.json` — in-game update notice. **Bump `build` here and `BUILD`/`VERSION`/`NOTES` in `index.html` together** on every release so ORION tells players an update is ready.
@@ -20,8 +20,8 @@ Rex works from a Samsung S22 Ultra only (no laptop/PC). He tests every change by
 - Must run smoothly in mobile Chrome at phone width; touch drag is the main control. Keep the "Smooth" graphics option working (no shadows, lower pixel ratio).
 - Rendering: 3D world (terrain, props, units, bosses) in WebGL; bullets, explosions, popups and telegraphs are a 2D overlay projected through the same camera (`pj()`), so game logic stays in 2D logic coordinates (x 0–400, y 0–H).
 - Don't use PMREM/`fromScene` for reflections (renders black on some GPUs); `envCube()` paints a small cube map instead.
-- Keep Rex's Workshop working (in Settings: unlimited gears, max upgrades, unlock everything, invincible mode).
-- Save data uses localStorage key `skyfire-rex-v1`; wrap storage in try/catch and migrate rather than wipe when the save shape changes (current shape has `ver:2` plus `cores`, `ent`, `txn`, `sens`, `range`).
+- Keep Rex's Workshop working (in Settings: unlimited gears/cores, max upgrades, unlock everything, invincible mode, Test Range).
+- Save data uses localStorage key `skyfire-rex-v1`; wrap storage in try/catch and migrate rather than wipe when the save shape changes (current shape has `ver:2` plus `cores`, `ent`, `txn`, `sens`, `range`, `obj`).
 - Economy: two currencies, Gears (normal) and Cores (rare, earnable in play, purchasable later). Follow the fair-play rules in `js/config/economy.js`: a free player can finish and max everything; paid items are convenience, speed, cosmetics or support, never pay-to-win.
 - `sw.js` serves the page and `js/` network-first; bump `CACHE` when the cached file list changes. Script URLs carry `?v=BUILD`.
 - Difficulty modes unlock in sequence: Easy → Hard → Extreme (beat mission 10 of the previous mode).

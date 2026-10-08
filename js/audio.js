@@ -3,7 +3,7 @@
 let AC=null,NB=null,OUT=null,MG=null;const lastS={};
 function audioOn(){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();OUT=AC.createDynamicsCompressor();OUT.connect(AC.destination);MG=AC.createGain();MG.gain.value=.55;MG.connect(OUT);
   NB=AC.createBuffer(1,AC.sampleRate*1.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}
- if(AC.state==='suspended')AC.resume();if(!MUS.iv)musicStart(state==='play'&&G?STAGES[G.si].key:45);}catch(e){}}
+ if(AC.state==='suspended')AC.resume();if(!MUS.iv)musicStart(state==='run'&&SF.R?STAGES[SF.R.si].key:45);}catch(e){}}
 function tone(f0,f1,dur,type,vol,at=0,dest=OUT){const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(dest);o.start(t);o.stop(t+dur+.02);}
 function noise(dur,vol,freq,at=0,type='lowpass',dest=OUT,end=60){const t=AC.currentTime+at,n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();n.buffer=NB;f.type=type;f.frequency.setValueAtTime(freq,t);if(type==='lowpass')f.frequency.exponentialRampToValueAtTime(end,t+dur);

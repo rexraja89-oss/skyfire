@@ -56,6 +56,7 @@ Wp.step=(R,dt)=>{const grid=SF.enemies.grid,L=pool.live;
    SF.enemies.hit(e,b.dmg,b);SF.fx.impact(b.x,b.y,b.tier,e.sh>0?'#9fe8ff':null);sfx('hit');
    if(b.splash){SF.fx.explode(b.x,b.y,.7);for(const o of SF.enemies.list())if(o!==e&&o.alive&&!o.untargetable&&(o.x-b.x)**2+(o.y-b.y)**2<b.splash*b.splash)SF.enemies.hit(o,b.dmg*.5,b);}
    if(b.pierce>0){b.pierce--;b.last=e;}else{gone=true;break;}}
+  if(!gone&&b.k!=='f'&&SF.boss.list.length&&SF.boss.absorb(b.x,b.y)){if(Math.random()<.5)SF.fx.spark(b.x,b.y,'#ffe2a8',2);gone=true;}
   if(gone)pool.kill(b);}
  // beam
  const p=R.p,bm=p.beam;if(bm&&p.alive&&p.dying<=0){const hw=bm.w/2,hits=[];for(const e of SF.enemies.list()){if(!e.alive||e.untargetable)continue;if(Math.abs(e.x-p.x)<e.r+hw&&e.y<p.y&&e.y>-20)hits.push(e);}

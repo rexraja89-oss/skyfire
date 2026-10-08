@@ -20,7 +20,7 @@ const P=SF.player={
  step(R,dt){const p=R.p,b=B(),pl=p.pl;p.ox=p.x;p.oy=p.y;
   if(p.inv>0)p.inv-=dt;if(p.hurtT>0)p.hurtT-=dt;if(p.muzzle>0)p.muzzle-=dt;
   if(p.dying>0){p.dying-=dt;p.y+=40*dt;if(Math.random()<dt*10)SF.fx.explode(p.x+rnd(-14,14),p.y+rnd(-14,14),rnd(.6,1.2));
-   if(p.dying<=0)P.respawn(R);return;}
+   if(p.dying<=0){if(R.respawn)P.respawn(R);else{p.dead=true;SF.emit('playerDead',{});}}return;}
   const kx=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0),ky=(keys.ArrowDown||keys.s?1:0)-(keys.ArrowUp||keys.w?1:0);
   if(kx||ky){p.tx+=kx*b.keySpeed*pl.spd*dt;p.ty+=ky*b.keySpeed*pl.spd*dt;P.clampTarget(p);}
   const st=b.smoothTime/Math.sqrt(pl.spd),mv=b.maxSpeed*pl.spd;smooth(p,'x','vx',p.tx,st,mv,dt);smooth(p,'y','vy',p.ty,st,mv,dt);
@@ -28,7 +28,7 @@ const P=SF.player={
   if(p.burst)P.stepBurst(R,dt);},
  hurt(R,dmg){const p=R.p,b=B();if(save.god||p.inv>0||!p.alive||p.dying>0)return false;
   const sh=R.eff&&R.eff.shield;if(sh&&sh.hits>0){sh.hits--;p.inv=.6;SF.fx.ring(p.x,p.y,30,'#38c8ff',.35);SF.fx.spark(p.x,p.y,'#bff4ff',8);sfx('zap');SF.emit('shieldHit',{left:sh.hits});return true;}
-  p.hp-=dmg*SF.BAL.mul.enemyDamage;p.inv=b.iframes;p.hurtT=.35;SF.fx.hurt=.35;SF.fx.addShake(b.hitShake);SF.fx.spark(p.x,p.y,'#ffffff',10,1.3);sfx('hurt');vib(40);
+  p.hp-=dmg*SF.dm('enemyDamage');R.hits=(R.hits||0)+1;p.inv=b.iframes;p.hurtT=.35;SF.fx.hurt=.35;SF.fx.addShake(b.hitShake);SF.fx.spark(p.x,p.y,'#ffffff',10,1.3);sfx('hurt');vib(40);
   SF.emit('playerHit',{dmg});
   if(p.hp<=0){p.hp=0;P.die(R);}return true;},
  die(R){const p=R.p,b=B();p.alive=false;p.dying=b.deathTime;p.deaths++;R.slow=b.deathSlowmo;SF.fx.explode(p.x,p.y,2.6);SF.fx.flash=.35;SF.fx.addShake(.6);sfx('boom');vib(200);
@@ -40,7 +40,7 @@ const P=SF.player={
  addMeter(R,v){const p=R.p,s=S();if(p.charges>=s.maxCharges){p.meter=s.meterMax;return;}p.meter+=v;
   while(p.meter>=s.meterMax&&p.charges<s.maxCharges){p.meter-=s.meterMax;p.charges++;SF.emit('specialReady',{charges:p.charges});}
   if(p.charges>=s.maxCharges)p.meter=Math.min(p.meter,s.meterMax);},
- special(R){const p=R.p,s=S();if(!p.alive||p.dying>0||p.charges<=0||p.burst)return false;p.charges--;
+ special(R){const p=R.p,s=S();if(!p.alive||p.dying>0||p.charges<=0||p.burst)return false;p.charges--;R.specials=(R.specials||0)+1;
   p.burst={x:p.x,y:p.y,t:0,hit:new Set()};p.inv=Math.max(p.inv,s.inv);SF.fx.flash=.5;SF.fx.addShake(.5);sfx('bomb');vib(120);flashLight(p.x,p.y,3,false);
   SF.emit('special',{});return true;},
  stepBurst(R,dt){const p=R.p,s=S(),bu=p.burst;bu.t+=dt;const f=Math.min(1,bu.t/s.expandTime),r=s.radius*(1-(1-f)*(1-f));bu.r=r;bu.x=p.x;bu.y=p.y;
