@@ -1,6 +1,6 @@
 {
-  "build": 2,
-  "version": "2.0",
+  "build": 3,
+  "version": "3.0",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
-  "notes": ["10 real-world missions, 3 difficulty modes, new jets, weapons and drones"]
+  "notes": ["full 3D landscapes and 11 new enemy types with special abilities"]
 }

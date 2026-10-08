@@ -38,12 +38,16 @@ jobs:
           mkdir -p app/www
           cp index.html manifest.webmanifest version.json app/www/
           cp -r icons app/www/
+          # bundle three.js inside the APK so the game works offline
+          (cd app && npm init -y > /dev/null && npm install --no-audit --no-fund three@0.128.0)
+          cp app/node_modules/three/build/three.min.js app/www/three.min.js
+          sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js#three.min.js#' app/www/index.html
+          grep -q 'src="three.min.js"' app/www/index.html
           echo "VERSION_NAME=$(python3 -c "import json;print(json.load(open('version.json'))['version'])")" >> "$GITHUB_ENV"
 
       - name: Create the Capacitor Android project
         working-directory: app
         run: |
-          npm init -y > /dev/null
           npm install --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
           echo '{"appId":"com.rexraja.skyfire","appName":"Skyfire Squadron","webDir":"www","android":{"backgroundColor":"#0a1220"}}' > capacitor.config.json
           npx cap add android
