@@ -71,6 +71,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 .item .acts{grid-column:3;grid-row:1/4;display:flex;flex-direction:column;gap:6px}
 .item .acts button{min-width:96px;padding:.5em .6em;font-size:13px;font-variant-numeric:tabular-nums}
 .pips{display:flex;gap:3px}.pips i{width:13px;height:6px;border-radius:2px;background:var(--line)}.pips i.on{background:var(--teal)}
+.pips.lv10 i{width:9px}
+.item .val{color:#c9d6e3;font-size:11.5px;line-height:1.45}.item .val span{display:inline-block;min-width:34px;color:var(--teal);font-weight:700}.item .val .nx{color:var(--saffron)}
+.item .buy{font-variant-numeric:tabular-nums;white-space:nowrap}
+.item.up .acts{grid-row:1/3}.item.up .val,.item.up .pips,.item.up .lock{grid-column:2/4}
+.item.bought{animation:bought .7s ease-out}@keyframes bought{0%{box-shadow:0 0 0 2px var(--saffron),0 0 26px var(--saffron);transform:scale(1.02)}100%{box-shadow:none;transform:scale(1)}}
 .bars{display:grid;grid-template-columns:auto 1fr;gap:2px 6px;font-size:10px;color:var(--dim);align-items:center}
 .bars span{height:5px;border-radius:3px;background:var(--line);overflow:hidden}.bars span i{display:block;height:100%;background:var(--saffron)}
 .lock{color:var(--dim);font-size:12px}
@@ -92,6 +97,14 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 .reward small{color:var(--saffron);letter-spacing:.2em;font-size:11px;font-weight:700}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
 .hint{color:var(--dim);font-size:12px;text-align:center;margin:0}
+.sorties{display:flex;flex-direction:column;gap:5px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.sorties h3{margin:0 0 2px}.sortie{display:flex;justify-content:space-between;gap:8px;font-size:13px}.sortie b{color:var(--dim);font-variant-numeric:tabular-nums}.sortie.done{color:var(--good)}.sortie.done b{color:var(--good)}
+.tier{font-size:10px;font-weight:700;letter-spacing:.12em}
+.ach{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 12px;opacity:.75}
+.ach.got{opacity:1;border-color:var(--saffron)}.ach b{font-size:14px}.ach p{margin:2px 0 0;color:var(--dim);font-size:12px}.ach small{white-space:nowrap;font-weight:700;font-size:12px}
+.ach .bar{display:block;height:4px;background:var(--line);border-radius:2px;margin-top:5px;overflow:hidden;width:140px}.ach .bar i{display:block;height:100%;background:var(--teal)}
+.tierbox{display:flex;gap:12px;align-items:center;justify-content:center;border-radius:14px;padding:10px 12px;border:1px solid var(--line);background:var(--panel);animation:pop .6s ease-out}
+.tierbox b{font-family:var(--display);font-weight:400;font-size:24px;letter-spacing:.05em}
 .banner{display:flex;gap:10px;align-items:center;background:rgba(10,40,44,.9);border:1px solid var(--teal);border-radius:14px;padding:10px 12px;font-size:13px}
 .banner button,.banner .btn{padding:.5em .7em;font-size:13px;white-space:nowrap}
 .orb{flex:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#d8fffa,#2bd1c0 45%,#0b4f4a 75%);box-shadow:0 0 12px #2bd1c0;animation:orb 1.6s ease-in-out infinite}
@@ -163,7 +176,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
       <div id="updBanner" class="banner" hidden><div class="orb"></div><div style="flex:1"><b>ORION:</b> <span id="updText">Update ready.</span></div><button id="updBtn" class="teal">Update</button></div>
       <div class="bank"><i class="cog"></i><span id="bankT">0</span><i class="core"></i><span id="coreT">0</span></div>
       <button class="primary" id="goPlay" style="font-size:18px;padding:.85em">PLAY</button>
-      <div class="row"><button id="goHangar">Hangar</button><button id="goSettings">Settings</button></div>
+      <div class="row"><button id="goHangar">Hangar</button><button id="goRecords">Records</button><button id="goSettings">Settings</button></div>
       <div class="row" id="getApp"><button id="installBtn" class="teal" hidden>Install app</button><a id="apkLink" class="btn" hidden href="https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk">Download Android APK</a></div>
       <p class="hint">Drag anywhere to fly. Guns fire on their own.</p>
     </div>
@@ -174,6 +187,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
       <div class="head"><h2>Missions</h2><button class="back" data-go="title">Back</button></div>
       <div class="tabs" id="modeTabs"></div>
       <p class="hint" id="modeHint"></p>
+      <div id="sortie" class="sorties"></div>
       <div class="stages" id="stageList"></div>
     </div>
   </section>
@@ -181,7 +195,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
   <section id="hangar" class="screen" hidden>
     <div class="box">
       <div class="head"><h2>Hangar</h2><div class="bank"><i class="cog"></i><span id="bankH">0</span><i class="core s"></i><span id="coreH" style="font-size:15px">0</span></div><button class="back" data-go="title">Back</button></div>
-      <div class="tabs" id="hTabs"><button data-t="planes" class="on">Planes</button><button data-t="weapons">Weapons</button><button data-t="drones">Drones</button><button data-t="parts">Parts</button></div>
+      <div class="tabs" id="hTabs"><button data-t="planes" class="on">Jets</button><button data-t="weapons">Weapons</button><button data-t="parts">Systems</button><button data-t="drones">Drones</button></div>
       <div id="hList" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </section>
@@ -209,6 +223,15 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
       </div>
       <h3>What's new · <span id="verTxt"></span></h3>
       <div id="notes" class="hint" style="text-align:left;line-height:1.5"></div>
+    </div>
+  </section>
+
+  <section id="records" class="screen" hidden>
+    <div class="box">
+      <div class="head"><h2>Records</h2><button class="back" data-go="title">Back</button></div>
+      <div id="recStats" style="display:flex;flex-direction:column;gap:6px"></div>
+      <h3 id="recAchT">Achievements</h3>
+      <div id="recAch" style="display:flex;flex-direction:column;gap:6px"></div>
     </div>
   </section>
 
@@ -241,11 +264,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Version info stays here (CI checks BUILD against version.json). The game code lives in js/ and is loaded in order below.
-const BUILD=8,VERSION='3.5';
-const NOTES=['10 brand-new bosses, each with its own weapons you can shoot off one by one: a dreadnought, a scythe combine, a sand serpent, a twin-rotor gunship, a diving submarine, a carrier that launches fighters, a four-legged walker, a shielded strike wing, a teleporting gunship and the final Inferno Throne','10 mini-bosses mid-stage','Boss entrances with a warning, name card and camera pull-back; boss deaths with slow motion and a reward shower','Boss bar shows each weapon and whether the core is sealed, guarded or exposed','New objectives: destroy every boss component, and beat the final boss quickly on Extreme'];
+const BUILD=9,VERSION='3.6';
+const NOTES=['New Hangar: every upgrade has 10 levels and shows what you have now and what the next level gives','New jet systems: Repair nanites heal you while you avoid hits','Medal tiers for every mission and mode: Spark, Flare, Blaze and Skyfire, each paying gears and Cores','31 achievements and a new Records screen with your lifetime stats','Daily sortie orders: three new goals every day for bonus gears and a Core','Locked jets, weapons and drones can be unlocked early with Cores (they still unlock free as mission rewards)','Your earlier upgrades were refunded as gears so you can rebuild with the new system','Save backup: a damaged save restores itself from a backup copy'];
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
- var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','save','economy','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
+ var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','config/upgrades','config/achievements','save','economy','progression','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
  F.forEach(function(f){var s=document.createElement('script');s.src='js/'+f+'.js?v='+BUILD;s.async=false;s.onerror=function(){var l=document.getElementById('loading');l.hidden=false;l.textContent='Could not load game files. Check your connection and reopen.';};document.body.appendChild(s);});
 })();
 </script>

@@ -60,7 +60,7 @@ const ET={
  artillery:{hp:20,r:17,g:5,pts:600,ground:1,intro:'Artillery is targeting your position. Move when you see the red circle.'},
  dome:{hp:32,r:20,g:6,pts:800,ground:1,intro:'A shield generator is protecting nearby ground units. Destroy it to drop their shields.'},
 };
-const MAXL=8;
+const MAXL=10;
 const cost=(base,l)=>Math.round(base*Math.pow(1.55,l));
 const REWARD_NAME=k=>(PLANES[k]||WEAPONS[k]||DRONES[k]).name;
 const MEDALS=[['clear','Mission cleared'],['untouched','No damage taken'],['hunter','85% enemies downed']];

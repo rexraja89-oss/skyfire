@@ -1,8 +1,8 @@
 {
-  "build": 8,
-  "version": "3.5",
+  "build": 9,
+  "version": "3.6",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "10 new bosses with destructible weapons, plus 10 mini-bosses"
+    "new upgrade hangar, medal tiers, achievements and daily sortie orders"
   ]
 }

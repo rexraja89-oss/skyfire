@@ -19,6 +19,8 @@ SF.BAL={
   collideDamage:20,
   deathSlowmo:.45,deathSlowScale:.3,deathTime:2.4,respawnInv:2.5,
   baseHp:100,armorPerLevel:20,
+  regenPerLevel:.6,regenDelay:3,   // Repair nanites: hull per second per level after this many seconds without a hit
+  gearValueStage:.3,               // each gear pickup is worth 1 + this × stage index
  },
  special:{                // Skyburst: tap the special button
   meterMax:100,perKill:4,perDamage:.12,startCharges:1,maxCharges:3,bonusChargesPerBombPart:.5,

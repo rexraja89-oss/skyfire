@@ -25,10 +25,11 @@ const P=SF.player={
   if(kx||ky){p.tx+=kx*b.keySpeed*pl.spd*dt;p.ty+=ky*b.keySpeed*pl.spd*dt;P.clampTarget(p);}
   const st=b.smoothTime/Math.sqrt(pl.spd),mv=b.maxSpeed*pl.spd;smooth(p,'x','vx',p.tx,st,mv,dt);smooth(p,'y','vy',p.ty,st,mv,dt);
   p.bank+=(clamp(p.vx/360,-1,1)-p.bank)*Math.min(1,dt*12);
-  if(p.burst)P.stepBurst(R,dt);},
+  if(p.burst)P.stepBurst(R,dt);
+  const rg=save.parts.regen|0;if(rg&&p.hp<p.max&&R.t-(p.lastHit||-99)>b.regenDelay)p.hp=Math.min(p.max,p.hp+b.regenPerLevel*rg*dt);},
  hurt(R,dmg){const p=R.p,b=B();if(save.god||p.inv>0||!p.alive||p.dying>0)return false;
   const sh=R.eff&&R.eff.shield;if(sh&&sh.hits>0){sh.hits--;p.inv=.6;SF.fx.ring(p.x,p.y,30,'#38c8ff',.35);SF.fx.spark(p.x,p.y,'#bff4ff',8);sfx('zap');SF.emit('shieldHit',{left:sh.hits});return true;}
-  p.hp-=dmg*SF.dm('enemyDamage');R.hits=(R.hits||0)+1;p.inv=b.iframes;p.hurtT=.35;SF.fx.hurt=.35;SF.fx.addShake(b.hitShake);SF.fx.spark(p.x,p.y,'#ffffff',10,1.3);sfx('hurt');vib(40);
+  p.lastHit=R.t;p.hp-=dmg*SF.dm('enemyDamage');R.hits=(R.hits||0)+1;p.inv=b.iframes;p.hurtT=.35;SF.fx.hurt=.35;SF.fx.addShake(b.hitShake);SF.fx.spark(p.x,p.y,'#ffffff',10,1.3);sfx('hurt');vib(40);
   SF.emit('playerHit',{dmg});
   if(p.hp<=0){p.hp=0;P.die(R);}return true;},
  die(R){const p=R.p,b=B();p.alive=false;p.dying=b.deathTime;p.deaths++;R.slow=b.deathSlowmo;SF.fx.explode(p.x,p.y,2.6);SF.fx.flash=.35;SF.fx.addShake(.6);sfx('boom');vib(200);

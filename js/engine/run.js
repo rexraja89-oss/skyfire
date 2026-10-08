@@ -76,6 +76,7 @@ Rn.finish=(won,quit)=>{if(!R)return;if(R.kind==='range'){goTitle();return;}
  const best=save.best[mode][si]||0,nb=R.score>best;if(nb)save.best[mode][si]=Math.floor(R.score);
  SF.wallet.grant('gears',gears,'mission');SF.wallet.grant('gears',bonus,'objectives');if(cores)SF.wallet.grant('cores',cores,'firstClear');store();
  const res={won,quit,score:Math.floor(R.score),best,nb,gears,bonus,cores,kills:R.kills,spawned:R.spawned,objs,reward,msgs,si,mode,combo:R.combo.best,time:R.t};
+ res.prog=SF.prog.onRunEnd(R,res);
  Rn.lastResult=res;Rn.stop();state='result';showResults(res);try{speechSynthesis.cancel();}catch(e){}if(reward&&save.voice)speak(`New hardware unlocked: ${REWARD_NAME(reward)}.`);musicStop();musicStart(45);};
 function showResults(r){$('resTitle').textContent=r.won?'Mission complete':r.quit?'Mission aborted':'Shot down';$('resTitle').style.color=r.won?'':'var(--danger)';
  $('resS').textContent=fmt(r.score)+(r.nb&&r.score>0?' · NEW BEST':' · best '+fmt(r.best));
@@ -83,7 +84,11 @@ function showResults(r){$('resTitle').textContent=r.won?'Mission complete':r.qui
  $('resK').textContent=(r.spawned?Math.round(r.kills/r.spawned*100):0)+'% · best combo '+r.combo;
  $('resMedals').innerHTML=r.objs.map(o=>`<div class="medal ${o.done||o.had?'got':''} ${o.fresh?'new':''}">${o.done||o.had?'★':'☆'} ${o.text}</div>`).join('');
  let rw='';if(r.reward)rw+=`<div class="reward"><img src="${preview(r.reward)}" alt=""><div><small>REWARD UNLOCKED</small><div style="font-size:17px;font-weight:700">${REWARD_NAME(r.reward)}</div><div class="hint" style="text-align:left">Equip it in the Hangar.</div></div></div>`;
- for(const t of r.msgs)rw+=`<div class="reward"><div class="orb"></div><div><small>NEW MODE</small><div style="font-size:17px;font-weight:700">${t}</div></div></div>`;$('resReward').innerHTML=rw;
+ for(const t of r.msgs)rw+=`<div class="reward"><div class="orb"></div><div><small>NEW MODE</small><div style="font-size:17px;font-weight:700">${t}</div></div></div>`;
+ const P=r.prog||{};if(P.tier>=0){const T=SF.MEDAL_TIERS[P.tier],nw=P.tier>P.prevTier;rw=`<div class="tierbox" style="border-color:${T.color}"><small style="color:var(--dim);letter-spacing:.2em;font-weight:700">${nw?'NEW MEDAL':'MEDAL'}</small><b style="color:${T.color}">${T.name.toUpperCase()}</b>${nw&&(P.tierGears||P.tierCores)?`<small><i class="cog s"></i> ${fmt(P.tierGears)}${P.tierCores?` <i class="core s"></i> ${P.tierCores}`:''}</small>`:''}</div>`+rw;}
+ for(const A of P.ach||[])rw+=`<div class="reward"><div class="orb"></div><div><small>ACHIEVEMENT</small><div style="font-size:16px;font-weight:700">${A.name}</div><div class="hint" style="text-align:left">${A.desc}${A.cores?` · +${A.cores} cores`:''}</div></div></div>`;
+ for(const o of P.sortie||[])rw+=`<div class="reward"><div class="orb"></div><div><small>SORTIE ORDER COMPLETE</small><div style="font-size:15px;font-weight:700">${SF.prog.sortieText(o)}</div><div class="hint" style="text-align:left">+${fmt(SF.SORTIE_REWARD.gears)} gears · +${SF.SORTIE_REWARD.cores} core</div></div></div>`;
+ $('resReward').innerHTML=rw;
  const next=r.won&&r.si+1<STAGES.length;$('resNext').textContent=next?'Next mission':'Fly again';$('resNext').onclick=()=>Rn.start({kind:'stage',si:next?r.si+1:r.si,mode:r.mode});
  show('result');}
 // ---------- HUD ----------

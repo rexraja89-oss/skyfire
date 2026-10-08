@@ -13,7 +13,7 @@ function rollTable(name,x,y,force){const T=SF.DROPS[name];if(!T)return false;if(
  let tot=0;for(const k in T.items)tot+=T.items[k];let r=Math.random()*tot;for(const k in T.items){r-=T.items[k];if(r<=0){drop(k,x,y);return true;}}return false;}
 Pk.rollTable=rollTable;
 Pk.onKill=(R,e)=>{const d=e.d,b=BP(),mul=SF.BAL.mul.dropRate;
- for(let i=0;i<(d.gears||0);i++)drop('gear',e.x+rnd(-12,12),e.y+rnd(-12,12),1);
+ const gv=R.kind==='stage'?1+SF.BAL.player.gearValueStage*R.si:1;for(let i=0;i<(d.gears||0);i++)drop('gear',e.x+rnd(-12,12),e.y+rnd(-12,12),gv);
  if(d.noCount)return;R.sinceCell++;
  if(Math.random()<SF.DROPS.chip.chance*mul){drop('chip',e.x,e.y);return;}
  const lvl=R.p.lvl,ch=(b.cellChanceByLevel[lvl]||0)*mul;
