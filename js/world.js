@@ -387,6 +387,25 @@ function lancerModel(){const g=jetModel({L:46,S:26,sweep:.85,wl:.42,chord:.4,tip
  g.add(mesh(new T3.CylinderGeometry(.09,.12,3.4,8).rotateX(Math.PI/2),std('#22262a',.7,.3),0,-.3,-3.6));const tip=new T3.Mesh(new T3.SphereGeometry(.22,8,6),basic('#ff3c50'));tip.position.set(0,-.3,-5.3);tip.name='tip';g.add(tip);return g;}
 function bomberModel(){const g=jetModel({L:64,S:118,sweep:.14,wl:.32,chord:.2,tip:.12,fw:7,tailS:.22},'#76806f','#c23b3b');
  for(const s of[-1,1])for(const f of[.3,.62]){const x=s*(.7+5.2*f),z=-(3.2-6.4*.32-5.2*f*.14)-.2;g.add(mesh(new T3.CylinderGeometry(.42,.42,1.9,10).rotateX(Math.PI/2),std('#4a5048',.5,.4),x,-.25,z));const r=rotor(.9,3);r.rotation.x=Math.PI/2;r.position.set(x,-.25,z-1.05);r.name='rotor';g.add(r);}return g;}
+// ---- ground installations (Checkpoint 3) ----
+function towerModel(){const g=new T3.Group();g.add(mesh(new T3.CylinderGeometry(1.5,1.9,.5,10),std('#6d665a',.1,.85),0,.25,0));g.add(mesh(new T3.CylinderGeometry(.9,1.2,3,8),std('#8a8274',.15,.8),0,1.9,0));
+ const t=new T3.Group();t.name='tur';t.position.y=3.6;t.add(mesh(new T3.BoxGeometry(1.6,.9,1.6),std('#4e5560',.5,.45)));for(const s of[-1,1])t.add(mesh(new T3.CylinderGeometry(.12,.12,2,6).rotateX(Math.PI/2),std('#1d2126',.7,.3),s*.35,0,-1.3));g.add(t);return g;}
+function radarModel(){const g=new T3.Group();g.add(mesh(new T3.BoxGeometry(2.6,1.2,2.6),std('#7a8288',.2,.6),0,.6,0));g.add(mesh(new T3.CylinderGeometry(.18,.24,1.8,6),std('#5a6066',.6,.4),0,2,0));
+ const t=new T3.Group();t.name='tur';t.position.y=2.9;const dish=mesh(new T3.SphereGeometry(1.6,16,8,0,TAU,0,Math.PI/2.6),std('#e8ecef',.3,.4));dish.rotation.x=-Math.PI/2.2;dish.material.side=T3.DoubleSide;t.add(dish);
+ const tip=new T3.Mesh(new T3.SphereGeometry(.2,8,6),basic('#ff5a5a'));tip.position.set(0,.3,-.9);tip.name='light';t.add(tip);g.add(t);return g;}
+function depotModel(){const g=new T3.Group(),mt=std('#d8d2c2',.4,.4),mr=std('#c23b3b',.3,.5);for(const[x,z]of[[-1.3,0],[1.3,0]]){g.add(mesh(new T3.CylinderGeometry(1.2,1.2,1.8,14),mt,x,.9,z));g.add(mesh(new T3.CylinderGeometry(1.22,1.22,.25,14),mr,x,1.3,z));}
+ g.add(mesh(new T3.BoxGeometry(3.6,.15,.2),std('#555',.6,.4),0,.4,1.1));return g;}
+function mastModel(){const g=new T3.Group(),md=std('#9aa0a6',.6,.4);g.add(mesh(new T3.BoxGeometry(1.8,.6,1.8),std('#5a6066',.3,.6),0,.3,0));
+ for(const[a,b]of[[-.4,-.4],[.4,-.4],[-.4,.4],[.4,.4]])g.add(mesh(new T3.BoxGeometry(.12,6.4,.12),md,a*(1-.2),3.5,b*(1-.2)));
+ for(let y=1;y<6.5;y+=1.2)g.add(mesh(new T3.BoxGeometry(.9,.08,.9),md,0,y,0));g.add(mesh(new T3.CylinderGeometry(.5,.5,.12,10).rotateZ(Math.PI/2),std('#e8ecef',.3,.4),.4,5.6,0));
+ const l=new T3.Mesh(new T3.SphereGeometry(.28,8,6),basic('#ff3c50'));l.position.y=6.9;l.name='light';g.add(l);return g;}
+function bunkerModel(){const g=new T3.Group(),mc=std('#7d7a70',.05,.95);const dome=mesh(new T3.SphereGeometry(2.2,16,8,0,TAU,0,Math.PI/2),mc);dome.scale.y=.6;g.add(dome);
+ const d=new T3.Group();d.name='door';d.position.y=.2;d.add(mesh(new T3.BoxGeometry(2.2,.5,.6),std('#3a3d40',.6,.4),0,0,-1.9));for(const s of[-.5,0,.5])d.add(mesh(new T3.CylinderGeometry(.1,.1,1.2,6).rotateX(Math.PI/2),std('#1d2126',.7,.3),s,0,-2.4));g.add(d);return g;}
+function factoryModel(){const g=new T3.Group();g.add(mesh(new T3.BoxGeometry(7,2.2,4.6),std('#8a7f72',.1,.85),0,1.1,0));
+ for(let i=0;i<3;i++)g.add(mesh(new T3.BoxGeometry(2.2,.7,4.4),std('#5d646b',.4,.5),-2.3+i*2.3,2.5,0));g.add(mesh(new T3.BoxGeometry(7.2,.3,.3),std('#d8a03a',.2,.6),0,.6,2.35));return g;}
+function stackModel(){const g=new T3.Group();g.add(mesh(new T3.CylinderGeometry(.55,.75,4.2,10),std('#9a6a52',.1,.85),0,2.1+2,0));g.add(mesh(new T3.CylinderGeometry(.6,.6,.3,10),std('#e8e2d6',.1,.8),0,6,0));
+ const l=new T3.Mesh(new T3.SphereGeometry(.18,6,4),basic('#ffb347'));l.position.y=6.3;l.name='light';g.add(l);return g;}
+function gateModel(){const g=new T3.Group();g.add(mesh(new T3.BoxGeometry(3,1.8,.5),std('#c9a04a',.3,.5),0,.9,.2));for(let i=0;i<4;i++)g.add(mesh(new T3.BoxGeometry(.6,1.5,.1),std('#2a2c30',.4,.6),-1.05+i*.7,.85,.48));return g;}
 // Bulwark: heavy gunship with a thick armoured nose plate (hit it from the sides)
 function bulwarkModel(){const g=jetModel({L:46,S:52,sweep:.3,wl:.36,chord:.36,tip:.14,fw:7,tailS:.34,eng:2},'#4f5a63','#ffb347');
  const plate=mesh(new T3.BoxGeometry(3.4,1.1,1.1),std('#9aa4ad',.8,.3),0,.15,-2.1);g.add(plate);
@@ -405,13 +424,14 @@ function buildModels(){
  MODELS.aegis=jetModel({L:38,S:36,sweep:.5,wl:.36,chord:.4,tip:.12,fw:4.5,tailS:.32,fins:1},'#3a6ab0','#e9eef2');MODELS.aegis.add(shieldBall(2.6,'#5fd0ff'));
  MODELS.lancer=lancerModel();MODELS.hydra=hydraModel();MODELS.wraith=wraithModel();MODELS.sower=ufoModel();MODELS.mine=mineModel();MODELS.mender=menderModel();MODELS.blink=blinkModel();
  MODELS.bulwark=bulwarkModel();
+ MODELS.tower=towerModel();MODELS.radar=radarModel();MODELS.depot=depotModel();MODELS.mast=mastModel();MODELS.bunker=bunkerModel();MODELS.factory=factoryModel();MODELS.stack=stackModel();MODELS.gate=gateModel();
  MODELS.tank=tankModel('#59633f');MODELS.aa=aaModel();MODELS.truck=truckModel();MODELS.boat=boatModel();MODELS.sam=samModel();MODELS.artillery=artyModel();MODELS.dome=domeModel();
  for(const k in PLANES){const p=PLANES[k];MODELS['pl_'+k]=jetModel(p.jet,p.body,p.accent);}
  for(const k in DRONES)MODELS['dr_'+k]=playerDrone(k);}
 const POOL={};
 function acquire(type){const pool=POOL[type]||(POOL[type]=[]);let m=pool.pop();
  if(!m){m=MODELS[type].clone();if(type==='wraith')m.traverse(o=>{if(o.isMesh)o.material=o.material.clone();});if(type==='aegis'||type==='dome')m.traverse(o=>{if(o.name==='shield')o.material=o.material.clone();});
-  m.R={rotor:[],tur:null,shield:null,ring:[]};m.traverse(o=>{if(o.name==='rotor')m.R.rotor.push(o);else if(o.name==='tur')m.R.tur=o;else if(o.name==='shield')m.R.shield=o;else if(o.name.startsWith('ring'))m.R.ring.push(o);else if(o.name==='trot')m.R.trot=o;else if(o.name==='light'||o.name==='orb'||o.name==='tip')m.R.light=o;});scene.add(m);}
+  m.R={rotor:[],tur:null,shield:null,ring:[]};m.traverse(o=>{if(o.name==='rotor')m.R.rotor.push(o);else if(o.name==='tur')m.R.tur=o;else if(o.name==='shield')m.R.shield=o;else if(o.name.startsWith('ring'))m.R.ring.push(o);else if(o.name==='trot')m.R.trot=o;else if(o.name==='light'||o.name==='orb'||o.name==='tip')m.R.light=o;else if(o.name==='door')m.R.door=o;});scene.add(m);}
  m.visible=true;m.userData.type=type;return m;}
 function release(m){if(!m)return;m.visible=false;(POOL[m.userData.type]||(POOL[m.userData.type]=[])).push(m);}
 // bosses

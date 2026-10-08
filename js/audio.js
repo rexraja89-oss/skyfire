@@ -8,7 +8,7 @@ function tone(f0,f1,dur,type,vol,at=0,dest=OUT){const t=AC.currentTime+at,o=AC.c
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(dest);o.start(t);o.stop(t+dur+.02);}
 function noise(dur,vol,freq,at=0,type='lowpass',dest=OUT,end=60){const t=AC.currentTime+at,n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();n.buffer=NB;f.type=type;f.frequency.setValueAtTime(freq,t);if(type==='lowpass')f.frequency.exponentialRampToValueAtTime(end,t+dur);
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);n.connect(f).connect(g).connect(dest);n.start(t,Math.random()*.5);n.stop(t+dur+.02);}
-function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=performance.now();if(n-(lastS[k]||0)<({gear:40,pop:45,shot:95,hit:70,flame:110,plasma:150,zap:90,lance:200,blink:150,heal:300,mine:120}[k]||0))return;lastS[k]=n;
+function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=performance.now();if(n-(lastS[k]||0)<({gear:40,pop:45,shot:95,combo:60,bonus:200,hit:70,flame:110,plasma:150,zap:90,lance:200,blink:150,heal:300,mine:120}[k]||0))return;lastS[k]=n;
  if(k==='shot')tone(1500,600,.04,'square',.016);
  else if(k==='flame')noise(.16,.07,1800,0,'bandpass');
  else if(k==='plasma'){tone(300,900,.12,'sine',.08);tone(600,1500,.1,'triangle',.03);}
@@ -27,6 +27,11 @@ function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=perfo
  else if(k==='heal'){tone(600,1200,.25,'sine',.04);}
  else if(k==='mine'){tone(1000,1000,.05,'square',.03);}
  else if(k==='lvl'){[523,784,1047,1568].forEach((f,i)=>tone(f,f*1.01,.11,'square',.05,i*.055));tone(260,520,.25,'triangle',.06);}
+ else if(k==='combo'){const f=520*Math.pow(1.12,p);tone(f,f*1.5,.09,'triangle',.06);tone(f*1.5,f*2,.08,'square',.025,.05);}
+ else if(k==='bonus'){[784,988,1175,1568].forEach((f,i)=>tone(f,f,.12,'triangle',.08,i*.06));}
+ else if(k==='over'){tone(120,900,.45,'sawtooth',.07);noise(.4,.25,2400,0,'bandpass');}
+ else if(k==='shieldUp'){tone(400,1600,.3,'sine',.08);tone(800,2400,.25,'triangle',.03,.05);}
+ else if(k==='chip'){[1319,1760,2093,2637].forEach((f,i)=>tone(f,f,.18,'sine',.06,i*.08));}
  else if(k==='ui')tone(700,900,.05,'triangle',.05);}
 const MUS={iv:null,next:0,step:0,root:45,prog:[0,8,3,10],len:.115};
 const hz=m=>440*Math.pow(2,(m-69)/12);

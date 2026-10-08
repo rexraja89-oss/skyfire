@@ -1,8 +1,8 @@
 {
-  "build": 5,
-  "version": "3.2",
+  "build": 6,
+  "version": "3.3",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "new Test Range: try the new flight controls, weapons and enemies"
+    "formations, ground combat, new power-ups and the combo meter in the Test Range"
   ]
 }

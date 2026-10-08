@@ -116,6 +116,17 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 #bombBtn{position:absolute;right:14px;bottom:max(16px,env(safe-area-inset-bottom));width:70px;height:70px;border-radius:50%;padding:0;background:radial-gradient(circle at 40% 35%,#ff8a9c,#d3203f 70%);border:2px solid #ffb3c0;font-size:11px;line-height:1.1;box-shadow:0 0 18px rgba(255,77,109,.5)}
 #bombBtn span{display:block;font-family:var(--display);font-size:20px}
 #bombBtn b{font-size:11px;letter-spacing:.04em}
+#combo{position:absolute;right:12px;top:calc(max(8px,env(safe-area-inset-top)) + 124px);display:flex;flex-direction:column;align-items:flex-end;text-shadow:0 2px 0 rgba(0,0,0,.6);pointer-events:none}
+#combo b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1;color:#ffd27a}
+#combo span{font-size:11px;font-weight:700;letter-spacing:.14em;color:#fff3c4}
+#combo .cbar{width:76px;height:4px;background:rgba(0,0,0,.45);border-radius:2px;overflow:hidden;margin-top:3px}
+#combo .cbar i{display:block;height:100%;background:linear-gradient(90deg,#ff861a,#ffd27a)}
+#combo.up b{animation:cup .35s ease-out}@keyframes cup{0%{transform:scale(1.6);color:#fff}100%{transform:scale(1)}}
+#effRow{position:absolute;left:12px;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 40px);display:flex;gap:6px;pointer-events:none}
+.eff{width:34px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.eff img{width:30px;height:30px;filter:drop-shadow(0 0 6px var(--c))}
+.eff i{display:block;height:3px;background:var(--c);border-radius:2px;align-self:flex-start}
+#weapName.od{color:#ff7a5a;animation:odp .5s ease-in-out infinite alternate}@keyframes odp{to{color:#ffd27a}}
 #bombBtn.sp{background:radial-gradient(circle,#5a1222 0 60%,transparent 61%),conic-gradient(#ffd27a var(--c,0%),rgba(40,14,22,.85) 0);border-color:#ffd27a;text-shadow:0 1px 2px #000}
 #bombBtn.sp.ready{background:radial-gradient(circle at 40% 35%,#ff8a9c,#d3203f 60%,transparent 61%),conic-gradient(#ffd27a var(--c,0%),rgba(40,14,22,.85) 0)}
 #bombBtn.sp.ready{animation:spr 1s ease-in-out infinite}
@@ -139,7 +150,8 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
     </div>
     <div id="co" class="off" aria-live="polite"><div class="orb"></div><div><div class="who">ORION · COPILOT</div><div id="coText"></div></div></div>
     <div id="weap"><span id="weapName">Vulcan</span><div class="pips" id="pwPips"><i></i><i></i></div></div>
-    <div id="spRing" hidden></div>
+    <div id="combo" hidden><b id="comboM">×1</b><span id="comboN">0 COMBO</span><div class="cbar"><i id="comboBar"></i></div></div>
+    <div id="effRow"></div>
     <button id="bombBtn" aria-label="Special attack"><span id="bombN">1</span><b id="bombL">BOMB</b></button>
   </div>
 
@@ -229,11 +241,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Version info stays here (CI checks BUILD against version.json). The game code lives in js/ and is loaded in order below.
-const BUILD=5,VERSION='3.2';
-const NOTES=['New Test Range on the title screen: try the new flight controls, weapons and enemies','New weapon system: power cells raise your gun from level 1 to 10 during a run, and you can see it grow','10 new enemy types with their own movement and attack patterns','New special attack: Skyburst wipes nearby bullets and hits everything around you','Control sensitivity setting','Faster, steadier game engine (fixed 60 Hz simulation)'];
+const BUILD=6,VERSION='3.3';
+const NOTES=['Test Range now has enemy formations: V, wedge, snake, pincer, crossfire, loops, halo rings and more, with a bonus for wiping out a whole formation','Ground combat: gun towers, convoys, radar (boosts nearby enemy fire), fuel depots that chain-explode, comms masts that call reinforcements, bunkers, shield generators and a factory with destructible parts','New power-ups: Overdrive, Shield, Score ×2, gear caches, rare medal chips, plus repair and Skyburst charge, with timers on the HUD','Combo meter: chain kills to raise your score multiplier up to ×6, with bonuses for quick kills, formations, ground sites and staying untouched','Test Range moves to the Golden Fields so there is land for ground targets'];
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
- var F=['core','data','config/balance','config/weapons','config/enemies','config/economy','save','economy','world','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/pickups','engine/range','legacy','ui','main'];
+ var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/economy','save','economy','world','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/range','legacy','ui','main'];
  F.forEach(function(f){var s=document.createElement('script');s.src='js/'+f+'.js?v='+BUILD;s.async=false;s.onerror=function(){var l=document.getElementById('loading');l.hidden=false;l.textContent='Could not load game files. Check your connection and reopen.';};document.body.appendChild(s);});
 })();
 </script>

@@ -16,40 +16,46 @@ function layout(w,group){const n=w.n,t=w.t,list=[];const x0=rnd(110,290);
   else o={x:W/2,y:-40,x0:W/2,group};
   o.ph=i;list.push(o);}
  return list;}
-function spawnWave(){const w=SF.RANGE_WAVES[R.wi%SF.RANGE_WAVES.length],g=SF.enemies.newGroup();R.wi++;
- for(const o of layout(w,g))SF.enemies.spawn(w.t,o);
- if(w.escort){const e=w.escort;for(const o of layout({t:e.t,n:e.n,lay:'v'},g)){o.y-=50;SF.enemies.spawn(e.t,o);}}
- R.waveT=0;R.banner={t:SF.ENEMIES[w.t].name.toUpperCase()+(w.n>1?' ×'+w.n:''),l:1.4,sub:'WAVE '+R.wi};}
+function spawnNext(){const S=SF.RANGE_SCRIPT,w=S[R.wi%S.length];R.wi++;R.waveT=0;let title='';
+ if(w.f){SF.formations.spawn(w.f,{enemy:w.enemy,mirror:Math.random()<.5});const F=SF.FORMATIONS[w.f];title=F.name.toUpperCase();const en=w.enemy||(F.groups[0].enemies||[])[0];if(en)title+=' · '+SF.ENEMIES[en].name.toUpperCase();}
+ else if(w.g){const x=w.road?toLogicX(4)/W:(w.x!==undefined?w.x:rnd(.3,.7));SF.formations.spawnSetup(w.g,{x});title=SF.GROUND_SETUPS[w.g].name.toUpperCase();R.lastGround=R.t;}
+ else{const g=SF.enemies.newGroup();for(const o of layout(w,g))SF.enemies.spawn(w.w,o);if(w.escort)for(const o of layout({t:w.escort,n:4,lay:'v'},g)){o.y-=50;SF.enemies.spawn(w.escort,o);}title=SF.ENEMIES[w.w].name.toUpperCase()+(w.n>1?' ×'+w.n:'');}
+ R.banner={t:title,l:1.4,sub:'WAVE '+R.wi};}
+function layout(w,group){const n=w.n,t=w.t||w.w,list=[];const x0=rnd(110,290);
+ for(let i=0;i<n;i++){const d=i-(n-1)/2;let o={group};
+  if(w.lay==='v')o={x:x0+d*30,y:-30-Math.abs(d)*26,x0:x0+d*30,group};
+  else o={x:(i+1)*W/(n+1)+rnd(-15,15),y:-30-i*30,x0:(i+1)*W/(n+1),group};
+  o.ph=i;list.push(o);}
+ return list;}
 Rg.start=()=>{audioOn();clearRun();G=null;
- SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();
- R=SF.R={t:0,slow:0,score:0,shown:0,gears:0,gp:0,kills:0,spawned:0,sinceCell:0,wi:0,waveT:0,gap:1.5,beams:[],banner:null,drone:save.own[save.drone]?save.drone:'',drones:[],p:null,hud:{}};
- SF.enemies.R=R;SF.player.create(R);
+ if(LV.si!==1){$('loading').hidden=false;show('none');setTimeout(()=>{buildLevel(1);$('loading').hidden=true;Rg.start();},40);return;}
+ SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();
+ R=SF.R={t:0,slow:0,score:0,shown:0,gears:0,gp:0,kills:0,spawned:0,sinceCell:0,wi:0,waveT:0,gap:1.5,beams:[],marks:[],eff:{},banner:null,lastGround:-99,drone:save.own[save.drone]?save.drone:'',drones:[],p:null,hud:{}};
+ SF.enemies.R=R;SF.player.create(R);SF.scoring.reset(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
  gz3=0;updTerrain(true);resetCopilot();
  $('bombBtn').classList.add('sp');$('bombL').textContent='SKYBURST';$('pwPips').classList.add('lv');
  state='range';show('play');musicStop();musicStart(STAGES[LV.si].key);
- say('range','Test Range. Every enemy type is coming through. Grab power cells to level up your gun, and tap Skyburst when it glows.',3,0);
+ say('range','Test Range. Formations, ground targets and power-ups are all live. Chain your kills to build the combo.',3,0);
  updHud(true);};
-Rg.stop=()=>{SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();for(const m of DRM)scene.remove(m);DRM.length=0;
+Rg.stop=()=>{SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();$('combo').hidden=true;$('effRow').innerHTML='';for(const m of DRM)scene.remove(m);DRM.length=0;
  if(R&&R.score>(save.range.best||0)){save.range.best=Math.floor(R.score);store();}R=SF.R=null;SF.enemies.R=null;
  $('bombBtn').classList.remove('sp','ready');$('bombL').textContent='BOMB';$('pwPips').classList.remove('lv');};
 Rg.drag=(dx,dy)=>{if(R)SF.player.drag(R,dx,dy);};
 Rg.special=()=>{if(R&&SF.player.special(R))updHud();};
-// score + meter from kills
-SF.on('kill',({e})=>{if(!R)return;R.kills++;const pts=Math.round(e.d.score*SF.BAL.mul.score);R.score+=pts;if(R.p)SF.player.addMeter(R,(e.d.charge||2)*SF.BAL.special.perKill/2);
- SF.fx.pop(e.x,e.y,fmt(pts),e.d.score>=600);SF.pickups.onKill(R,e);});
-SF.on('captainDown',({e,bonus})=>{if(!R)return;R.score+=bonus;SF.fx.pop(e.x,e.y-36,'+'+fmt(bonus),true);});
-SF.on('levelUp',({lvl})=>{if(!R)return;R.score+=SF.BAL.score.levelUpBonus;if(lvl===SF.BAL.weapon.maxLevel)say('maxlv','Weapon at maximum power!',1,20);else if(lvl===5)say('lv5','Weapon level five. Feel that?',1,60);});
+SF.on('levelUp',({lvl})=>{if(!R)return;if(lvl===SF.BAL.weapon.maxLevel)say('maxlv','Weapon at maximum power!',1,20);else if(lvl===5)say('lv5','Weapon level five. Feel that?',1,60);});
 SF.on('specialReady',()=>{if(R)sfx('ui');});
 SF.on('playerDown',()=>{if(R)say('rdown','Down! Respawning. You keep most of your weapon power.',2,8);});
 // ---------- step ----------
 Rg.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  SF.player.step(R,dt);SF.enemies.step(R,dt);SF.weapons.fire(R,dt);SF.weapons.step(R,dt);SF.pickups.step(R,dt);SF.fx.step(dt);
  R.gp=Math.max(0,R.gp-dt*4);
- // waves
- R.waveT+=dt;let alive=0;for(const e of SF.enemies.list())if(e.alive&&!e.d.noCount)alive++;
- if(R.t>1.2&&(alive<=1&&R.waveT>R.gap||R.waveT>14))spawnWave();
+ SF.scoring.step(R,dt);
+ // script: next entry when the air is (nearly) clear; ground setups scroll past and don't block
+ R.waveT+=dt;let air=0;for(const e of SF.enemies.list())if(e.alive&&!e.d.noCount&&!e.ground)air++;
+ const nx=SF.RANGE_SCRIPT[R.wi%SF.RANGE_SCRIPT.length],groundBusy=nx.g&&R.t-R.lastGround<9;
+ if(R.t>1.2&&!groundBusy&&(air<=1&&R.waveT>R.gap||R.waveT>12))spawnNext();
  if(R.banner){R.banner.l-=dt;if(R.banner.l<=0)R.banner=null;}
  stepWeather(dt);stepCopilot(dt);
  R.shown+=Math.max(1,(R.score-R.shown)*Math.min(1,dt*8));if(R.shown>R.score)R.shown=R.score;
@@ -65,7 +71,17 @@ function updHud(force){const p=R.p,h=R.hud,f=p.hp/p.max;
   $('pwPips').innerHTML=L.map((r,i)=>`<i class="${i<p.lvl?'on t'+r.tier:''}"></i>`).join('');});
  const S=SF.BAL.special,pc=p.charges>=S.maxCharges?100:Math.round(p.meter/S.meterMax*100);
  set('sp',p.charges+':'+pc,()=>{$('bombN').textContent=p.charges;$('bombBtn').style.setProperty('--c',pc+'%');$('bombBtn').classList.toggle('ready',p.charges>0);});
- set('ch','',()=>$('hudChain').textContent='');}
+ set('ch','',()=>$('hudChain').textContent='');
+ // combo meter
+ const c=R.combo,CF=SF.BAL.combo,mult=SF.scoring.mult(R);
+ set('cv',c.n>=2,v=>$('combo').hidden=!v);
+ if(c.n>=2){set('cn',c.n,v=>$('comboN').textContent=v+' COMBO');set('cm',mult,v=>{$('comboM').textContent='×'+(Math.round(v*10)/10);const el=$('combo');el.classList.remove('up');void el.offsetWidth;el.classList.add('up');});
+  set('ct',Math.round(c.t/CF.window*40),v=>$('comboBar').style.width=(v*2.5)+'%');}
+ // timed effects
+ const keys=Object.keys(R.eff).sort().join(',');
+ set('ek',keys,()=>{$('effRow').innerHTML=Object.keys(R.eff).sort().map(k=>{const D=SF.PICKUPS[k];return `<div class="eff" style="--c:${D.color}"><img src="${SP['pk_'+k].toDataURL()}" alt=""><i id="eb_${k}"></i></div>`;}).join('');});
+ for(const k in R.eff){const f=R.eff[k],el=document.getElementById('eb_'+k);if(el)el.style.width=Math.max(0,f.t/f.max*100)+'%';}
+ set('lvx',SF.weapons.level(R),()=>{const od=R.eff.overdrive;$('weapName').classList.toggle('od',!!od);if(od)$('weapName').textContent=SF.weapons.def().name+' · Lv '+Math.min(10,SF.weapons.level(R))+' OVERDRIVE';else h.lv=null;});}
 // ---------- render ----------
 Rg.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);gameCam(SF.fx.shake);
  const px=p.ox+(p.x-p.ox)*A,py=p.oy+(p.y-p.oy)*A;
@@ -90,6 +106,7 @@ Rg.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);gameCam(SF.fx.
  if(p.alive&&p.dying<=0){let near=0;for(const b of SF.enemies.ebPool.live){if((b.x-p.x)**2+(b.y-p.y)**2<3600){near=1;break;}}
   pj(px,py);const hr=SF.BAL.player.hitR*PS;cx.fillStyle='#ffffff';cx.beginPath();cx.arc(PX,PY,hr*.9,0,TAU);cx.fill();
   cx.strokeStyle=near?'rgba(255,90,110,.95)':'rgba(43,209,192,.6)';cx.lineWidth=near?2:1.4;cx.beginPath();cx.arc(PX,PY,hr+(near?3.5:2.5),0,TAU);cx.stroke();}
+ if(R.eff.shield&&p.alive){pj(px,py);cx.globalCompositeOperation='lighter';const a=.35+.15*Math.sin(R.t*8);cx.strokeStyle=`rgba(90,210,255,${a})`;cx.lineWidth=3;cx.beginPath();cx.arc(PX,PY,28*PS,0,TAU);cx.stroke();pdg(px,py,30,'#38c8ff');cx.globalCompositeOperation='source-over';}
  if(save.god&&p.alive){pj(px,py);cx.strokeStyle='rgba(43,209,192,.45)';cx.lineWidth=2;cx.beginPath();cx.arc(PX,PY,32*PS,0,TAU);cx.stroke();}
  SF.fx.drawPops();
  cx.setTransform(oS,0,0,oS,0,0);

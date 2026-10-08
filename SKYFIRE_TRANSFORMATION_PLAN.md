@@ -1,6 +1,6 @@
 # Skyfire Transformation Plan
 
-**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) are done. Next: Checkpoint 3.
+**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) and Checkpoint 3 (formations, ground combat, pickups, combo) are done. Next: Checkpoint 4.
 
 **Goal:** turn Skyfire from a good-looking prototype into a polished, replayable vertical arcade shooter. It should match the depth and feel of the best games in the genre, using only original Skyfire code, content, names, art and sound.
 
@@ -408,7 +408,7 @@ Deliverable: this file. **Stop for approval.**
 - **Test Range:** a temporary title-screen button that spawns waves to try the new controller, weapons and enemies. The old campaign keeps working until Checkpoint 4.
 - **Stop.**
 
-### Checkpoint 3: formations + ground combat + power-ups
+### Checkpoint 3: formations + ground combat + power-ups ✅ done (v3.3, build 6)
 - Formation system (shapes, entry paths, mixed groups, captains, formation-clear bonus).
 - **Ground system:**
   - towers, vehicles and columns

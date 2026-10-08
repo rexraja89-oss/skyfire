@@ -63,14 +63,14 @@ SF.ENEMIES={
  mine:{name:'Mine',model:'mine',hp:2.5,r:10,score:50,gears:0,charge:1,size:.8,noCount:1,abilities:{fuse:{time:4.2,ring:10,speed:130}},
   move:{type:'fall',speed:35,drag:.995},fire:{pattern:'none'}},
 };
-// Test Range wave list (Checkpoint 2 only; real stages arrive with the stage engine).
-// Each wave: enemy type, how many, simple placement. Formations proper come in Checkpoint 3.
-SF.RANGE_WAVES=[
- {t:'dart',n:5,lay:'v'},{t:'swift',n:5,lay:'left'},{t:'dart',n:4,lay:'line'},{t:'swift',n:5,lay:'right'},
- {t:'gunboat',n:2,lay:'spread'},{t:'siderunner',n:3,lay:'left'},{t:'hawk',n:3,lay:'spread'},
- {t:'wingleader',n:1,lay:'center',escort:{t:'dart',n:4}},{t:'aegis',n:3,lay:'spread'},
- {t:'brute',n:1,lay:'center',escort:{t:'swift',n:4}},{t:'bulwark',n:2,lay:'spread'},
- {t:'tender',n:1,lay:'center',escort:{t:'gunboat',n:2}},{t:'lancer',n:2,lay:'spread'},
- {t:'hydra',n:2,lay:'spread'},{t:'wraith',n:2,lay:'spread'},{t:'sower',n:1,lay:'right'},
- {t:'blink',n:2,lay:'spread'},{t:'hawk',n:5,lay:'spread'},{t:'wingleader',n:2,lay:'spread',escort:{t:'swift',n:6}},
+// Test Range script (Checkpoints 2-3 only; the stage director replaces it in Checkpoint 4).
+// f = formation (with enemy type), g = ground setup (x = anchor as a fraction of the width), w = loose wave.
+SF.RANGE_SCRIPT=[
+ {f:'vDrop',enemy:'dart'},{f:'pincer',enemy:'swift'},{g:'outpost',x:.3},{f:'snake',enemy:'dart'},
+ {f:'lineHover',enemy:'gunboat'},{g:'convoy',road:1},{f:'wedgeLeader'},{f:'crossing',enemy:'swift'},
+ {g:'depotYard',x:.65},{f:'swoop',enemy:'siderunner'},{f:'stagger',enemy:'dart'},{g:'missileSite',x:.4},
+ {w:'hawk',n:3},{f:'ringSpin',enemy:'aegis'},{g:'relay',x:.6},{f:'converge',enemy:'swift'},{f:'boxEscort'},
+ {g:'bunkerLine',x:.5},{w:'bulwark',n:2},{f:'loop',enemy:'dart'},{g:'factory',x:.5},{f:'column',enemy:'swift'},
+ {w:'lancer',n:2},{f:'mixedRaid'},{w:'hydra',n:2},{f:'strafeRun',enemy:'siderunner'},{w:'tender',n:1,escort:'gunboat'},
+ {w:'wraith',n:2},{f:'vDropWide',enemy:'dart'},{w:'sower',n:1},{w:'blink',n:2},{w:'brute',n:1,escort:'swift'},
 ];

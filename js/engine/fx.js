@@ -9,7 +9,7 @@ const cap=()=>SF.BAL.caps.parts[save.hq?0:1];
 function add(k,x,y,vx,vy,l,c,r,extra){if(parts.live.length>=cap())return null;const q=parts.get();if(!q)return null;
  q.k=k;q.x=x;q.y=y;q.vx=vx;q.vy=vy;q.l=l;q.m=l;q.c=c;q.r=r;q.a=0;q.va=0;q.drag=.94;q.scroll=0;if(extra)Object.assign(q,extra);return q;}
 fx.add=add;
-fx.reset=()=>{parts.clear();pops.clear();fx.shake=0;fx.flash=0;fx.hurt=0;};
+fx.reset=()=>{parts.clear();wrecks.length=0;pops.clear();fx.shake=0;fx.flash=0;fx.hurt=0;};
 fx.explode=(x,y,size=1,ground)=>{const hq=save.hq,n=Math.min(40,(hq?8:4)+size*(hq?10:5));
  for(let i=0;i<n;i++){const a=Math.random()*TAU,v=Math.random()*90*size+30;add('f',x,y,Math.cos(a)*v,Math.sin(a)*v,rnd(.25,.6),Math.random()<.4?'#ffe08a':'#ff7a2e',rnd(6,12)*Math.sqrt(size));}
  for(let i=0;i<n/2;i++){const a=Math.random()*TAU,v=rnd(150,400)*Math.sqrt(size);add('k',x,y,Math.cos(a)*v,Math.sin(a)*v,rnd(.2,.45),'#fff3c4',1.6);}
@@ -23,8 +23,13 @@ fx.ring=(x,y,r,c='#ffffff',l=.35)=>add('o',x,y,0,0,l,c,r);
 fx.glow=(x,y,r,c,l=.2)=>add('g',x,y,0,0,l,c,r);
 fx.smoke=(x,y,r=3,c='#cfd6dc',l=.35)=>add('s',x,y,0,0,l,c,r);
 fx.pop=(x,y,t,big)=>{const q=pops.get();if(!q)return;q.x=x;q.y=y;q.t=t;q.l=.8;q.big=!!big;};
+// burning wreck: a smoke column that scrolls with the ground for a few seconds
+const wrecks=[];
+fx.wreck=(x,y,size)=>{if(wrecks.length<12)wrecks.push({x,y,t:SF.BAL.ground.wreckSmoke*(save.hq?1:.5),s:size});};
 fx.addShake=v=>{fx.shake=Math.max(fx.shake,v);};
-fx.step=dt=>{if(fx.shake>0)fx.shake-=dt;if(fx.flash>0)fx.flash-=dt;if(fx.hurt>0)fx.hurt-=dt;
+fx.step=dt=>{if(fx.shake>0)fx.shake-=dt;
+ for(let i=wrecks.length-1;i>=0;i--){const w=wrecks[i];w.t-=dt;w.y+=SCROLL*dt;if(w.t<=0||w.y>H+40){wrecks.splice(i,1);continue;}
+  if(Math.random()<dt*(save.hq?9:4)){add('s',w.x+rnd(-5,5),w.y,rnd(-8,8),-35,rnd(1,1.6),'#2e2a28',rnd(4,7)*Math.sqrt(w.s),{scroll:1,drag:.985});if(Math.random()<.3)add('f',w.x+rnd(-4,4),w.y,0,-20,.3,'#ff7a2e',5);}}if(fx.flash>0)fx.flash-=dt;if(fx.hurt>0)fx.hurt-=dt;
  const L=parts.live;for(let i=L.length-1;i>=0;i--){const q=L[i];q.x+=q.vx*dt;q.y+=q.vy*dt;q.l-=dt;
   if(q.k!=='w'){q.vx*=q.drag;q.vy*=q.drag;}if(q.k==='d')q.a+=q.va*dt;if(q.scroll)q.y+=SCROLL*dt*q.scroll;if(q.l<=0)parts.kill(q);}
  const P=pops.live;for(let i=P.length-1;i>=0;i--){const q=P[i];q.y-=40*dt;q.l-=dt;if(q.l<=0)pops.kill(q);}};

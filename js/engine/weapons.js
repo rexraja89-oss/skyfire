@@ -8,9 +8,11 @@ const Wp=SF.weapons={pool,
  def(){return SF.WEAPONS[save.weapon]||SF.WEAPONS.vulcan;},
  hangarLevel(){return save.wl[save.weapon]|0;},
  startLevel(){return clamp(1+Math.floor(Wp.hangarLevel()/SF.BAL.weapon.hangarStartPer),1,SF.BAL.weapon.maxLevel);},
- row(R){const L=Wp.def().levels;return L[clamp(R.p.lvl,1,L.length)-1];},
+ // effective level = power-cell level + overdrive bonus (capped at the table length)
+ level(R){const od=R.eff&&R.eff.overdrive?SF.PICKUPS.overdrive.levels:0;return R.p.lvl+od;},
+ row(R){const L=Wp.def().levels;return L[clamp(Wp.level(R),1,L.length)-1];},
  dmgMul(R){return R.p.pl.dmg*(1+SF.BAL.weapon.hangarDamagePer*Wp.hangarLevel())*SF.BAL.mul.weaponDamage;},
- rateMul(R){return (R.p.pl.fire||1)*(1+SF.BAL.weapon.hangarRatePart*save.parts.engine)*SF.BAL.mul.fireRate;},
+ rateMul(R){return (R.p.pl.fire||1)*(1+SF.BAL.weapon.hangarRatePart*save.parts.engine)*SF.BAL.mul.fireRate*(R.eff&&R.eff.overdrive?SF.PICKUPS.overdrive.rate:1);},
  levelUp(R){const p=R.p,mx=SF.BAL.weapon.maxLevel;if(p.lvl>=mx)return false;p.lvl++;SF.emit('levelUp',{lvl:p.lvl});return true;},
  reset(){pool.clear();},
 };
