@@ -116,7 +116,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 #bombBtn{position:absolute;right:14px;bottom:max(16px,env(safe-area-inset-bottom));width:70px;height:70px;border-radius:50%;padding:0;background:radial-gradient(circle at 40% 35%,#ff8a9c,#d3203f 70%);border:2px solid #ffb3c0;font-size:11px;line-height:1.1;box-shadow:0 0 18px rgba(255,77,109,.5)}
 #bombBtn span{display:block;font-family:var(--display);font-size:20px}
 #bombBtn b{font-size:11px;letter-spacing:.04em}
-#combo{position:absolute;right:12px;top:calc(max(8px,env(safe-area-inset-top)) + 124px);display:flex;flex-direction:column;align-items:flex-end;text-shadow:0 2px 0 rgba(0,0,0,.6);pointer-events:none}
+#combo{position:absolute;right:12px;top:calc(max(8px,env(safe-area-inset-top)) + 150px);display:flex;flex-direction:column;align-items:flex-end;text-shadow:0 2px 0 rgba(0,0,0,.6);pointer-events:none}
 #combo b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1;color:#ffd27a}
 #combo span{font-size:11px;font-weight:700;letter-spacing:.14em;color:#fff3c4}
 #combo .cbar{width:76px;height:4px;background:rgba(0,0,0,.45);border-radius:2px;overflow:hidden;margin-top:3px}
@@ -241,11 +241,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Version info stays here (CI checks BUILD against version.json). The game code lives in js/ and is loaded in order below.
-const BUILD=7,VERSION='3.4';
-const NOTES=['All 10 missions rebuilt on the new engine as designed stages: an intro, formations, ground assaults, a mini-boss, a special event in every stage, then the boss','4 objectives per mission and mode, with live checkmarks in flight and gear rewards for each new one','Each stage and mode has its own difficulty: Hard and Extreme add extra enemies and extra waves, not just tougher armour','Bosses are now built from destructible parts: shoot off their weapons to silence them, then crack the core','First clears pay Cores','Test Range moved to Settings > Rex\'s Workshop'];
+const BUILD=8,VERSION='3.5';
+const NOTES=['10 brand-new bosses, each with its own weapons you can shoot off one by one: a dreadnought, a scythe combine, a sand serpent, a twin-rotor gunship, a diving submarine, a carrier that launches fighters, a four-legged walker, a shielded strike wing, a teleporting gunship and the final Inferno Throne','10 mini-bosses mid-stage','Boss entrances with a warning, name card and camera pull-back; boss deaths with slow motion and a reward shower','Boss bar shows each weapon and whether the core is sealed, guarded or exposed','New objectives: destroy every boss component, and beat the final boss quickly on Extreme'];
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
- var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/bosses','config/stages','config/economy','save','economy','world','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
+ var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','save','economy','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
  F.forEach(function(f){var s=document.createElement('script');s.src='js/'+f+'.js?v='+BUILD;s.async=false;s.onerror=function(){var l=document.getElementById('loading');l.hidden=false;l.textContent='Could not load game files. Check your connection and reopen.';};document.body.appendChild(s);});
 })();
 </script>

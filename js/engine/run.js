@@ -15,7 +15,7 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
  SF.BAL.run={enemyHp:row.hp,enemySpeed:row.spd,bulletSpeed:row.bullet,enemyFire:row.fire,enemyDamage:row.dmg,tele:row.tele};
  R=SF.R={kind,si,mode,diff:row,reward:kind==='range'?0:MD.reward,modeScore:kind==='range'?1:MD.score,st:STAGES[si],def:SF.STAGE_DEFS[si],respawn:kind==='range',
   t:0,slow:0,score:0,shown:0,gears:0,gp:0,kills:0,spawned:0,groundSpawned:0,groundKills:0,hits:0,specials:0,pickups:0,typeKills:{},formationsCleared:0,setupsCleared:0,
-  sinceCell:0,beams:[],marks:[],eff:{},banner:null,toasts:[],warnT:0,endT:-1,won:false,over:false,boss:null,bossTime:0,bossPartsTotal:0,bossPartsKilled:0,seen:{},
+  sinceCell:0,beams:[],marks:[],eff:{},banner:null,toasts:[],zoom:1,camZ:1,bossCard:null,warnT:0,endT:-1,won:false,over:false,boss:null,bossTime:0,bossPartsTotal:0,bossPartsKilled:0,seen:{},
   drone:save.own[save.drone]?save.drone:'',drones:[],p:null,hud:{}};
  SF.enemies.R=R;SF.player.create(R);SF.scoring.reset(R);
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
@@ -52,7 +52,8 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  SF.enemies.step(R,dt);SF.boss.step(R,dt);SF.boss.stepPending(R,dt);
  if(!R.over||R.won)SF.weapons.fire(R,dt);SF.weapons.step(R,dt);SF.pickups.step(R,dt);SF.fx.step(dt);
  R.gp=Math.max(0,R.gp-dt*4);SF.scoring.step(R,dt);if(R.kind==='stage')SF.missions.step(R);
- if(R.warnT>0)R.warnT-=dt;
+ if(R.warnT>0){R.warnT-=dt;R.camZ=1.1;}
+ if(R.bossCard&&R.bossCard.l>0)R.bossCard.l-=dt;
  if(R.banner){R.banner.l-=dt;if(R.banner.l<=0)R.banner=null;}
  for(const t of R.toasts)t.l-=dt;prune(R.toasts,t=>t.l>0);
  if(R.over&&R.won)for(const g of SF.pickups.pool.live)if(g.k==='gear'){const dx=R.p.x-g.x,dy=R.p.y-g.y,d=Math.hypot(dx,dy)||1;g.vx=dx/d*520;g.vy=dy/d*520;}
@@ -106,12 +107,12 @@ function updHud(force){const p=R.p,h=R.hud,f=p.hp/p.max;
  set('lvx',SF.weapons.level(R),()=>{const od=R.eff.overdrive;$('weapName').classList.toggle('od',!!od);if(od)$('weapName').textContent=SF.weapons.def().name+' · Lv '+Math.min(10,SF.weapons.level(R))+' OVERDRIVE';else h.lv=null;});}
 Rn.updHud=()=>{if(R)updHud(true);};
 // ---------- render ----------
-Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);gameCam(SF.fx.shake);
+Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.camZ||1)-R.zoom)*Math.min(1,dt*1.5);gameCam(SF.fx.shake,R.zoom);
  const px=p.ox+(p.x-p.ox)*A,py=p.oy+(p.y-p.oy)*A;
  if(PLM){const blink=p.inv>0&&p.alive&&Math.floor(R.t*20)%2===0&&!save.god;PLM.visible=(p.alive||p.dying>0)&&!blink&&!p.dead;
   place(PLM,px,py,false,p.dying>0?-(SF.BAL.player.deathTime-p.dying)*2:0);PLM.rotation.set(-.08+(p.dying>0?(SF.BAL.player.deathTime-p.dying)*.6:0),p.dying>0?(SF.BAL.player.deathTime-p.dying)*5:0,-p.bank*.75);}
  R.drones.forEach((d,i)=>{const m=DRM[i];if(!m)return;m.visible=p.alive;place(m,d.x,d.y,false,.2);m.rotation.y+=dt*3;});
- SF.enemies.sync(A,dt);if(LV.boss&&!SF.boss.list.some(B=>B.m))LV.boss.g.visible=false;SF.boss.sync(A,dt);
+ SF.enemies.sync(A,dt);if(LV.boss&&!SF.boss.list.some(B=>B.legacy))LV.boss.g.visible=false;SF.boss.sync(A,dt);
  renderer.render(scene,camera);updProj();
  cx.setTransform(oS,0,0,oS,0,0);cx.clearRect(0,0,OW,OH);drawWeather();
  if(SF.fx.shake>0)cx.translate(rnd(-4,4)*SF.fx.shake*1.6,rnd(-4,4)*SF.fx.shake*1.6);
@@ -132,7 +133,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);gameCam(SF.fx.
  const vg=cx.createRadialGradient(OW/2,OH/2,OH*.35,OW/2,OH/2,OH*.8);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,SF.fx.hurt>0?`rgba(200,0,30,${.25+SF.fx.hurt})`:'rgba(0,0,0,.35)');cx.fillStyle=vg;cx.fillRect(0,0,OW,OH);
  if(R.slow>0){cx.fillStyle='rgba(20,0,10,.18)';cx.fillRect(0,0,OW,OH);}
  if(SF.fx.flash>0){cx.fillStyle=`rgba(255,250,235,${Math.min(1,SF.fx.flash)})`;cx.fillRect(0,0,OW,OH);}
- SF.boss.drawBar(R);
+ SF.boss.drawBar(R);SF.boss.drawCard(R);
  if(R.kind==='stage'&&R.t<3.2){cx.globalAlpha=Math.min(1,(3.2-R.t)*1.5);cx.textAlign='center';cx.fillStyle='rgba(0,0,0,.5)';cx.fillRect(0,OH*.4-50,OW,78);cx.fillStyle='#ffb352';cx.font='600 13px "Chakra Petch", sans-serif';cx.fillText(`MISSION ${R.si+1} · ${R.mode.toUpperCase()}`,OW/2,OH*.4-26);cx.fillStyle='#fff';cx.font='26px Bungee, Impact, sans-serif';cx.fillText(R.st.name.toUpperCase(),OW/2,OH*.4+6);cx.globalAlpha=1;}
  if(R.warnT>0){const a=.5+.5*Math.sin(R.warnT*12);cx.fillStyle=`rgba(255,40,70,${.12*a})`;cx.fillRect(0,0,OW,OH);cx.textAlign='center';cx.fillStyle=`rgba(255,77,109,${a})`;cx.font='30px Bungee, Impact, sans-serif';cx.fillText('WARNING',OW/2,OH*.42);cx.fillStyle='#fff';cx.font='600 14px "Chakra Petch", sans-serif';cx.fillText(R.st.boss.name.toUpperCase()+' APPROACHING',OW/2,OH*.42+26);}
  if(R.banner){const b=R.banner,a=Math.min(1,b.l*3);cx.globalAlpha=a;cx.textAlign='center';cx.fillStyle='rgba(0,0,0,.45)';cx.fillRect(0,OH*.3-34,OW,b.sub?58:44);

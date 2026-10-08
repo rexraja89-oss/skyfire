@@ -33,7 +33,7 @@ Dr.step=(R,dt)=>{const D=R.dir,tl=R.def.timeline;
   if(D.i>=tl.length&&D.clock>=R.def.len){let air=0;for(const e of SF.enemies.list())if(e.alive&&!e.ground&&!e.d.noCount)air++;D.clearT+=dt;
    if(air===0||D.clearT>8){D.phase='warn';D.warnT=2.8;R.warnT=2.8;sfx('warn');vib(80);musicStop();musicStart((STAGES[R.si].key||45)-5);
     say('boss',`Large signature detected. It is the ${STAGES[R.si].boss.name}!`,3,0);}}}
- else if(D.phase==='warn'){D.warnT-=dt;if(D.warnT<=0){D.phase='boss';SF.boss.spawn(R,SF.boss.defFor(R.si),{hpMul:1});}}};
+ else if(D.phase==='warn'){D.warnT-=dt;if(D.warnT<=0){D.phase='boss';const b=SF.boss.defFor(R.si);SF.boss.spawn(R,b.D,{key:b.id});}}};
 // ---------- Test Range script ----------
 Dr.rangeStart=R=>{R.wi=0;R.waveT=0;R.gap=1.5;R.lastGround=-99;};
 Dr.rangeStep=(R,dt)=>{R.waveT+=dt;let air=0;for(const e of SF.enemies.list())if(e.alive&&!e.d.noCount&&!e.ground)air++;

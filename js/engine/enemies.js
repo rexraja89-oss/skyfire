@@ -151,7 +151,8 @@ En.step=(R,dt)=>{const p=R.p,L=pool.live,mv=SF.dm('enemySpeed'),pad=BAL().enemy.
    if(SF.player.hurt(R,e.d.ram||BAL().player.collideDamage)){if(e.d.dieOnRam)En.kill(e);else En.hit(e,BAL().enemy.collideRam,null);}}
   if(e.alive&&!e.d.bossPart&&(e.y>H+pad||e.x<-pad-60||e.x>W+pad+60||(e.y<-260&&e.t>6)))En.remove(e);}
  // grid for player bullets
- grid.reset();for(const e of L)if(e.alive&&!e.delay&&!e.untargetable&&e.y>-40)grid.add(e,e.x,e.y,e.r+10);
+ // sealed (invulnerable) boss parts are skipped so shots fly past them to the parts behind
+ grid.reset();for(const e of L)if(e.alive&&!e.delay&&!e.untargetable&&!e.invuln&&e.y>-40)grid.add(e,e.x,e.y,e.r+10);
  // mortar marks
  for(const mk of R.marks){mk.t-=dt;if(mk.t<=0){mk.dead=1;SF.fx.explode(mk.x,mk.y,1.5,true);addDecal(mk.x,mk.y,mk.r*.8);sfx('boom');SF.fx.addShake(.15);
   if(p.alive&&(p.x-mk.x)**2+(p.y-mk.y)**2<mk.r*mk.r)SF.player.hurt(R,mk.dmg);}}prune(R.marks,m=>!m.dead);

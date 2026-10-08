@@ -26,7 +26,7 @@ function syncEnv(dt,tnow){
  for(const c of LV.clouds){if(!c.visible)continue;c.position.z+=C3.v*dt*.95;if(c.position.z>C3.z+30)spawnCloud(c,false);}
  TER.water.material.normalMap.offset.y+=C3.v*dt*36/900;TER.water.material.normalMap.offset.x=Math.sin(tnow*.2)*.02;if(TER.lava.visible){LAVA.offset.y+=C3.v*dt*40/900+dt*.01;LAVA.offset.x=Math.sin(tnow*.3)*.03;}}
 // top-down gameplay camera (shake in seconds of remaining shake)
-function gameCam(shake){fill.intensity=0;camera.position.set(0,C3.y,C3.z);camera.lookAt(0,0,0);
+function gameCam(shake,zoom=1){fill.intensity=0;camera.position.set(0,C3.y*zoom,C3.z*zoom);camera.lookAt(0,0,0);
  if(shake>0){camera.position.x+=rnd(-.5,.5)*shake*2.2;camera.position.z+=rnd(-.5,.5)*shake*2.2;}
  scene.fog.near=230;scene.fog.far=560*(LV.B.fogN||1);
  sun.position.copy(LV.sunDir).multiplyScalar(220).add(new T3.Vector3(0,GY,(C3.Zt+C3.Zb)/2*C3.t));sun.target.position.set(0,GY,(C3.Zt+C3.Zb)/2*C3.t);}

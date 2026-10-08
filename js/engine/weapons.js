@@ -59,7 +59,7 @@ Wp.step=(R,dt)=>{const grid=SF.enemies.grid,L=pool.live;
   if(!gone&&b.k!=='f'&&SF.boss.list.length&&SF.boss.absorb(b.x,b.y)){if(Math.random()<.5)SF.fx.spark(b.x,b.y,'#ffe2a8',2);gone=true;}
   if(gone)pool.kill(b);}
  // beam
- const p=R.p,bm=p.beam;if(bm&&p.alive&&p.dying<=0){const hw=bm.w/2,hits=[];for(const e of SF.enemies.list()){if(!e.alive||e.untargetable)continue;if(Math.abs(e.x-p.x)<e.r+hw&&e.y<p.y&&e.y>-20)hits.push(e);}
+ const p=R.p,bm=p.beam;if(bm&&p.alive&&p.dying<=0){const hw=bm.w/2,hits=[];for(const e of SF.enemies.list()){if(!e.alive||e.untargetable||e.invuln)continue;if(Math.abs(e.x-p.x)<e.r+hw&&e.y<p.y&&e.y>-20)hits.push(e);}
   hits.sort((a,b)=>b.y-a.y);let end=-20;const n=Math.min(hits.length,1+bm.pierce);for(let i=0;i<n;i++){SF.enemies.hit(hits[i],bm.dps*dt,{x:p.x,beam:1});if(Math.random()<.3)SF.fx.impact(hits[i].x+rnd(-4,4),hits[i].y+hits[i].r*.5,bm.tier,'#7fe0ff');}
   if(n&&n===1+bm.pierce)end=hits[n-1].y;bm.end=end;if(n)sfx('hit');}};
 // ---- drawing ----
