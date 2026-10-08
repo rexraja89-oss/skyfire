@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - 'js/**'
       - 'icons/**'
+      - 'art/**'
       - 'tools/**'
       - 'version.json'
       - '.github/workflows/android.yml'
@@ -47,6 +48,7 @@ jobs:
           cp index.html manifest.webmanifest version.json app/www/
           cp -r js app/www/
           cp -r icons app/www/
+          if [ -d art ]; then cp -r art app/www/; fi
           # bundle three.js inside the APK so the game works offline
           (cd app && npm init -y > /dev/null && npm install --no-audit --no-fund three@0.128.0)
           cp app/node_modules/three/build/three.min.js app/www/three.min.js
