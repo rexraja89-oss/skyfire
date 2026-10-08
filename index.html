@@ -88,6 +88,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 .workshop h3{color:var(--teal);margin:0}
 .workshop .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .workshop button{font-size:13px;padding:.6em .5em}
+#lab summary{color:var(--teal);font-weight:700;padding:6px 0;cursor:pointer}
+#lab details>*:not(summary){margin-top:6px}
+.labRow{display:grid;grid-template-columns:1fr 40px 52px 40px;align-items:center;gap:6px;font-size:13px}
+.labRow b{text-align:center}
+.labRow button{padding:.3em 0}
 .stat{display:flex;justify-content:space-between;background:var(--panel);border-radius:10px;padding:10px 12px;font-variant-numeric:tabular-nums}
 .stat span{color:var(--dim)}
 .medal{display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:10px;border:1px solid var(--line)}
@@ -232,6 +237,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
           <button id="wGod" class="tog">Invincible: off</button>
         </div>
         <button id="goRange">Test Range (practice)</button>
+        <div id="lab"></div>
         <button id="wReset">Reset all progress</button>
       </div>
       <h3>What's new · <span id="verTxt"></span></h3>
@@ -292,11 +298,11 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Version info stays here (CI checks BUILD against version.json). The game code lives in js/ and is loaded in order below.
-const BUILD=10,VERSION='3.7';
-const NOTES=['Mission briefing before every flight: the story, your objectives, the next medal to earn and your loadout','Results screen counts up your score, ticks off objectives one by one and suggests the upgrade you can afford next','Objective stars on the HUD, and full live progress on the pause screen','Health bar shows a trail of the damage you just took','Smoother screen transitions'];
+const BUILD=11,VERSION='4.0';
+const NOTES=["Skyfire 4.0: the full rebuild is finished", "Real 3D city buildings and cars in the harbor, farm, port and night-city missions", "Deeper camera angle, richer colours and a soft vignette", "New music that changes for menus, combat, boss fights and victory; music dips under big explosions", "New sounds for shield hits, armour deflects, missiles, boss parts, achievements and more", "Combos are easier to keep: every hit you land keeps the chain alive", "Cheaper upgrades: about a third less gears overall, and fewer Cores at the top levels", "Rex's Workshop: new Balance lab (difficulty sliders, start at the boss, FPS counter, hitboxes)"];
 (function(){
  if(!window.THREE){var l=document.getElementById('loading');l.hidden=false;l.textContent='Skyfire needs internet the first time it loads. Connect and reopen.';return;}
- var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','config/upgrades','config/achievements','save','economy','progression','assets/kaykit','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','main'];
+ var F=['core','data','config/balance','config/weapons','config/enemies','config/ground','config/formations','config/pickups','config/difficulty','config/missions','config/stages','config/bosses','config/economy','config/upgrades','config/achievements','save','economy','progression','assets/kaykit','world','bossmodels','audio','copilot','engine/fx','engine/player','engine/weapons','engine/enemies','engine/formations','engine/pickups','engine/scoring','engine/boss','engine/director','engine/missions','engine/run','scene','ui','devtools','main'];
  F.forEach(function(f){var s=document.createElement('script');s.src='js/'+f+'.js?v='+BUILD;s.async=false;s.onerror=function(){var l=document.getElementById('loading');l.hidden=false;l.textContent='Could not load game files. Check your connection and reopen.';};document.body.appendChild(s);});
 })();
 </script>

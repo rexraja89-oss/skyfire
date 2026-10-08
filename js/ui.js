@@ -47,7 +47,7 @@ function renderSelect(){const mk_=save.mode;
   return`<button class="stagec" data-s="${i}" ${lock?'disabled':''}><span class="num">${lock?'🔒':i+1}</span><b>${s.name}</b><small>${s.place}</small><div class="meta"><span class="stars">${objs.map(o=>`<span style="opacity:${got[o.id]?1:.25}">★</span>`).join('')}</span>${T?`<span class="tier" style="color:${T.color}">${T.name.toUpperCase()}</span>`:''}</div>${b?`<small>Best ${fmt(b)}</small>`:''}</button>`;}).join('');
  $('stageList').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sfx('ui');openBrief(+b.dataset.s,mk_);});}
 function renderSettings(){document.querySelectorAll('.tog[data-k]').forEach(b=>{const k=b.dataset.k,on=!!save[k];b.classList.toggle('on',on);b.textContent=k==='hq'?(on?'High':'Smooth'):(on?'On':'Off');});
- $('sensBtn').textContent='×'+(save.sens||1).toFixed(1);$('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');}
+ $('sensBtn').textContent='×'+(save.sens||1).toFixed(1);$('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');if(SF.dev)SF.dev.renderLab();}
 document.querySelectorAll('.tog[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;save[k]=!save[k];store();sfx('ui');renderSettings();
  if(k==='music'){if(save.music){audioOn();musicStart(SF.R?STAGES[SF.R.si].key:45,state==='run'?'combat':'calm');}else musicStop();}
  if(k==='hq'){applyQuality();resize();}if(k==='voice'&&!save.voice)try{speechSynthesis.cancel();}catch(e){}});

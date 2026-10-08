@@ -137,7 +137,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
   cx.strokeStyle=near?'rgba(255,90,110,.95)':'rgba(43,209,192,.6)';cx.lineWidth=near?2:1.4;cx.beginPath();cx.arc(PX,PY,hr+(near?3.5:2.5),0,TAU);cx.stroke();}
  if(R.eff.shield&&p.alive){pj(px,py);cx.globalCompositeOperation='lighter';const a=.35+.15*Math.sin(R.t*8);cx.strokeStyle=`rgba(90,210,255,${a})`;cx.lineWidth=3;cx.beginPath();cx.arc(PX,PY,28*PS,0,TAU);cx.stroke();pdg(px,py,30,'#38c8ff');cx.globalCompositeOperation='source-over';}
  if(save.god&&p.alive){pj(px,py);cx.strokeStyle='rgba(43,209,192,.45)';cx.lineWidth=2;cx.beginPath();cx.arc(PX,PY,32*PS,0,TAU);cx.stroke();}
- SF.fx.drawPops();
+ SF.fx.drawPops();SF.dev.draw(R,A);
  cx.setTransform(oS,0,0,oS,0,0);
  const vg=cx.createRadialGradient(OW/2,OH/2,OH*.35,OW/2,OH/2,OH*.8);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,SF.fx.hurt>0?`rgba(200,0,30,${.25+SF.fx.hurt})`:'rgba(0,0,0,.35)');cx.fillStyle=vg;cx.fillRect(0,0,OW,OH);
  if(R.slow>0){cx.fillStyle='rgba(20,0,10,.18)';cx.fillRect(0,0,OW,OH);}

@@ -9,7 +9,7 @@ function fresh(){return{ver:3,gears:0,god:false,sfx:true,music:true,voice:true,v
  wl:{vulcan:0,spread:0,flamer:0,laser:0,plasma:0},dl:{gundrone:0,laserdrone:0,shielddrone:0},
  parts:{armor:0,engine:0,missile:0,magnet:0,bomb:0,regen:0},
  cores:0,ent:{},txn:{},sens:1,range:{best:0},obj:{easy:{},hard:{},extreme:{}},
- tiers:{easy:{},hard:{},extreme:{}},stats:{},ach:{},sortie:{day:'',list:[]},refund:0}}
+ tiers:{easy:{},hard:{},extreme:{}},stats:{},ach:{},sortie:{day:'',list:[]},refund:0,dev:{}}}
 function readJSON(k){try{const t=localStorage.getItem(k);if(!t)return null;const d=JSON.parse(t);return d&&typeof d==='object'?d:null;}catch(e){return null;}}
 // v2 -> v3: refund old upgrade purchases as gears (new upgrade system, new prices), turn old medals into objectives
 const OLD_COST=(base,l)=>Math.round(base*Math.pow(1.55,l));

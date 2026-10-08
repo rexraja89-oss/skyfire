@@ -1,6 +1,6 @@
 # Skyfire Transformation Plan
 
-**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) Checkpoint 3 (formations, ground combat, pickups, combo) and Checkpoint 4 (stage engine, missions, campaign on the new engine) are done. Rex asked to run Checkpoints 4-8 back to back and test only the finished, polished version. Checkpoint 5 (10 part-based bosses, 10 mini-bosses, boss presentation) is done. Checkpoint 6 (upgrade hangar, medal tiers, achievements, sortie orders, save v3) is done. Checkpoint 7 (briefing/loadout screen, animated results, HUD objectives, damage trail, transitions) is done. Next: Checkpoint 8.
+**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) Checkpoint 3 (formations, ground combat, pickups, combo) and Checkpoint 4 (stage engine, missions, campaign on the new engine) are done. Rex asked to run Checkpoints 4-8 back to back and test only the finished, polished version. Checkpoint 5 (10 part-based bosses, 10 mini-bosses, boss presentation) is done. Checkpoint 6 (upgrade hangar, medal tiers, achievements, sortie orders, save v3) is done. Checkpoint 7 (briefing/loadout screen, animated results, HUD objectives, damage trail, transitions) is done. Checkpoint 8 (CC0 KayKit city models + engine visuals, audio mixer and music states, Balance lab, balance and performance pass) is done: the rebuild is complete (v4.0).
 
 **Goal:** turn Skyfire from a good-looking prototype into a polished, replayable vertical arcade shooter. It should match the depth and feel of the best games in the genre, using only original Skyfire code, content, names, art and sound.
 
@@ -477,6 +477,8 @@ Deliverable: this file. **Stop for approval.**
   - music states
 - Full balance pass with bot runs and Rex's playtests. Tune `difficulty.js` and `economy.js` only.
 - Performance pass on a mid-range profile; final version bump. **Stop.**
+
+**Done (v4.0):** Rex chose C. Reachable CC0 source was KayKit City Builder Bits (buildings, cars, water tower) for harbor, farm, port and city; no CC0 aircraft packs were reachable, so jets, enemies and bosses stay code-built. Camera tilt 30°, fog scaled to camera distance, richer desert palette, vignette. Audio: sfx/music buses, ducking, calm/combat/boss/victory music, new event sounds. Balance lab in the Workshop. Balance: combo window 3 s and lower combo targets (bots reached 13-30), upgrade growth 1.38 (all tracks ≈195k gears), Core costs 2/3/5/8. Smooth mode uses fewer KayKit buildings in the city.
 
 ---
 

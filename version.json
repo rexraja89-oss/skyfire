@@ -1,8 +1,8 @@
 {
-  "build": 10,
-  "version": "3.7",
+  "build": 11,
+  "version": "4.0",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "mission briefings, animated results and a clearer HUD"
+    "Skyfire 4.0: real 3D city models, new music and sounds, easier combos, cheaper upgrades"
   ]
 }

@@ -25,7 +25,7 @@ Dr.run=(R,ev)=>{
    if(M.stub.escort)SF.formations.spawn('vDrop',{enemy:M.stub.escort});}
   else{const B=SF.boss.spawn(R,M,{mini:true,key:ev.mini});R.dir.hold=()=>SF.boss.list.includes(B);}
   say('mini_'+ev.mini,M.say||(M.name+' incoming. Take it down!'),2,0);}};
-Dr.start=R=>{R.dir={i:0,clock:0,hold:null,phase:'stage',warnT:0,clearT:0};};
+Dr.start=R=>{R.dir={i:0,clock:0,hold:null,phase:'stage',warnT:0,clearT:0};if(SF.dev)SF.dev.jump(R,R.dir);};
 Dr.step=(R,dt)=>{const D=R.dir,tl=R.def.timeline;
  if(D.hold){if(!D.hold())D.hold=null;else return;}
  if(D.phase==='stage'){D.clock+=dt;

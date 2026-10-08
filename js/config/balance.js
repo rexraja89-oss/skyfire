@@ -43,7 +43,8 @@ SF.BAL={
  caps:{pb:[300,200],eb:[340,260],parts:[700,280],enemies:80,pops:30},
  score:{levelUpBonus:500},
  combo:{                 // combo meter: kills inside the window keep it alive; steps raise the multiplier
-  window:2.4,steps:[0,5,12,22,35,50,70,100],mults:[1,1.5,2,2.5,3,4,5,6],
+  hitRefresh:.8,           // landing hits keeps at least this much time on the combo timer (kills reset it to the full window)
+  window:3,steps:[0,5,12,22,35,50,70,100],mults:[1,1.5,2,2.5,3,4,5,6],
   hitKeep:.5,             // fraction of the combo kept when you take damage
   groundCount:2,          // a ground kill adds this many to the combo
   milestoneEvery:25,milestoneBonus:1000,

@@ -115,7 +115,7 @@ En.hit=(e,dmg,src)=>{if(!e.alive||e.untargetable)return 0;const A=e.d.abilities|
  if(A.guarded&&e.kids&&e.kids.some(k=>k.alive))dmg*=1-A.guarded.reduce;
  if(A.frontArmor&&src&&src.x!==undefined&&!src.special){if(Math.abs(src.x-e.x)<e.r*A.frontArmor.sideFrac){dmg*=1-A.frontArmor.reduce;e.armorT=.08;sfx('deflect');if(Math.random()<.3)SF.fx.spark(src.x,e.y+e.r*.6,'#c9d2db',1);}}
  if(e.sh>0){e.sh-=dmg;e.shHit=.12;e.lastHit=e.t;if(e.sh>=0)return 0;dmg=-e.sh;e.sh=0;SF.fx.spark(e.x,e.y,'#9fe8ff',6);sfx('zap');}
- e.hp-=dmg;e.flash=.06;if(e.hp<=0)En.kill(e,src);return dmg;};
+ e.hp-=dmg;e.flash=.06;const c=En.R&&En.R.combo;if(c&&c.n>0)c.t=Math.max(c.t,SF.BAL.combo.hitRefresh);if(e.hp<=0)En.kill(e,src);return dmg;};
 En.kill=(e,src)=>{if(!e.alive)return;e.alive=false;const d=e.d,R=En.R,A=d.abilities||{},size=d.size||1;
  SF.fx.explode(e.x,e.y,size,e.ground);SF.fx.addShake(size>1.4?.2:.06);sfx(size>1.4?'boom':'pop');
  if(e.ground){addDecal(e.x,e.y,e.r*1.6);SF.fx.wreck(e.x,e.y,size);}

@@ -1,11 +1,11 @@
 'use strict';
 // ============ UPGRADES ============
-// Every upgrade track has 10 levels. Cost of the next level: gears = base × growth^level (the last two levels
+// Every upgrade track has 10 levels. Cost of the next level: gears = base × growth^level (the last three levels
 // cost extra), plus Cores from level 7 up. 'value' shows what the current and next level do in the hangar.
 // Effects are read by the engine from save.wl (weapons), save.dl (drones) and save.parts (everything else).
 SF.UPGRADES={
- maxLevel:10,growth:1.45,topLevelsMul:1.4,topLevelsFrom:8,
- coresFrom:7,coreCost:[3,5,8,12],   // cores for levels 7, 8, 9, 10
+ maxLevel:10,growth:1.38,topLevelsMul:1.25,topLevelsFrom:8,
+ coresFrom:7,coreCost:[2,3,5,8],    // cores for levels 7, 8, 9, 10
  // weapons (one track per family, save.wl)
  weapons:{
   vulcan:{base:120},spread:{base:150},flamer:{base:190},laser:{base:230},plasma:{base:260},

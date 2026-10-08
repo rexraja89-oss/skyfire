@@ -6,23 +6,29 @@ An original vertical arcade shooter by Rex. Runs in a phone browser, installs as
 **Android APK (always the newest build):** https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk
 
 ## Features
-- Full 3D: height-mapped landscapes with mountains, rivers, coastlines, forests, cities and lava; 3D jets, enemies and bosses with lighting, shadows and reflections
-- 10 missions over real-world-style places: harbor, farmland, desert highway, pine forest, container port, tropical islands, red canyon, arctic base, night city and a volcanic fortress, each with its own weather, lighting and boss
+- Full 3D: height-mapped landscapes with mountains, rivers, coastlines, forests, cities and lava; 3D jets, enemies and part-based bosses with lighting, shadows and reflections
+- 10 missions over real-world-style places: harbor, farmland, desert highway, pine forest, container port, tropical islands, red canyon, arctic base, night city and volcano, each with its own hand-built timeline of formations, ground sites, mini-boss and boss
 - Easy, Hard and Extreme modes, unlocked in order (beat mission 10 on Easy to open Hard, then Hard to open Extreme)
-- 4 jets (Falcon, Viper, Titan, Phantom), 5 weapons (Vulcan, Spread Shot, Flamethrower, Laser Lance, Plasma Cannon), 3 drone types (gun, laser, shield) and 5 upgrade parts
-- New hardware is unlocked as mission rewards
-- 20 enemy types, including special-ability craft: Hornet (homing missiles), Aegis (energy shield), Lancer (sniper beam), Hydra (splits into drones), Wraith (cloaking), Sower (mines), Mender (heals allies), Blink (teleports), plus SAM sites, artillery and shield-dome generators
-- Bosses with destructible turrets, a shielded reactor core and three attack phases; later bosses launch drones and mines
+- 10-level weapons that power up in flight with power cells: Vulcan, Spread Shot, Flamethrower, Laser Lance, Plasma Cannon, plus drones, homing missiles and the Skyburst special
+- Air and ground enemies with special abilities (shields, cloaking, teleporting, healing, splitting, sniping, minelaying), data-driven formations and ground sites
+- 10 bosses and 10 mini-bosses with breakable turrets, shields, weak points and attack phases
+- Combo meter, score bonuses, power-ups, gear pickups and rare medal chips
+- 5 objectives per mission and mode; medals Spark, Flare, Blaze and Skyfire; achievements and three daily sortie orders
+- Upgrade hangar: 10 levels for every weapon, drone and jet system, paid with Gears (and a few Cores at the top levels). Everything can be earned by playing
 - ORION copilot gives live callouts (text plus optional voice) and announces new app updates
-- Chain scoring, medals, best scores, power-ups, repair kits and bombs
-- Test Range (title screen): preview of the new engine with 10-level weapons, power cells, the Skyburst special, 17 air enemy types, 16 data-driven formations, ground sites (outposts, convoys, radar, fuel depots, comms masts, bunkers, shield generators, a factory with destructible parts), 8 power-ups and a combo multiplier
-- Rex's Workshop (Settings): unlimited gears and cores, max upgrades, unlock everything, invincible mode
+- Synthesized music that changes between menus, combat, boss fights and victory
+- Rex's Workshop (Settings): unlimited gears and cores, max upgrades, unlock everything, invincible mode, Test Range, and the Balance lab (live difficulty/damage/drop multipliers, start missions at the middle or the boss, FPS counter, hitboxes)
 
 ## Install
 - **Android APK:** open the APK link on your phone and allow your browser to install unknown apps when asked.
 - **App from the browser:** open the Play link in Chrome and tap **Install app** on the title screen (or ⋮ → Add to Home screen).
 
-Controls: drag anywhere to fly (guns fire automatically), tap BOMB to clear bullets. On desktop: arrow keys / WASD, Space for bomb, Esc to pause.
+Controls: drag anywhere to fly (guns fire automatically), tap SKYBURST to clear bullets. On desktop: arrow keys / WASD, Space for bomb, Esc to pause.
 
 ## Assets
-All graphics, music and sound effects are generated in code by this project. There are no third-party art or audio files. Fonts are Bungee and Chakra Petch from Google Fonts (SIL Open Font License). 3D rendering uses three.js r128 (MIT). The Android wrapper uses Capacitor (MIT).
+Most graphics, the music and all sound effects are generated in code by this project.
+
+Third-party assets:
+- **KayKit City Builder Bits 1.0** by Kay Lousberg (www.kaylousberg.com), licensed **CC0 1.0 Universal** (public domain, no attribution required; credited anyway). Source: https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0 . Used: buildings A, C, E, G, three cars and the water tower, converted to compact vertex-coloured meshes in `js/assets/kaykit.js` by `tools/kaykit_convert.py`.
+- Fonts: Bungee and Chakra Petch from Google Fonts (SIL Open Font License).
+- three.js r128 (MIT) for 3D rendering; Capacitor (MIT) for the Android wrapper.

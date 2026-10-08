@@ -5,7 +5,7 @@ let last=performance.now(),acc=0,pausedFrom='';
 function frame(now){requestAnimationFrame(frame);let dt=(now-last)/1000;last=now;if(dt>.1)dt=.1;
  const STEP=SF.BAL.sim.step,MAXS=SF.BAL.sim.maxSteps;let alpha=1;
  try{
-  if(state==='run'){SF.run.realTick(dt);acc+=dt*SF.run.timeScale();let n=0;while(acc>=STEP&&n<MAXS&&state==='run'){SF.run.step(STEP);acc-=STEP;n++;}if(n>=MAXS)acc=0;alpha=clamp(acc/STEP,0,1);}
+  if(state==='run'){SF.run.realTick(dt);acc+=dt*SF.run.timeScale();let n=0;const s0=performance.now();while(acc>=STEP&&n<MAXS&&state==='run'){SF.run.step(STEP);acc-=STEP;n++;}if(n>=MAXS)acc=0;alpha=clamp(acc/STEP,0,1);SF.dev.frame(dt,performance.now()-s0);}
   else if(state!=='pause'&&state!=='none'){acc=0;gz3+=C3.v*(state==='result'?.3:.8)*dt;stepWeather(dt);}
   if(LV.si>=0){updTerrain(false);
    if(state==='run'||(state==='pause'&&pausedFrom==='run'))SF.run.render(state==='pause'?0:dt,state==='pause'?1:alpha,now/1000);
