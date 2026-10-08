@@ -465,6 +465,10 @@ Deliverable: this file. **Stop for approval.**
 - Transitions, button feedback and haptics. **Stop.**
 
 ### Checkpoint 8: effects + audio + balance + performance
+- **Visual upgrade toward a realistic 3D look (Rex, after Checkpoint 3):**
+  - **A.** Replace code-built models with professionally made CC0 model packs (e.g. Kenney, Quaternius), recoloured and mixed so Skyfire keeps its own look. Sources and licences go in the README.
+  - **B.** Engine visuals: bloom/glow, better lighting, textured terrain (fields, roads, rock, water detail), 3D explosions/smoke/trails instead of flat overlay sprites, a slightly tilted camera for depth.
+  - **C.** Both (recommended). Rex picks A, B or C when this checkpoint starts. Everything must stay smooth on a phone (Smooth mode keeps working).
 - Layered effects for explosions, impacts, sparks, smoke, fire, trails, debris, shockwaves, flashes, pickups, damage and specials. All within the particle caps and scaled down in Smooth mode.
 - Environment: parallax cloud layers, ambient life per biome, zone transitions.
 - Audio:
