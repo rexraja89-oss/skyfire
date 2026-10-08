@@ -61,11 +61,17 @@ jobs:
       - name: Build APK
         working-directory: app/android
         run: |
-          mkdir -p ~/.android
-          cp ../../tools/debug.keystore ~/.android/debug.keystore
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
           cp app/build/outputs/apk/debug/app-debug.apk ../../Skyfire-Squadron.apk
+
+      - name: Check the APK is signed with the committed key
+        run: |
+          want=$(keytool -list -v -keystore tools/debug.keystore -storepass android | grep -m1 'SHA256:' | awk '{print $2}')
+          got=$(keytool -printcert -jarfile Skyfire-Squadron.apk | grep -m1 'SHA256:' | awk '{print $2}')
+          echo "keystore: $want"
+          echo "apk:      $got"
+          test -n "$want" && test "$want" = "$got"
 
       - name: Publish release
         uses: softprops/action-gh-release@v2

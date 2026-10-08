@@ -52,10 +52,18 @@ if 'screenOrientation' not in x:
     x = x.replace('<activity', '<activity android:screenOrientation="portrait"', 1)
 open(manifest, 'w').write(x)
 
-# version
+# version + signing: always sign with the committed key so every new APK installs over the last one
 gradle = os.path.join(android, 'app/build.gradle')
 x = open(gradle).read()
 x = re.sub(r'versionCode \d+', 'versionCode ' + code, x)
 x = re.sub(r'versionName "[^"]*"', 'versionName "' + name + '"', x)
+ks = os.path.join(here, 'debug.keystore').replace('\\', '/')
+signing = ('    signingConfigs {\n        skyfire {\n'
+           '            storeFile file("' + ks + '")\n'
+           '            storePassword "android"\n            keyAlias "androiddebugkey"\n            keyPassword "android"\n'
+           '        }\n    }\n')
+assert 'signingConfigs' not in x
+x = x.replace('    buildTypes {\n', signing + '    buildTypes {\n        debug {\n            signingConfig signingConfigs.skyfire\n        }\n', 1)
+assert 'signingConfig signingConfigs.skyfire' in x, 'could not add signing config'
 open(gradle, 'w').write(x)
 print('patched', android, code, name)
