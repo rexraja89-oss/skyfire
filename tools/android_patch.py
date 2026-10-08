@@ -55,8 +55,9 @@ open(manifest, 'w').write(x)
 # version + signing: always sign with the committed key so every new APK installs over the last one
 gradle = os.path.join(android, 'app/build.gradle')
 x = open(gradle).read()
-x = re.sub(r'versionCode \d+', 'versionCode ' + code, x)
-x = re.sub(r'versionName "[^"]*"', 'versionName "' + name + '"', x)
+x, n1 = re.subn(r'versionCode \d+', 'versionCode ' + code, x)
+x, n2 = re.subn(r'versionName "[^"]*"', 'versionName "' + name + '"', x)
+assert n1 == 1 and n2 == 1, 'could not set versionCode/versionName'
 ks = os.path.join(here, 'debug.keystore').replace('\\', '/')
 signing = ('    signingConfigs {\n        skyfire {\n'
            '            storeFile file("' + ks + '")\n'

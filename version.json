@@ -1,6 +1,6 @@
 {
-  "build": 3,
-  "version": "3.0",
+  "build": 4,
+  "version": "3.1",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
-  "notes": ["full 3D landscapes and 11 new enemy types with special abilities"]
+  "notes": ["updates now install over the old app, plus progress backup codes"]
 }

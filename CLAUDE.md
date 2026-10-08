@@ -7,7 +7,7 @@ Rex works from a Samsung S22 Ultra only (no laptop/PC). He tests every change by
 - `index.html` — the whole game (one self-contained file, no build step, no external assets except Google Fonts). The 3D engine uses three.js **r128** from cdnjs (global `THREE` build); the APK workflow bundles a local copy so the app works offline. Everything else (terrain, models, textures, sound) is generated in code.
 - `manifest.webmanifest`, `sw.js`, `icons/` — installable app (PWA) + offline support.
 - `version.json` — in-game update notice. **Bump `build` here and `BUILD`/`VERSION`/`NOTES` in `index.html` together** on every release so ORION tells players an update is ready.
-- `.github/workflows/android.yml` + `tools/` — GitHub Actions builds the Android APK with Capacitor on every push to `main` and publishes it as the latest release. `tools/debug.keystore` is a public debug key (keeps APK updates installable over each other).
+- `.github/workflows/android.yml` + `tools/` — GitHub Actions builds the Android APK with Capacitor on every push to `main` and publishes it as the latest release. `tools/debug.keystore` is the app's signing key: **never regenerate or replace it** — Android only installs updates signed with the same key (SHA256 `63:86:B6:…:19:95`, checked in CI). Don't rename `android.yml` (versionCode = run_number must keep rising).
 - APK link: https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk
 
 ## Project rules

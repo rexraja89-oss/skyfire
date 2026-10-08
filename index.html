@@ -172,6 +172,7 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
       <div class="set"><div>ORION voice<span>Copilot speaks updates out loud</span></div><button class="tog" data-k="voice"></button></div>
       <div class="set"><div>Vibration</div><button class="tog" data-k="vib"></button></div>
       <div class="set"><div>Graphics<span>Smooth mode = fewer effects, higher frame rate</span></div><button class="tog" data-k="hq"></button></div>
+      <div class="set"><div>Progress backup<span>Copy a save code, or paste one to restore</span></div><div style="display:flex;gap:6px"><button id="saveOut" class="tog" style="min-width:0;white-space:nowrap;font-size:13px">Back up</button><button id="saveIn" class="tog" style="min-width:0;white-space:nowrap;font-size:13px">Restore</button></div></div>
       <div class="workshop">
         <h3>Rex's Workshop</h3>
         <div class="grid">
@@ -217,8 +218,8 @@ h3{margin:4px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;co
 <script>
 (()=>{
 'use strict';
-const BUILD=3,VERSION='3.0';
-const NOTES=['Full 3D engine: real landscapes with mountains, rivers, oceans, forests, cities and lava, plus lighting, shadows and reflections','11 new enemy types with special abilities: homing missiles, energy shields, sniper beams, cloaking, splitting, mines, healing, teleporting, SAM sites, artillery and shield domes','Bosses rebuilt in 3D, and later bosses launch drones and mines','10 missions across Easy, Hard and Extreme modes','4 jets, 5 weapons, 3 drone types, upgrade parts, mission rewards','ORION copilot warns you about each new enemy ability'];
+const BUILD=4,VERSION='3.1';
+const NOTES=['App updates now install over the old version (one last reinstall needed if you had an older APK)','New: back up and restore your progress with a save code (Settings)','Full 3D engine: real landscapes with mountains, rivers, oceans, forests, cities and lava, plus lighting, shadows and reflections','11 new enemy types with special abilities: homing missiles, energy shields, sniper beams, cloaking, splitting, mines, healing, teleporting, SAM sites, artillery and shield domes','Bosses rebuilt in 3D, and later bosses launch drones and mines','10 missions across Easy, Hard and Extreme modes','4 jets, 5 weapons, 3 drone types, upgrade parts, mission rewards','ORION copilot warns you about each new enemy ability'];
 const PAGES='https://rexraja89-oss.github.io/skyfire/';
 const IN_APP=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
 const $=id=>document.getElementById(id);
@@ -1253,6 +1254,15 @@ $('wGears').onclick=()=>{save.gears+=10000;store();sfx('power');$('wGears').text
 $('wMax').onclick=()=>{for(const k in save.wl)save.wl[k]=MAXL;for(const k in save.dl)save.dl[k]=MAXL;for(const k in save.parts)save.parts[k]=MAXL;store();sfx('power');$('wMax').textContent='All maxed ✓';};
 $('wUnlock').onclick=()=>{for(const m of MODES)save.prog[m.k]=STAGES.length;for(const s of STAGES)save.own[s.reward]=1;store();sfx('power');$('wUnlock').textContent='Everything open ✓';};
 $('wGod').onclick=()=>{save.god=!save.god;store();renderSettings();};
+// save code backup / restore (moves progress between the app and the browser, or survives a reinstall)
+const flashBtn=(id,t,orig)=>{$(id).textContent=t;setTimeout(()=>$(id).textContent=orig,1600);};
+$('saveOut').onclick=()=>{const code='SKY1:'+btoa(unescape(encodeURIComponent(JSON.stringify(save))));
+ const manual=()=>{try{window.prompt('Copy this save code and keep it somewhere safe:',code);}catch(e){}};
+ try{navigator.clipboard.writeText(code).then(()=>flashBtn('saveOut','Copied ✓','Back up'),manual);}catch(e){manual();}};
+$('saveIn').onclick=()=>{let t=null;try{t=window.prompt('Paste your save code:');}catch(e){}if(!t)return;t=t.trim();
+ try{if(!t.startsWith('SKY1:'))throw 0;const d=JSON.parse(decodeURIComponent(escape(atob(t.slice(5)))));if(!d||typeof d!=='object'||!d.prog)throw 0;
+  localStorage.setItem(KEY,JSON.stringify(d));save=load();store();renderSettings();flashBtn('saveIn','Restored ✓','Restore');}
+ catch(e){flashBtn('saveIn','Invalid code','Restore');}};
 let resetArm=0;$('wReset').onclick=()=>{if(!resetArm){resetArm=1;$('wReset').textContent='Tap again to wipe everything';setTimeout(()=>{resetArm=0;$('wReset').textContent='Reset all progress';},3000);return;}
  save=fresh();store();resetArm=0;$('wReset').textContent='Reset all progress';renderSettings();};
 function pause(){if(state!=='play')return;state='pause';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}

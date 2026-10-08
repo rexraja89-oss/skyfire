@@ -33,6 +33,13 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Check version numbers match
+        run: |
+          page=$(grep -oP 'const BUILD=\K[0-9]+' index.html)
+          json=$(python3 -c "import json;print(json.load(open('version.json'))['build'])")
+          echo "index.html BUILD=$page  version.json build=$json"
+          test "$page" = "$json"
+
       - name: Bundle the game
         run: |
           mkdir -p app/www
@@ -49,7 +56,8 @@ jobs:
         working-directory: app
         run: |
           npm install --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
-          echo '{"appId":"com.rexraja.skyfire","appName":"Skyfire Squadron","webDir":"www","android":{"backgroundColor":"#0a1220"}}' > capacitor.config.json
+          # androidScheme/hostname pinned to Capacitor's defaults so the save (localStorage origin) survives future upgrades
+          echo '{"appId":"com.rexraja.skyfire","appName":"Skyfire Squadron","webDir":"www","server":{"androidScheme":"https","hostname":"localhost"},"android":{"backgroundColor":"#0a1220"}}' > capacitor.config.json
           npx cap add android
           npx cap sync android
 
@@ -67,11 +75,14 @@ jobs:
 
       - name: Check the APK is signed with the committed key
         run: |
+          # The installed app only accepts updates signed with this exact key. Never replace tools/debug.keystore.
+          expected=63:86:B6:10:66:0E:F9:AB:79:D6:5C:89:5F:E8:EC:9E:60:7B:B4:0D:3A:20:90:B3:7C:76:15:5F:34:7E:19:95
           want=$(keytool -list -v -keystore tools/debug.keystore -storepass android | grep -m1 'SHA256:' | awk '{print $2}')
           got=$(keytool -printcert -jarfile Skyfire-Squadron.apk | grep -m1 'SHA256:' | awk '{print $2}')
+          echo "expected: $expected"
           echo "keystore: $want"
           echo "apk:      $got"
-          test -n "$want" && test "$want" = "$got"
+          test "$want" = "$expected" && test "$got" = "$expected"
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
