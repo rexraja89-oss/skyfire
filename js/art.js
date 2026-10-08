@@ -23,7 +23,9 @@ A.flat=(cv,len)=>{const T3=THREE,t=new T3.CanvasTexture(cv);t.encoding=T3.sRGBEn
 // swap a model group's built-in meshes for the picture
 A.swap=(group,cv,len)=>{for(const ch of group.children)ch.visible=false;const m=A.flat(cv,len);m.userData.art=1;group.add(m);return m;};
 // player jets: art/jet_<plane>.png
-A.applyJets=async()=>{for(const k in PLANES){const cv=await A.load('jet_'+k);if(!cv)continue;const g=MODELS['pl_'+k];if(!g)continue;
+A.have=new Set();
+A.applyJets=async()=>{for(const k in PLANES){if(!A.have.has('jet_'+k))continue;const cv=await A.load('jet_'+k);if(!cv)continue;const g=MODELS['pl_'+k];if(!g)continue;
   A.swap(g,cv,PLANES[k].jet.L*K*1.08);A.list.push('jet_'+k);}};
-A.init=()=>A.applyJets().catch(e=>console.warn('art',e));
+// art/list.json names the pictures that exist (so the game never asks for missing files)
+A.init=()=>fetch('art/list.json?v='+BUILD).then(r=>r.ok?r.json():[]).catch(()=>[]).then(l=>{A.have=new Set(l||[]);return A.applyJets();}).catch(e=>console.warn('art',e));
 })();
