@@ -1,8 +1,8 @@
 {
-  "build": 12,
-  "version": "4.1",
+  "build": 13,
+  "version": "4.2",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Rex's new Falcon jet"
+    "Rex's realistic Falcon artwork"
   ]
 }

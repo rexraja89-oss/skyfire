@@ -38,7 +38,8 @@ function sync3D(dt,tnow){syncEnv(dt,tnow);
  {
   // menu flyby: low cinematic camera with the horizon in view
   camera.position.set(Math.sin(tnow*.15)*5,GY+21,C3.z-6);camera.lookAt(Math.sin(tnow*.15)*2.5,GY+5,C3.z-100);
-  if(PLM){PLM.visible=true;PLM.position.set(1+Math.sin(tnow*.6)*2.5,GY+15.4+Math.sin(tnow*1.3)*.4,C3.z-40);PLM.rotation.set(.35,-.75+Math.sin(tnow*.6)*.15,.45+Math.cos(tnow*.6)*.2);PLM.scale.setScalar(1.1);}
+  if(PLM){PLM.visible=true;PLM.position.set(1+Math.sin(tnow*.6)*2.5,GY+15.4+Math.sin(tnow*1.3)*.4,C3.z-40);if(PLM.userData.flat){PLM.rotation.set(1.05+Math.sin(tnow*.7)*.05,Math.sin(tnow*.6)*.08,Math.cos(tnow*.6)*.15);PLM.scale.setScalar(1);PLM.position.x+=4.5;}   // picture jets face the camera
+   else{PLM.rotation.set(.35,-.75+Math.sin(tnow*.6)*.15,.45+Math.cos(tnow*.6)*.2);PLM.scale.setScalar(1.1);}}
   fill.intensity=1.1;fill.position.copy(camera.position);fill.target.position.copy(PLM?PLM.position:camera.position);
   for(const m of DRM)m.visible=false;if(LV.boss)LV.boss.g.visible=false;
   sun.position.copy(LV.sunDir).multiplyScalar(200).add(new T3.Vector3(0,GY,C3.z-60));sun.target.position.set(0,GY,C3.z-60);

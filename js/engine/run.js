@@ -127,13 +127,13 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  if(SF.fx.shake>0)cx.translate(rnd(-4,4)*SF.fx.shake*1.6,rnd(-4,4)*SF.fx.shake*1.6);
  SF.fx.drawBack();SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
  cx.globalCompositeOperation='lighter';
- if(p.alive&&PLM&&PLM.visible){const J=p.pl.jet,n=J.eng||1,f=.8+Math.sin(R.t*50)*.2+Math.min(.4,Math.max(0,-p.vy)/900);for(let i=0;i<n;i++){const ex=px+(n===1?0:(i-.5)*J.fw*1.2);pdg(ex,py+J.L/2+4,10*f,'#ff9d2e');pdg(ex,py+J.L/2+2,5,'#fff3c4');}}
+ if(p.alive&&PLM&&PLM.visible){const J=p.pl.jet,n=J.eng||1,f=.8+Math.sin(R.t*50)*.2+Math.min(.4,Math.max(0,-p.vy)/900);for(let i=0;i<n;i++){const ex=px+(n===1?0:(i-.5)*J.fw*1.2);pdg(ex,py+(J.flameY||J.L/2)+4,10*f,'#ff9d2e');pdg(ex,py+(J.flameY||J.L/2)+2,5,'#fff3c4');}}
  cx.globalCompositeOperation='source-over';
  SF.boss.draw(R,A);SF.weapons.draw(R,A);SF.enemies.drawFlash(A);SF.fx.drawFront();SF.enemies.drawBullets(A);
  if(p.burst){const b=p.burst,a=1-b.t/SF.BAL.special.expandTime;pj(b.x,b.y);cx.globalCompositeOperation='lighter';cx.strokeStyle=`rgba(255,220,140,${.3+.6*a})`;cx.lineWidth=(6+10*a)*PS;cx.beginPath();cx.ellipse(PX,PY,b.r*PS,b.r*PS*.85,0,0,TAU);cx.stroke();
   cx.strokeStyle=`rgba(255,255,255,${.5*a})`;cx.lineWidth=2;cx.stroke();cx.globalCompositeOperation='source-over';}
  if(p.alive&&p.dying<=0){let near=0;for(const b of SF.enemies.ebPool.live){if((b.x-p.x)**2+(b.y-p.y)**2<3600){near=1;break;}}
-  pj(px,py);const hr=SF.BAL.player.hitR*PS;cx.fillStyle='#ffffff';cx.beginPath();cx.arc(PX,PY,hr*.9,0,TAU);cx.fill();
+  pj(px,py);const hr=SF.BAL.player.hitR*PS;cx.fillStyle='rgba(255,255,255,.6)';cx.beginPath();cx.arc(PX,PY,hr*.7,0,TAU);cx.fill();
   cx.strokeStyle=near?'rgba(255,90,110,.95)':'rgba(43,209,192,.6)';cx.lineWidth=near?2:1.4;cx.beginPath();cx.arc(PX,PY,hr+(near?3.5:2.5),0,TAU);cx.stroke();}
  if(R.eff.shield&&p.alive){pj(px,py);cx.globalCompositeOperation='lighter';const a=.35+.15*Math.sin(R.t*8);cx.strokeStyle=`rgba(90,210,255,${a})`;cx.lineWidth=3;cx.beginPath();cx.arc(PX,PY,28*PS,0,TAU);cx.stroke();pdg(px,py,30,'#38c8ff');cx.globalCompositeOperation='source-over';}
  if(save.god&&p.alive){pj(px,py);cx.strokeStyle='rgba(43,209,192,.45)';cx.lineWidth=2;cx.beginPath();cx.arc(PX,PY,32*PS,0,TAU);cx.stroke();}
