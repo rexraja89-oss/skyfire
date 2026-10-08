@@ -33,8 +33,8 @@ SF.BAL={
  },
  enemy:{fireMinY:30,fireMaxFrac:.72,offscreenPad:90,collideRam:5},
  pickup:{                 // power cells: rubber-band odds (chance falls as the weapon level climbs)
-  cellChanceByLevel:[.0,.34,.3,.26,.22,.18,.15,.12,.1,.08,.06],
-  guaranteeEveryKills:14, // pity: a cell is guaranteed after this many kills without one
+  cellChanceByLevel:[0,.3,.25,.21,.17,.14,.11,.09,.07,.055,.045],
+  guaranteeEveryKills:18, // pity: a cell is guaranteed after this many kills without one
   repairChance:.03,repairAmount:.35,chargeChance:.035,chargeAmount:35,
   cellBonusAtMax:1500,magnetRange:75,fall:60,
  },

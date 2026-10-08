@@ -15,7 +15,8 @@ An original vertical arcade shooter by Rex. Runs in a phone browser, installs as
 - Bosses with destructible turrets, a shielded reactor core and three attack phases; later bosses launch drones and mines
 - ORION copilot gives live callouts (text plus optional voice) and announces new app updates
 - Chain scoring, medals, best scores, power-ups, repair kits and bombs
-- Rex's Workshop (Settings): unlimited gears, max upgrades, unlock everything, invincible mode
+- Test Range (title screen): preview of the new engine with 10-level weapons, power cells, the Skyburst special and 17 enemy types with their own movement, attack patterns and abilities
+- Rex's Workshop (Settings): unlimited gears and cores, max upgrades, unlock everything, invincible mode
 
 ## Install
 - **Android APK:** open the APK link on your phone and allow your browser to install unknown apps when asked.

@@ -1,6 +1,6 @@
 # Skyfire Transformation Plan
 
-**Checkpoint 1: inspection and architecture plan.** No game code has been changed.
+**Status:** Checkpoint 1 (plan) and Checkpoint 2 (player, weapons, enemy engine, economy architecture) are done. Next: Checkpoint 3.
 
 **Goal:** turn Skyfire from a good-looking prototype into a polished, replayable vertical arcade shooter. It should match the depth and feel of the best games in the genre, using only original Skyfire code, content, names, art and sound.
 
@@ -282,25 +282,50 @@ All names below are new for Skyfire, and the final list is Rex's call.
   - Inferno Throne, a multi-stage final boss with a desperation phase
   - plus 4–5 **mini-bosses**
 
-### 6.5 Economy (original)
+### 6.5 Economy (original, monetization-ready)
 
-- **Gears** stay the main currency. A second, rarer currency, **Cores**, comes from medals, boss first-kills and achievements, and gates top upgrade levels and plane unlocks. That way skill gates the end game, not grinding alone.
-- **Upgrade tracks** (configurable, 10 levels each):
-  - main gun
-  - wing weapon
-  - hull
-  - shield regen
-  - special attack (bomb → choice of special per plane)
-  - magnet
-  - drones
-- Each level shows *current value → next value* and costs gears (plus Cores from level 7 up).
-- **Cost curve:** about ×1.45 per level with a steeper final 2 levels. All values live in `economy.js`. No real-time waits, ads or purchases.
-- **Medal tiers per stage × mode** (original names): **Spark, Flare, Blaze, Skyfire.** Each tier is scored from objectives completed, score threshold, damage taken, destruction % and ground %. A higher tier pays a one-time gear and Core bonus.
-- **Repeatable progression:**
-  - daily-style "sortie orders" (3 rotating objectives across any stage; offline, date-seeded)
-  - lifetime statistics
-  - about 30 achievements that pay Cores
-- **Unlocks:** stage N+1 opens on clearing stage N (as today). Modes keep the current rule: beat mission 10 to open the next mode. Planes and weapon families unlock through stage rewards and Cores.
+*Updated after Checkpoint 1 at Rex's request: Skyfire may be published on Google Play and monetized. The economy is built so real-money purchases can be added later without changing progression code. **No payment processing is implemented yet.***
+
+**Currencies**
+- **Gears** (normal currency) are earned from stages, missions, medals and rewards, and buy normal upgrades.
+- **Cores** (rare premium currency) are earned in play in limited amounts (first clears, medal tiers, boss first kills, achievements, sortie orders) and can later be bought. They pay for high-tier upgrade levels and selected premium features.
+
+**Layers (kept apart)**
+
+| Layer | File | Gameplay may use it? | Responsibility |
+|---|---|---|---|
+| `SF.wallet` | `js/economy.js` | yes | `balance`, `canAfford({gears,cores})`, `spend(cost, reason)`, `grant(currency, n, source)` |
+| `SF.ent` | `js/economy.js` | yes | `has(id)`, `perk(name)`: "does the player own this?" |
+| `SF.billing` | `js/economy.js` | **no** (store UI only) | provider registry, product query (localised prices come from the store), purchase → verify → fulfil once per transaction → finish/consume, restore |
+| Catalog | `js/config/economy.js` | data | product ids, consumable or non-consumable, what each grants. **No prices.** |
+
+**Example products** (final list and prices decided later):
+- `core_pack_small`, `core_pack_medium`, `core_pack_large`, `gear_pack` (consumable)
+- `starter_pack`, `remove_ads`, `premium_upgrade_pack` (non-consumable, restorable)
+
+**Provider interface.** Google Play Billing becomes a new provider object with these functions, registered via `SF.billing.register()`:
+- `init`
+- `available`
+- `queryProducts`
+- `purchase`
+- `verify` (server-side later)
+- `finish`
+- `restore`
+
+Today the game runs with a `none` provider, so no store shows. A `dev` provider with no money involved exists only so automated tests can exercise the full purchase → fulfil → restore path. Transactions are recorded in the save (`txn`) so a receipt is never granted twice.
+
+**Fair-play rules** (also written at the top of `js/config/economy.js`):
+1. A free player can finish every stage and mode and max every upgrade through play.
+2. Anything that costs Cores is also reachable with Cores earned in play. Paying only makes it faster.
+3. Paid items are convenience, faster progression, cosmetics, optional extra content or support. There is no paid-only power, no paid-only main-campaign stage and no pay-to-continue.
+4. Randomised rewards are never sold for real money.
+
+**Upgrades and rewards (Checkpoint 6):**
+- **Upgrade tracks** (configurable, 10 levels each): main gun, wing weapon, hull, shield regen, special attack, magnet, drones.
+- Each level shows *current value → next value* and a cost from `economy.js` (gears; plus cores from level 7). Cost curve about ×1.45 per level with a steeper final 2 levels.
+- **Medal tiers per stage × mode:** Spark, Flare, Blaze, Skyfire. Each tier pays one-time gears and cores.
+- **Repeatable:** sortie orders (3 rotating date-seeded objectives), lifetime statistics, about 30 achievements.
+- **Unlocks:** stage N+1 on clearing stage N; modes as today (beat mission 10 to open the next mode); planes and weapon families via stage rewards and Cores.
 
 ### 6.6 Save v3
 
@@ -367,7 +392,7 @@ The existing Workshop buttons stay.
 ### Checkpoint 1: inspection and plan *(this document)*
 Deliverable: this file. **Stop for approval.**
 
-### Checkpoint 2: player + weapons + enemy engine
+### Checkpoint 2: player + weapons + enemy engine ✅ done (v3.2, build 5)
 - Split into `js/` files and update `android.yml`, `sw.js` and `CLAUDE.md`. Move the 3D world code unchanged into `world.js`.
 - Fixed-step loop, event bus, pools, spatial grid, damage pipeline.
 - **Player:**

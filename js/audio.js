@@ -26,6 +26,7 @@ function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=perfo
  else if(k==='blink'){tone(1800,300,.18,'sine',.06);}
  else if(k==='heal'){tone(600,1200,.25,'sine',.04);}
  else if(k==='mine'){tone(1000,1000,.05,'square',.03);}
+ else if(k==='lvl'){[523,784,1047,1568].forEach((f,i)=>tone(f,f*1.01,.11,'square',.05,i*.055));tone(260,520,.25,'triangle',.06);}
  else if(k==='ui')tone(700,900,.05,'triangle',.05);}
 const MUS={iv:null,next:0,step:0,root:45,prog:[0,8,3,10],len:.115};
 const hz=m=>440*Math.pow(2,(m-69)/12);

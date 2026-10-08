@@ -68,14 +68,14 @@ function renderSelect(){const mk_=save.mode;
   return`<button class="stagec" data-s="${i}" ${lock?'disabled':''}><span class="num">${lock?'🔒':i+1}</span><b>${s.name}</b><small>${s.place}</small><div class="meta"><span class="stars">${MEDALS.map(([k])=>`<span style="opacity:${m[k]?1:.25}">★</span>`).join('')}</span><span class="diff">${[1,2,3,4,5,6,7].map(j=>`<i class="${j<=d?'on':''}"></i>`).join('')}</span></div>${b?`<small>Best ${fmt(b)}</small>`:''}</button>`;}).join('');
  $('stageList').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sfx('ui');startRun(+b.dataset.s,mk_);});}
 function renderSettings(){document.querySelectorAll('.tog[data-k]').forEach(b=>{const k=b.dataset.k,on=!!save[k];b.classList.toggle('on',on);b.textContent=k==='hq'?(on?'High':'Smooth'):(on?'On':'Off');});
- $('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');}
+ $('sensBtn').textContent='×'+(save.sens||1).toFixed(1);$('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');}
 document.querySelectorAll('.tog[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;save[k]=!save[k];store();sfx('ui');renderSettings();
  if(k==='music'){if(save.music){audioOn();musicStart(state==='play'||state==='pause'?STAGES[G.si].key:45);}else musicStop();}
  if(k==='hq'){applyQuality();resize();}if(k==='voice'&&!save.voice)try{speechSynthesis.cancel();}catch(e){}});
-function goTitle(){state='title';clearRun();G=null;showPlayerModel();$('bankT').textContent=fmt(SF.wallet.balance('gears'));$('coreT').textContent=fmt(SF.wallet.balance('cores'));show('title');resetCopilot();WX.length=0;}
+function goTitle(){if(SF.R)SF.range.stop();state='title';clearRun();G=null;showPlayerModel();$('bankT').textContent=fmt(SF.wallet.balance('gears'));$('coreT').textContent=fmt(SF.wallet.balance('cores'));show('title');resetCopilot();WX.length=0;}
 function go(name){sfx('ui');if(name==='title')return goTitle();state=name;if(name==='select')renderSelect();if(name==='hangar')renderHangar();if(name==='settings')renderSettings();show(name);}
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
-$('goPlay').onclick=()=>{audioOn();go('select');};$('goHangar').onclick=()=>{audioOn();go('hangar');};$('goSettings').onclick=()=>{audioOn();go('settings');};
+$('goPlay').onclick=()=>{audioOn();go('select');};$('goRange').onclick=()=>{sfx('ui');SF.range.start();};$('goHangar').onclick=()=>{audioOn();go('hangar');};$('goSettings').onclick=()=>{audioOn();go('settings');};
 $('hTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{hTab=b.dataset.t;sfx('ui');renderHangar();});
 $('resHangar').onclick=()=>{clearRun();G=null;showPlayerModel();go('hangar');};$('resMenu').onclick=()=>{clearRun();G=null;showPlayerModel();go('select');};
 $('wGears').onclick=()=>{SF.wallet.grant('gears',10000,'workshop');SF.wallet.grant('cores',100,'workshop');sfx('power');$('wGears').textContent='Added ✓';setTimeout(()=>$('wGears').textContent='+10k gears, +100 cores',900);};
@@ -93,11 +93,11 @@ $('saveIn').onclick=()=>{let t=null;try{t=window.prompt('Paste your save code:')
  catch(e){flashBtn('saveIn','Invalid code','Restore');}};
 let resetArm=0;$('wReset').onclick=()=>{if(!resetArm){resetArm=1;$('wReset').textContent='Tap again to wipe everything';setTimeout(()=>{resetArm=0;$('wReset').textContent='Reset all progress';},3000);return;}
  save=fresh();store();resetArm=0;$('wReset').textContent='Reset all progress';renderSettings();};
-function pause(){if(state!=='play')return;state='pause';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}
+function pause(){if(state!=='play'&&state!=='range')return;pausedFrom=state;state='pause';$('quit').textContent=pausedFrom==='range'?'Leave Test Range':'Leave mission (keep gears)';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}
 $('pauseBtn').onclick=pause;
-$('resume').onclick=()=>{state='play';show('play');last=performance.now();};
-$('quit').onclick=()=>{G.win=false;state='play';finish();};
-$('bombBtn').addEventListener('pointerdown',e=>{e.stopPropagation();bomb();});
+$('resume').onclick=()=>{state=pausedFrom||'play';pausedFrom='';show('play');last=performance.now();};
+$('quit').onclick=()=>{if(pausedFrom==='range'){pausedFrom='';goTitle();return;}pausedFrom='';G.win=false;state='play';finish();};
+$('bombBtn').addEventListener('pointerdown',e=>{e.stopPropagation();if(state==='range')SF.range.special();else bomb();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();if(AC)AC.suspend();}else if(AC)AC.resume();});
 
 // ---------- sizing ----------
@@ -112,10 +112,10 @@ addEventListener('resize',()=>resize());
 // ---------- input ----------
 let drag=null;
 function gp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*OW,y:(e.clientY-r.top)/r.height*OH};}
-cv.addEventListener('pointerdown',e=>{audioOn();if(state!=='play')return;drag=gp(e);try{cv.setPointerCapture(e.pointerId);}catch(_){} });
-cv.addEventListener('pointermove',e=>{if(!drag||state!=='play')return;const q=gp(e);pj(G.p.x,G.p.y);const f=1.3/Math.max(.5,PS);G.p.tx=clamp(G.p.tx+(q.x-drag.x)*f,16,W-16);G.p.ty=clamp(G.p.ty+(q.y-drag.y)*f*1.1,lyAt(.16),H-30);drag=q;});
+cv.addEventListener('pointerdown',e=>{audioOn();if(state!=='play'&&state!=='range')return;drag=gp(e);try{cv.setPointerCapture(e.pointerId);}catch(_){} });
+cv.addEventListener('pointermove',e=>{if(!drag)return;if(state==='range'){const q=gp(e),R=SF.R;pj(R.p.x,R.p.y);const f=1/Math.max(.5,PS);SF.range.drag((q.x-drag.x)*f,(q.y-drag.y)*f);drag=q;return;}if(state!=='play')return;const q=gp(e);pj(G.p.x,G.p.y);const f=1.3*(save.sens||1)/Math.max(.5,PS);G.p.tx=clamp(G.p.tx+(q.x-drag.x)*f,16,W-16);G.p.ty=clamp(G.p.ty+(q.y-drag.y)*f*1.1,lyAt(.16),H-30);drag=q;});
 const endDrag=()=>drag=null;cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
-addEventListener('keydown',e=>{audioOn();keys[e.key]=true;if(e.key===' '){e.preventDefault();bomb();}if(e.key==='Escape')pause();});
+addEventListener('keydown',e=>{audioOn();keys[e.key]=true;if(e.key===' '){e.preventDefault();if(state==='range')SF.range.special();else bomb();}if(e.key==='Escape')pause();});
 addEventListener('keyup',e=>keys[e.key]=false);
 
 // ---------- app install & updates ----------
@@ -129,3 +129,5 @@ function checkUpdate(){const url=(IN_APP||location.protocol==='file:'?PAGES:'')+
  fetch(url,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(!j||!(j.build>BUILD))return;
   $('updText').textContent=`Version ${j.version} is ready: ${(j.notes||[])[0]||'new content'}.`;$('updBanner').hidden=false;
   $('updBtn').textContent=IN_APP?'Download':'Update';$('updBtn').onclick=()=>{if(IN_APP)window.open(j.apk||$('apkLink').href,'_system');else location.reload();};}).catch(()=>{});}
+
+$('sensBtn').onclick=()=>{const L=[.8,1,1.2,1.5],i=L.indexOf(save.sens||1);save.sens=L[(i+1)%L.length];store();sfx('ui');renderSettings();};

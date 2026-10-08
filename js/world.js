@@ -29,7 +29,7 @@ function buildSprites(){
  SP.shielddrone=mk(22,22,g=>{g.fillStyle=lin(g,-9,-9,9,9,['#b8f0ff','#2a7bbf']);g.beginPath();for(let i=0;i<6;i++){const a=i/6*TAU;g.lineTo(Math.cos(a)*9,Math.sin(a)*9);}g.closePath();g.fill();});
  const cap=(c,txt)=>mk(26,26,g=>{const gr=g.createRadialGradient(-3,-4,1,0,0,11);gr.addColorStop(0,'#fff');gr.addColorStop(.35,c);gr.addColorStop(1,shade(c,-.5));g.fillStyle=gr;g.beginPath();g.arc(0,0,11,0,TAU);g.fill();g.strokeStyle='rgba(255,255,255,.8)';g.lineWidth=1.5;g.stroke();
   g.fillStyle='#fff';g.font='bold 13px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,0,1);});
- SP.P=cap('#ff9d2e','P');SP.Hp=cap('#3ddc84','+');SP.B=cap('#ff4d6d','B');
+ SP.P=cap('#ff9d2e','P');SP.Hp=cap('#3ddc84','+');SP.B=cap('#ff4d6d','B');SP.S=cap('#38c8ff','S');
  SP.gear=mk(16,16,g=>{g.fillStyle=lin(g,-7,-7,7,7,['#ffe08a','#ff9d2e','#b35a00']);for(let i=0;i<8;i++){g.save();g.rotate(i/8*TAU);g.fillRect(-1.6,-7.5,3.2,4);g.restore();}g.beginPath();g.arc(0,0,5.5,0,TAU);g.fill();g.fillStyle='#5a2a00';g.beginPath();g.arc(0,0,2,0,TAU);g.fill();});
  const orb=(c,r,core='#fff')=>mk(r*4,r*4,g=>{const gr=g.createRadialGradient(0,0,0,0,0,r*2);gr.addColorStop(0,c+'cc');gr.addColorStop(.45,c+'55');gr.addColorStop(1,c+'00');g.fillStyle=gr;g.fillRect(-r*2,-r*2,r*4,r*4);
   g.fillStyle=c;g.beginPath();g.arc(0,0,r,0,TAU);g.fill();g.fillStyle=core;g.beginPath();g.arc(0,0,r*.5,0,TAU);g.fill();});
@@ -387,6 +387,11 @@ function lancerModel(){const g=jetModel({L:46,S:26,sweep:.85,wl:.42,chord:.4,tip
  g.add(mesh(new T3.CylinderGeometry(.09,.12,3.4,8).rotateX(Math.PI/2),std('#22262a',.7,.3),0,-.3,-3.6));const tip=new T3.Mesh(new T3.SphereGeometry(.22,8,6),basic('#ff3c50'));tip.position.set(0,-.3,-5.3);tip.name='tip';g.add(tip);return g;}
 function bomberModel(){const g=jetModel({L:64,S:118,sweep:.14,wl:.32,chord:.2,tip:.12,fw:7,tailS:.22},'#76806f','#c23b3b');
  for(const s of[-1,1])for(const f of[.3,.62]){const x=s*(.7+5.2*f),z=-(3.2-6.4*.32-5.2*f*.14)-.2;g.add(mesh(new T3.CylinderGeometry(.42,.42,1.9,10).rotateX(Math.PI/2),std('#4a5048',.5,.4),x,-.25,z));const r=rotor(.9,3);r.rotation.x=Math.PI/2;r.position.set(x,-.25,z-1.05);r.name='rotor';g.add(r);}return g;}
+// Bulwark: heavy gunship with a thick armoured nose plate (hit it from the sides)
+function bulwarkModel(){const g=jetModel({L:46,S:52,sweep:.3,wl:.36,chord:.36,tip:.14,fw:7,tailS:.34,eng:2},'#4f5a63','#ffb347');
+ const plate=mesh(new T3.BoxGeometry(3.4,1.1,1.1),std('#9aa4ad',.8,.3),0,.15,-2.1);g.add(plate);
+ for(const s of[-1,1])g.add(mesh(new T3.BoxGeometry(.5,.9,2.2),std('#3a4148',.6,.4),s*1.9,.05,-.6));
+ const eye=new T3.Mesh(new T3.SphereGeometry(.22,8,6),basic('#ffb347'));eye.position.set(0,.5,-2.4);g.add(eye);return g;}
 function playerDrone(k){const g=new T3.Group();if(k==='gundrone'){g.add(mesh(new T3.ConeGeometry(.55,1.6,6).rotateX(-Math.PI/2),std('#c9d2db',.6,.3)));g.add(mesh(new T3.CylinderGeometry(.06,.06,1,6).rotateX(Math.PI/2),std('#22262a',.6,.4),0,0,-.9));}
  else if(k==='laserdrone'){g.add(mesh(new T3.OctahedronGeometry(.7,0),std('#7fb2ff',.7,.2,{em:'#2a5ab0',ei:.6,flat:1})));}
  else{const m=mesh(new T3.CylinderGeometry(.7,.7,.25,6),std('#8ad8ff',.6,.2,{em:'#2a7bbf',ei:.8}));g.add(m);}
@@ -399,6 +404,7 @@ function buildModels(){
  MODELS.bomber=bomberModel();MODELS.drone=(()=>{const o=new T3.Group(),d=droneModel();d.scale.setScalar(1.5);o.add(d);return o;})();
  MODELS.aegis=jetModel({L:38,S:36,sweep:.5,wl:.36,chord:.4,tip:.12,fw:4.5,tailS:.32,fins:1},'#3a6ab0','#e9eef2');MODELS.aegis.add(shieldBall(2.6,'#5fd0ff'));
  MODELS.lancer=lancerModel();MODELS.hydra=hydraModel();MODELS.wraith=wraithModel();MODELS.sower=ufoModel();MODELS.mine=mineModel();MODELS.mender=menderModel();MODELS.blink=blinkModel();
+ MODELS.bulwark=bulwarkModel();
  MODELS.tank=tankModel('#59633f');MODELS.aa=aaModel();MODELS.truck=truckModel();MODELS.boat=boatModel();MODELS.sam=samModel();MODELS.artillery=artyModel();MODELS.dome=domeModel();
  for(const k in PLANES){const p=PLANES[k];MODELS['pl_'+k]=jetModel(p.jet,p.body,p.accent);}
  for(const k in DRONES)MODELS['dr_'+k]=playerDrone(k);}

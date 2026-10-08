@@ -1,6 +1,8 @@
 {
-  "build": 4,
-  "version": "3.1",
+  "build": 5,
+  "version": "3.2",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
-  "notes": ["updates now install over the old app, plus progress backup codes"]
+  "notes": [
+    "new Test Range: try the new flight controls, weapons and enemies"
+  ]
 }

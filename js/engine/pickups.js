@@ -21,7 +21,7 @@ Pk.step=(R,dt)=>{const p=R.p,b=BP(),pl=p.pl,mag=b.magnetRange*(1+.35*save.parts.
   if(g.k==='gear'){if(p.alive&&d<mag){g.vx=dx/d*480;g.vy=dy/d*480;}else{g.vx*=.96;g.vy=g.vy*.96+320*dt;}}
   else{if(p.alive&&d<70){g.vx=dx/d*300;g.vy=dy/d*300;}else{g.vx=Math.sin(g.t*2)*30;g.vy=Math.min(b.fall,g.vy+60*dt);}}
   g.x+=g.vx*dt;g.y+=g.vy*dt;
-  if(p.alive&&p.dying<=0&&d<b.pickupR){collect(R,g);pool.kill(g);continue;}
+  if(p.alive&&p.dying<=0&&d<SF.BAL.player.pickupR){collect(R,g);pool.kill(g);continue;}
   if(g.y>H+30)pool.kill(g);}};
 function collect(R,g){const p=R.p;
  if(g.k==='gear'){R.gears+=g.v;R.score+=10;sfx('gear',Math.floor(R.gp));R.gp=Math.min(14,R.gp+1);return;}
