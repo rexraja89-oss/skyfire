@@ -38,6 +38,17 @@ const GROUND={
   move:{type:'attached'},fire:{pattern:'none'}},
  factoryGate:{name:'Factory gate',model:'gate',hp:20,r:12,score:500,gears:2,charge:3,size:1.3,abilities:{spawner:{every:6,enemy:'armoredCar',first:3,ground:1}},
   move:{type:'attached'},fire:{pattern:'none'}},
+ // v5.5 ground targets
+ stiltGun:{name:'Stilt battery',model:'stilt',hp:34,r:18,score:900,gears:5,charge:6,size:1.8,dropTable:'ground',
+  move:{type:'ground'},fire:{pattern:'burst',every:2,first:1,speed:200,bullet:'pellet',burst:3,gap:.11}},
+ railGun:{name:'Rail turret',model:'railgun',hp:22,r:15,score:700,gears:4,charge:5,size:1.5,dropTable:'ground',
+  move:{type:'rail',range:55,speed:.9},fire:{pattern:'fan',every:1.9,first:1,speed:185,bullet:'pellet',count:3,spread:16}},
+ domeGun:{name:'Pop-up turret',model:'domegun',hp:26,r:16,score:750,gears:4,charge:5,size:1.6,dropTable:'ground',abilities:{bunker:{closed:2,open:1.5,armor:.85}},
+  move:{type:'ground'},fire:{pattern:'ring',on:'open',speed:135,bullet:'pellet',count:10}},
+ popMine:{name:'Buried mine',model:'popmine',hp:4,r:11,score:200,gears:1,charge:2,size:.9,noCount:true,abilities:{popup:{arm:.42,fuse:1.1,ring:10,speed:150}},
+  move:{type:'ground'},fire:{pattern:'none'}},
+ pylon:{name:'Power pylon',model:'pylon',hp:12,r:13,score:300,gears:2,charge:3,size:1.3,dropTable:'ground',
+  move:{type:'ground'},fire:{pattern:'none'}},
 };
 for(const k in GROUND){GROUND[k].ground=true;SF.ENEMIES[k]=GROUND[k];}
 // Ground setups: pieces placed around an anchor x (fraction of width) as one group.
@@ -56,4 +67,9 @@ SF.GROUND_SETUPS={
  armorColumn:{name:'Armour column',road:true,pieces:[{t:'tank',dx:0,dy:0},{t:'tank',dx:0,dy:-46},{t:'tank',dx:0,dy:-92},{t:'tank',dx:0,dy:-138},{t:'armoredCar',dx:0,dy:-184}]},
  domeBunkers:{name:'Shielded bunkers',pieces:[{t:'shieldDome',dx:0,dy:0},{t:'bunker',dx:-56,dy:24},{t:'bunker',dx:56,dy:24},{t:'mortar',dx:0,dy:-50}]},
  radarPost:{name:'Radar post',pieces:[{t:'radar',dx:0,dy:0},{t:'flak',dx:-40,dy:20},{t:'gunTower',dx:40,dy:20}]},
+ stiltBattery:{name:'Stilt battery',pieces:[{t:'stiltGun',dx:-44,dy:0},{t:'stiltGun',dx:44,dy:-30},{t:'pylon',dx:0,dy:-70}]},
+ railLine:{name:'Rail guns',pieces:[{t:'railGun',dx:0,dy:0},{t:'railGun',dx:0,dy:-60},{t:'flak',dx:-80,dy:-30}]},
+ popField:{name:'Pop-up nest',pieces:[{t:'domeGun',dx:-50,dy:0},{t:'domeGun',dx:50,dy:0},{t:'domeGun',dx:0,dy:-50}]},
+ minefield:{name:'Minefield',pieces:[{t:'popMine',dx:-80,dy:0},{t:'popMine',dx:0,dy:-30},{t:'popMine',dx:80,dy:-10},{t:'popMine',dx:-40,dy:-80},{t:'popMine',dx:40,dy:-90}]},
+ pylonLine:{name:'Power line',pieces:[{t:'pylon',dx:-90,dy:0},{t:'pylon',dx:-30,dy:-20},{t:'pylon',dx:30,dy:-40},{t:'pylon',dx:90,dy:-60}]},
 };

@@ -17,7 +17,7 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
   t:0,slow:0,score:0,shown:0,gears:0,gp:0,kills:0,spawned:0,groundSpawned:0,groundKills:0,hits:0,specials:0,pickups:0,typeKills:{},formationsCleared:0,setupsCleared:0,
   sinceCell:0,beams:[],marks:[],eff:{},banner:null,toasts:[],zoom:1,camZ:1,bossCard:null,warnT:0,endT:-1,won:false,over:false,boss:null,bossTime:0,bossPartsTotal:0,bossPartsKilled:0,seen:{},
   drone:save.own[save.drone]?save.drone:'',drones:[],p:null,hud:{}};
- SF.enemies.R=R;SF.player.create(R);SF.scoring.reset(R);SF.feel.start(R);
+ SF.enemies.R=R;SF.player.create(R);SF.scoring.reset(R);SF.feel.start(R);SF.rescue.start(R);
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
@@ -52,7 +52,7 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  if(R.kind==='stage'){if(!R.over)SF.director.step(R,dt);}else SF.director.rangeStep(R,dt);
  SF.enemies.step(R,dt);SF.boss.step(R,dt);SF.boss.stepPending(R,dt);
  if(!R.over||R.won)SF.weapons.fire(R,dt);SF.loadout.step(R,dt);SF.weapons.step(R,dt);SF.pickups.step(R,dt);SF.fx.step(dt);
- R.gp=Math.max(0,R.gp-dt*4);SF.scoring.step(R,dt);SF.feel.step(R,dt);if(R.kind==='stage')SF.missions.step(R);
+ R.gp=Math.max(0,R.gp-dt*4);SF.scoring.step(R,dt);SF.feel.step(R,dt);SF.rescue.step(R,dt);if(R.kind==='stage')SF.missions.step(R);
  if(R.warnT>0){R.warnT-=dt;R.camZ=1.1;}
  if(R.bossCard&&R.bossCard.l>0)R.bossCard.l-=dt;
  if(R.banner){R.banner.l-=dt;if(R.banner.l<=0)R.banner=null;}
@@ -126,7 +126,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  renderer.render(scene,camera);updProj();
  cx.setTransform(oS,0,0,oS,0,0);cx.clearRect(0,0,OW,OH);SF.atmos.drawUnder();drawWeather();
  if(SF.fx.shake>0){const k=Math.min(1.2,SF.fx.shake)*SF.BAL.fx.shake*6,u=tnow*1;cx.translate((Math.sin(u*61)+.6*Math.sin(u*37.3))*k,(Math.cos(u*53)+.6*Math.sin(u*29.1))*k);}   // smooth shake (no random jitter)
- SF.fx.drawBack();SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
+ SF.fx.drawBack();SF.rescue.draw(R);SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
  cx.globalCompositeOperation='lighter';
  if(p.alive&&PLM&&PLM.visible&&p.dying<=0)SF.thrust.draw(R,px,py);
  SF.loadout.drawThrust(R,A);

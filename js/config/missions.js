@@ -17,6 +17,7 @@ SF.OBJECTIVES={
  collect:   {text:v=>`Collect ${v} power-ups`,                     live:(R,v)=>R.pickups>=v},
  killType:  {text:v=>{const[t,n]=v.split('*');return `Destroy ${n} ${SF.ENEMIES[t].name}${n>1?'s':''}`;},live:(R,v)=>{const[t,n]=v.split('*');return (R.typeKills[t]||0)>=+n;}},
  bossTime:  {text:v=>`Defeat the boss within ${v} seconds`,        end:(R,v)=>R.bossTime>0&&R.bossTime<=v},
+ rescue:    {text:()=>'Rescue every stranded crew',               end:R=>R.crewsTotal>0&&R.crewsSaved>=R.crewsTotal,fail:R=>R.crewsLost>0},
  bossParts: {text:()=>'Destroy every boss component',              end:R=>R.bossPartsTotal>0&&R.bossPartsKilled>=R.bossPartsTotal},
 };
 SF.parseObjective=s=>{const i=s.indexOf(':');const type=i<0?s:s.slice(0,i),raw=i<0?'':s.slice(i+1);const v=raw===''?null:isNaN(+raw)?raw:+raw;return {id:s,type,v,T:SF.OBJECTIVES[type]};};

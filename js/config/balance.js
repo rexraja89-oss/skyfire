@@ -66,6 +66,7 @@ SF.BAL={
   shield:{cd:50,first:15},     // cooldown seconds; first = seconds until first use in a flight
   overdrive:{cd:75,first:30},
  },
+ rescue:{times:[14,38,62,84],radius:30,score:1500,gears:12},   // stranded crews per stage (stage-clock seconds)
  streak:{                // kill streaks: kills less than `gap` seconds apart
   gap:1,tiers:[{n:6,word:'SHARP',bonus:300},{n:12,word:'ACE',bonus:1000},{n:20,word:'LEGEND',bonus:3000}],
   gearMilestones:[100,250,500,1000],

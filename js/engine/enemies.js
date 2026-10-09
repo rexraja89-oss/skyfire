@@ -57,6 +57,8 @@ const MOVE={
  patrol(e,m,dt){e.y+=SCROLL*m.scroll*dt;if(!e.vx)e.vx=(Math.random()<.5?-1:1)*m.vx;e.x+=e.vx*dt;if(e.x<e.wx0||e.x>e.wx1)e.vx=-e.vx;e.x=clamp(e.x,e.wx0,e.wx1);e.hd=e.vx>0?0:Math.PI;
   if(Math.random()<dt*12)SF.fx.add('w',e.x-Math.sign(e.vx)*18,e.y+rnd(-3,3),0,SCROLL*m.scroll,1.2,'#ffffff',rnd(2,4));},
  convoy(e,m,dt){e.y+=(SCROLL+m.vy)*dt;e.hd=Math.PI/2;},
+ // rail: slides back and forth along a fixed track that scrolls with the ground
+ rail(e,m,dt){e.y+=SCROLL*dt;if(e.rx0===undefined){e.rx0=clamp(e.x,m.range+12,W-m.range-12);e.rph=Math.random()*TAU;}e.x=e.rx0+Math.sin(e.t*m.speed+e.rph)*m.range;},
  attached(e,m,dt){const p=e.parent;if(p&&p.alive){e.x=p.x+e.dx;e.y=p.y+e.dy;}else e.y+=SCROLL*dt;},
 };
 En.MOVE=MOVE;
@@ -98,6 +100,8 @@ function stepAbilities(e,dt,R){const A=e.d.abilities;if(!A)return;
  if(A.heal){e.healT-=dt;if(e.healT<=0){e.healT=A.heal.every;let best=null,bd=A.heal.range**2;for(const o of pool.live){if(o===e||!o.alive||o.hp>=o.max||o.d.abilities&&o.d.abilities.heal||o.type==='mine')continue;const q=(o.x-e.x)**2+(o.y-e.y)**2;if(q<bd){bd=q;best=o;}}
   if(best){best.hp=Math.min(best.max,best.hp+best.max*A.heal.amount);if(best.shMax)best.sh=best.shMax;R.beams.push({a:e,b:best,t:.45});sfx('heal');SF.fx.spark(best.x,best.y,'#7fffb0',5);}}}
  if(A.fuse&&e.t>A.fuse.time){const f=A.fuse;for(let i=0;i<f.ring;i++)En.shoot(e.x,e.y,e.t+i*TAU/f.ring,f.speed,'ring');SF.fx.explode(e.x,e.y,1.1);sfx('pop');En.remove(e);return;}
+ if(A.popup){const P=A.popup;if(!e.armed){e.untargetable=true;if(e.y>lyAt(P.arm)){e.armed=true;e.untargetable=false;e.popT=P.fuse*Math.max(SF.DIFF_MIN_TELE,SF.BAL.run.tele||1);sfx('mine');SF.fx.ring(e.x,e.y,26,'#ff4030',.5);}}
+  else{e.popT-=dt;if(Math.random()<dt*10)SF.fx.glow(e.x,e.y,16,'#ff3020',.1);if(e.popT<=0){for(let i=0;i<P.ring;i++)En.shoot(e.x,e.y,i*TAU/P.ring+e.t,P.speed,'pellet');SF.fx.explode(e.x,e.y,1.2,true);addDecal(e.x,e.y,e.r*1.4);sfx('pop');En.remove(e);return;}}}
  if(A.bunker){const b=A.bunker,c=b.closed+b.open,ph=e.t%c,was=e.open;e.open=ph>=b.closed;if(e.open&&!was&&fireY(e)){firePattern(e,R);sfx('mine');}}
  if(A.spawner&&e.y>20&&e.y<H*.75){e.spawnT-=dt;if(e.spawnT<=0){const s=A.spawner;e.spawnT=s.every;En.spawn(s.enemy,{x:e.x,y:e.y+(s.ground?e.r:0),group:0});SF.fx.smoke(e.x,e.y,6,'#555',.6);}}
  if(A.reinforce&&!e.called&&e.y>40&&e.t>A.reinforce.after){e.called=true;const r=A.reinforce;SF.formations.spawn(r.formation,{enemy:r.enemy});SF.fx.pop(e.x,e.y-24,r.label,true);say('reinf','The comms mast called in reinforcements! Hit those masts early.',1,30);}}
@@ -173,6 +177,8 @@ En.sync=(A,dt)=>{for(const e of pool.live){if(!e.alive||!e.d.model)continue;if(!
  for(const r of m.R.rotor)r.rotation.y+=dt*30;if(m.R.trot)m.R.trot.rotation.x+=dt*40;
  if(m.R.tur)m.R.tur.rotation.y=T==='radar'?e.t*2.2:yawFrom(e.ang)-m.rotation.y;
  if(m.R.door)m.R.door.position.y=e.open?.9:.2;
+ if(m.R.track)m.R.track.position.x=-(e.x-(e.rx0===undefined?e.x:e.rx0))*K;
+ if(T==='popmine'){if(!e.armed)m.scale.y*=.25;else if(m.R.light)m.R.light.scale.setScalar(1+.6*Math.sin(e.t*30));}
  if(m.R.ring.length){m.R.ring.forEach((r,i)=>{r.rotation.z+=dt*(i?-3:3);});if(T==='blink'){const s=e.tp>0?Math.max(.05,e.tp/.35*.3):Math.min(1,e.stT*4);m.scale.multiplyScalar(s);}}
  if(m.R.shield){if(T==='aegis'){m.R.shield.visible=e.sh>0;m.R.shield.material.opacity=.18+(e.shHit>0?.4:0)+.1*Math.sin(e.t*6);}else m.R.shield.material.opacity=.14+.06*Math.sin(e.t*3);}
  if(m.R.light){if(T==='mine')m.R.light.visible=e.t<3?Math.floor(e.t*3)%2===0:Math.floor(e.t*12)%2===0;else m.R.light.scale.setScalar(1+.25*Math.sin(e.t*(e.d.abilities&&e.d.abilities.reinforce?14:6)));}

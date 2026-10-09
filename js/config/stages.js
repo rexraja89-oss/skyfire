@@ -102,3 +102,18 @@ SF.STAGE_DEFS=[
   {at:98,f:'boxEscort'},{at:104,f:'mixedRaid'},{at:108,w:'brute',n:2,mode:'hard'}],
   obj:_O(['killPct:70','setups:5','formations:4','combo:30','bossParts'],['killPct:80','setups:7','combo:50','noSpecial','bossParts'],['killPct:90','setups:9','combo:70','noHit','bossTime:75'])},
 ];
+
+// v5.5: new ground sites (stilt batteries, rail guns, pop-up turrets, minefields, power lines) and the rescue objective
+(()=>{const add=[
+ [[57,'stiltBattery',.24]],
+ [[21,'pylonLine',.5],[44,'minefield',.5],[70,'railLine',.3]],
+ [[28,'minefield',.5],[52,'stiltBattery',.7],[76,'railLine',.7]],
+ [[35,'popField',.5],[66,'stiltBattery',.3]],
+ [[25,'railLine',.35],[60,'stiltBattery',.3]],
+ [[33,'stiltBattery',.5],[70,'stiltBattery',.4]],
+ [[30,'popField',.5],[62,'minefield',.5]],
+ [[28,'popField',.35],[58,'railLine',.3],[80,'pylonLine',.4]],
+ [[32,'railLine',.5],[64,'popField',.5]],
+ [[30,'stiltBattery',.6],[55,'minefield',.5],[85,'popField',.4],[100,'railLine',.5]]];
+ SF.STAGE_DEFS.forEach((D,i)=>{for(const[at,g,x]of add[i]||[])if(at<D.len-5)D.timeline.push({at,g,x});D.timeline.sort((a,b)=>a.at-b.at);
+  for(const m of['easy','hard','extreme'])if(D.obj[m]&&!D.obj[m].includes('rescue'))D.obj[m].push('rescue');});})();

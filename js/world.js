@@ -539,11 +539,12 @@ function buildModels(){
  MODELS.tower=towerModel();MODELS.radar=radarModel();MODELS.depot=depotModel();MODELS.mast=mastModel();MODELS.bunker=bunkerModel();MODELS.factory=factoryModel();MODELS.stack=stackModel();MODELS.gate=gateModel();
  MODELS.tank=tankModel('#59633f');MODELS.aa=aaModel();MODELS.truck=truckModel();MODELS.boat=boatModel();MODELS.sam=samModel();MODELS.artillery=artyModel();MODELS.dome=domeModel();
  for(const k in PLANES){const p=PLANES[k];MODELS['pl_'+k]=k==='falcon'&&typeof falconModel==='function'?falconModel(p.jet):jetModel(p.jet,p.body,p.accent);}
- for(const k in DRONES)MODELS['dr_'+k]=playerDrone(k);}
+ for(const k in DRONES)MODELS['dr_'+k]=playerDrone(k);
+ if(typeof SF!=='undefined'&&SF.extraModels)SF.extraModels();}
 const POOL={};
 function acquire(type){const pool=POOL[type]||(POOL[type]=[]);let m=pool.pop();
  if(!m){m=MODELS[type].clone();if(type==='wraith')m.traverse(o=>{if(o.isMesh)o.material=o.material.clone();});if(type==='aegis'||type==='dome')m.traverse(o=>{if(o.name==='shield')o.material=o.material.clone();});
-  m.R={rotor:[],tur:null,shield:null,ring:[]};m.traverse(o=>{if(o.name==='rotor')m.R.rotor.push(o);else if(o.name==='tur')m.R.tur=o;else if(o.name==='shield')m.R.shield=o;else if(o.name.startsWith('ring'))m.R.ring.push(o);else if(o.name==='trot')m.R.trot=o;else if(o.name==='light'||o.name==='orb'||o.name==='tip')m.R.light=o;else if(o.name==='door')m.R.door=o;});scene.add(m);}
+  m.R={rotor:[],tur:null,shield:null,ring:[]};m.traverse(o=>{if(o.name==='rotor')m.R.rotor.push(o);else if(o.name==='tur')m.R.tur=o;else if(o.name==='shield')m.R.shield=o;else if(o.name.startsWith('ring'))m.R.ring.push(o);else if(o.name==='trot')m.R.trot=o;else if(o.name==='light'||o.name==='orb'||o.name==='tip')m.R.light=o;else if(o.name==='door')m.R.door=o;else if(o.name==='track')m.R.track=o;});scene.add(m);}
  m.visible=true;m.userData.type=type;return m;}
 function release(m){if(!m)return;m.visible=false;(POOL[m.userData.type]||(POOL[m.userData.type]=[])).push(m);}
 // bosses

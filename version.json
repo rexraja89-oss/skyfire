@@ -1,8 +1,8 @@
 {
-  "build": 25,
-  "version": "5.4",
+  "build": 26,
+  "version": "5.5",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Every stage its own world"
+    "New ground enemies and crew rescues"
   ]
 }
