@@ -1,8 +1,8 @@
 {
-  "build": 38,
-  "version": "5.17",
+  "build": 39,
+  "version": "5.18",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Less repetitive desert sand and more detailed snow"
+    "Desert trees and city windows"
   ]
 }

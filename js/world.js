@@ -160,13 +160,13 @@ const BIOME={
    // tint over the HD sand texture (art/tex_sand.jpg): slip faces darken and redden, crests catch the light
    const sh=Math.min(1,lit),v=.55+.5*sh;o[0]=v*(1.02-.06*(1-sh));o[1]=v*(.97-.1*(1-sh));o[2]=v*(.93-.14*(1-sh));if(lit>1){const k=(lit-1)*.6;o[0]+=k;o[1]+=k*.9;o[2]+=k*.7;}
    const r=Math.abs(x+6),grit=.85+.15*fbm(x*.4,z*.4,2);const drift=sst(.1,.45,fbm(x*.15+3,z*.06,2));if(r<3.2)mixc(o,[.07*grit,.065*grit,.06*grit],o,drift*.85);else if(r<4.4)mixc(o,o,[.5,.46,.42],.35);},   // sand-dusted highway
-  uses:['palm','shrub','acacia','tent','whouse','wall','shrine','derrick','tankf','rock'],
+  uses:['palmS','shrub','acaciaS','tent','whouse','wall','shrine','derrick','tankf','rock'],
   props(R,z0,put,HF){const off=(x,w=6)=>Math.abs(x+6)<w;
    for(let i=0;i<150;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,5))continue;put('shrub',x,z,.7+R()*.7,R()*6,pick(['#6a6438','#7a7044','#5c5a34','#857a4c']));}
-   for(let i=0;i<8;i++){const x=R()*140-70,z=z0-R()*TL;if(off(x,7))continue;put('acacia',x,z,1+R()*.5,R()*6,'#4e6a2e');}
+   for(let i=0;i<8;i++){const x=R()*140-70,z=z0-R()*TL;if(off(x,7))continue;put('acaciaS',x,z,4.2+R()*2.2,R()*TAU,pick(['#e4dcc4','#d8d2b8','#ece4cc']));}
    // oasis camp: palm grove, bushes and dark woven tents
    if(R()<.55){const sd=R()<.5?-1:1,ox=-6+sd*(16+R()*22),oz=z0-14-R()*(TL-28);
-    for(let k=0;k<9;k++){const a=R()*TAU,d=2+R()*8;put('palm',ox+Math.cos(a)*d,oz+Math.sin(a)*d,.9+R()*.5,R()*6,pick(['#3f7a32','#4a8a3a','#376a2c']));}
+    for(let k=0;k<9;k++){const a=R()*TAU,d=2+R()*8;put('palmS',ox+Math.cos(a)*d,oz+Math.sin(a)*d,3.4+R()*1.6,R()*TAU,pick(['#b0b488','#a4aa7c','#bcbc90']));}
     for(let k=0;k<8;k++){const a=R()*TAU,d=3+R()*9;put('shrub',ox+Math.cos(a)*d,oz+Math.sin(a)*d,.8+R()*.6,R()*6,'#4f6e30');}
     const tx=ox+sd*7,tz=oz+6;for(let k=0;k<4+Math.floor(R()*3);k++)put('tent',tx+(k%3)*3.2*sd,tz+Math.floor(k/3)*3.4,1+R()*.2,R()*.3,pick(['#3a2a22','#4a3428','#2e2420']));
     put('wall',tx+sd*3,tz+5,1,0,'#c9a27a',1,0,[8,.5,.2]);}
@@ -326,7 +326,7 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  const spr=(f,h,cap)=>{const t=GTX.L.load('art/'+f+'?v='+BUILD);t.encoding=T3.sRGBEncoding;t.anisotropy=4;const g=new T3.PlaneGeometry(1,1);g.rotateX(-Math.PI/2);g.translate(0,h,0);
   return{geo:g,mat:sway(new T3.MeshStandardMaterial({map:t,alphaTest:.42,side:T3.DoubleSide,roughness:.82,metalness:0})),depth:new T3.MeshDepthMaterial({depthPacking:T3.RGBADepthPacking,map:t,alphaTest:.42}),cap};};
  PROPS.palmS=spr('spr_palm.png',.6,220);PROPS.canopy=spr('spr_canopy.png',.5,320);PROPS.fern=spr('spr_fern.png',.12,420);
- PROPS.canopy2=spr('spr_canopy2.png',.55,200);PROPS.canopy3=spr('spr_canopy3.png',.65,160);
+ PROPS.canopy2=spr('spr_canopy2.png',.55,200);PROPS.acaciaS=spr('spr_acacia.png',.42,90);PROPS.canopy3=spr('spr_canopy3.png',.65,160);
  // desert props
  {const sb=[];const Rs=srng(77);for(let k=0;k<9;k++){const a=Rs()*TAU,d=Rs()*.5;sb.push([new T3.IcosahedronGeometry(.14+Rs()*.16,0),k%3?'#ffffff':'#d8d0b8',MT(Math.cos(a)*d,.1+Rs()*.12,Math.sin(a)*d,Rs()*3,Rs()*3,0,1,.6,1)]);}
   PROPS.shrub={geo:merge(sb),mat:veg,cap:220};}   // dry desert scrub: a loose clump of small tufts
@@ -344,6 +344,12 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  const bg=new T3.BoxGeometry(1,1,1);bg.translate(0,.5,0);const uv=bg.attributes.uv;for(let i=8;i<16;i++)uv.setXY(i,.01,.99);
  bg.setAttribute('color',new T3.BufferAttribute(new Float32Array(bg.attributes.position.count*3).fill(1),3));
  cityMat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.6,metalness:.3,emissiveMap:wt,emissive:col('#ffffff'),emissiveIntensity:1.4});
+ // windows keep a real size on every tower: wall UVs are scaled by the instance's width/depth and height (one texture
+ // tile = 7 windows across ≈ 4.2 units, 15 floors ≈ 9 units); roof/floor faces keep their dark texel
+ cityMat.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <uv_vertex>',`#include <uv_vertex>
+  #ifdef USE_INSTANCING
+  if(abs(normal.y)<.5){float sx=abs(normal.x)>.5?length(instanceMatrix[2].xyz):length(instanceMatrix[0].xyz);vUv=uv*vec2(sx/4.2,length(instanceMatrix[1].xyz)/9.);}
+  #endif`);};cityMat.customProgramCacheKey=()=>'city-win';
  PROPS.build={geo:bg,mat:cityMat,cap:420};
  // roof kit on every tower (unit footprint, stretched to the roof): membrane, parapet, HVAC units, stair/lift house,
  // water tank, antenna mast, solar rows and vents

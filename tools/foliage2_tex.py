@@ -4,6 +4,8 @@
 #   art/spr_canopy.png   broadleaf, deep green      (replaces the v4.8 sprite)
 #   art/spr_canopy2.png  broadleaf, olive / yellow-green with some dry leaves
 #   art/spr_canopy3.png  dense dark rainforest giant
+#   art/spr_acacia.png   flat-topped dry-country acacia: wide sparse umbrella, branches showing through (v5.18)
+# run: python3 tools/foliage2_tex.py [acacia]   (with 'acacia' only that sprite is written)
 # run: python3 tools/foliage2_tex.py
 import numpy as np, math
 from PIL import Image, ImageDraw, ImageFilter
@@ -12,13 +14,13 @@ def blur(a, r):
     im = Image.fromarray((np.clip(a, 0, 1)*255).astype(np.uint8), 'L').filter(ImageFilter.GaussianBlur(r))
     return np.asarray(im).astype(float)/255
 
-def crown(seed, out, pal, S=768, nclump=70, spread=.17, dry=0.0):
+def crown(seed, out, pal, S=768, nclump=70, spread=.17, dry=0.0, density=.045, branches=0, lim=.33):
     r = np.random.default_rng(seed); c = S/2
     yy, xx = np.mgrid[0:S, 0:S].astype(float)
     acc = np.zeros((S, S))
     for _ in range(nclump):
         px, py = c + r.normal(0, S*spread), c + r.normal(0, S*spread)
-        if math.hypot(px-c, py-c) > S*.33: continue
+        if math.hypot(px-c, py-c) > S*lim: continue
         R = S*(.04 + r.random()*.065)
         ang = np.arctan2(yy-py, xx-px); Rr = R*(1 + .22*np.sin(ang*r.integers(3, 7) + r.random()*6))   # lobed, irregular clumps
         q = Rr*Rr - (xx-px)**2 - (yy-py)**2
@@ -34,7 +36,12 @@ def crown(seed, out, pal, S=768, nclump=70, spread=.17, dry=0.0):
     cav = np.clip((blur(h, 14) - h)*4, 0, 1)            # gaps between clumps go dark
     shade = np.clip(lam**1.3*(1 - cav*.9)*(.5 + .5*h)*1.15, 0, 1)
     img = Image.new('RGBA', (S, S), (0, 0, 0, 0)); d = ImageDraw.Draw(img)
-    pts = r.random((int(S*S*.045), 2))*S
+    for b in range(branches):                        # dark limbs radiating from the trunk, seen through the gaps
+        a = b/branches*2*math.pi + r.random()*.6; L = S*(.22 + r.random()*.14); x0, y0 = c, c
+        for k in range(6):
+            a += r.normal(0, .25); x1, y1 = x0 + math.cos(a)*L/6, y0 + math.sin(a)*L/6
+            d.line([(x0, y0), (x1, y1)], fill=(52, 38, 26, 255), width=max(2, int(S*.012*(1 - k/7)))); x0, y0 = x1, y1
+    pts = r.random((int(S*S*density), 2))*S
     order = np.argsort(np.array([h[int(y), int(x)] for x, y in pts.astype(int)]))  # deep leaves first, top leaves last
     for i in order:
         x, y = pts[i]; hv = h[int(y), int(x)]
@@ -50,7 +57,12 @@ def crown(seed, out, pal, S=768, nclump=70, spread=.17, dry=0.0):
                   fill=tuple(int(v) for v in np.clip(col, 0, 255)) + (255,))
     img.resize((512, 512), Image.LANCZOS).save(out, optimize=True)
 
+import sys
+if len(sys.argv) > 1 and sys.argv[1] == 'acacia':
+    crown(44, 'art/spr_acacia.png', [(24, 26, 12), (62, 70, 30), (112, 118, 56), (176, 170, 104)], nclump=60, spread=.2, dry=.18, density=.03, branches=7, lim=.38)
+    print('ok'); sys.exit()
 crown(41, 'art/spr_canopy.png', [(10, 22, 10), (32, 60, 22), (72, 104, 40), (132, 156, 74)])
 crown(42, 'art/spr_canopy2.png', [(20, 26, 12), (52, 66, 26), (102, 118, 48), (170, 170, 90)], nclump=50, spread=.15, dry=.06)
 crown(43, 'art/spr_canopy3.png', [(6, 16, 8), (22, 46, 20), (52, 88, 36), (110, 140, 70)], nclump=90, spread=.19)
+crown(44, 'art/spr_acacia.png', [(24, 26, 12), (62, 70, 30), (112, 118, 56), (176, 170, 104)], nclump=60, spread=.2, dry=.18, density=.03, branches=7, lim=.38)
 print('ok')
