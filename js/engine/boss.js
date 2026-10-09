@@ -28,7 +28,8 @@ Bs.defFor=si=>{const id=SF.STAGE_DEFS[si]&&SF.STAGE_DEFS[si].boss;return id&&SF.
 // ---------- spawn ----------
 Bs.spawn=(R,D,opts={})=>{const id=opts.key||'b',hpMul=(opts.hpMul||1)*SF.dm('enemyHp')*(R.diff?R.diff.boss/R.diff.hp:1);
  const B={id,D,x:W/2,y:-(D.ry||80)-70,ox:W/2,oy:0,t:0,state:'enter',ty:lyAt(D.move.y),phase:-1,attacks:[],rage:1,dying:0,laser:null,mini:!!opts.mini,alive:true,flash:0,
-  sink:0,tilt:0,sub:0,subT:D.submerge?D.submerge.every:0,blinkT:D.move.type==='blink'?D.move.every:0,gone:0,vis:1,lanes:[],smokeT:0};
+  sink:0,tilt:0,sub:0,subT:D.submerge?D.submerge.every:0,blinkT:D.move.type==='blink'?D.move.every:0,gone:0,vis:1,lanes:[],smokeT:0,
+  lean:0,leanT:0,pitch:0,pitchT:0,jolt:0,lost:0,melt:{},arcT:0,dieT:0};
  B.oy=B.y;
  B.parts=D.parts.map(P=>{const key='bp_'+id+'_'+P.id;
   SF.ENEMIES[key]={name:P.name,model:null,hp:P.hp,r:P.r,score:P.score||0,gears:P.gears||0,charge:6,size:P.kill?2.4:1.6,dropTable:P.kill?'heavy':'standard',move:{type:'attached'},fire:{pattern:'none'},bossPart:true};
@@ -37,7 +38,8 @@ Bs.spawn=(R,D,opts={})=>{const id=opts.key||'b',hpMul=(opts.hpMul||1)*SF.dm('ene
  R.bossPartsTotal=(R.bossPartsTotal||0)+B.parts.filter(q=>!q.kill).length;
  if(D.legacy){B.legacy=LV.boss;B.legacy.g.visible=true;for(const t of B.legacy.turs){t.visible=true;const g=t.getObjectByName('gun');if(g)g.visible=true;}}
  else{B.mdl=BossModels.build(id,D);BossModels.reset(B.mdl);B.mdl.g.visible=true;}
- if(!opts.mini){R.boss=B;R.bossStart=R.t;R.bossCard={name:D.name,title:D.title||'',l:3};R.camZ=1.12;}
+ if(!opts.mini){R.boss=B;R.bossStart=R.t;R.bossCard={name:D.name,title:D.title||'',l:3};R.camZ=1.12;
+  const T=SF.BOSS_TAUNTS&&SF.BOSS_TAUNTS[id];if(T)R.taunt={text:T[0],reply:T[1],l:4.6,rt:3.4,key:id};}
  else R.bossCard={name:D.name,title:'MINI-BOSS · '+(D.title||''),l:2.2,mini:1};
  Bs.list.push(B);return B;};
 Bs.reset=()=>{for(const B of Bs.list){if(B.mdl)B.mdl.g.visible=false;if(B.legacy)B.legacy.g.visible=false;}Bs.list.length=0;pend.length=0;};
@@ -46,18 +48,28 @@ SF.on('kill',({e})=>{for(const B of Bs.list){const q=B.parts.find(q=>q.e===e);if
  if(q.kill){Bs.die(R,B);return;}
  SF.fx.explode(e.x,e.y,2,B.D.ground);SF.fx.ring(e.x,e.y,50,'#ffb347',.45);SF.fx.addShake(.35);sfx('boom');if(R)R.bossPartsKilled=(R.bossPartsKilled||0)+1;
  if(B.mdl){const n=B.mdl.nodes[q.id],s=B.mdl.stumps[q.id];if(n)n.visible=false;if(s)s.visible=true;}
+ B.melt[q.id]=3.5;B.lost++;B.jolt=.6;leanFor(B);for(let k=0;k<(save.hq?10:4);k++){const a=Math.random()*TAU,v=rnd(80,220);SF.fx.add('d',e.x,e.y,Math.cos(a)*v,Math.sin(a)*v,rnd(.7,1.3),pick(['#2a2c30','#4a4d52','#3a3026']),rnd(2.5,4.5),{a:Math.random()*6,va:rnd(-10,10),drag:.95,trail:.03,tt:0});}
  if(B.legacy&&q.node!==undefined&&B.legacy.turs[q.node]){const g=B.legacy.turs[q.node].getObjectByName('gun');if(g)g.visible=false;}
  SF.fx.pop(e.x,e.y-26,(q.P.name||'PART').toUpperCase()+' DESTROYED',true);SF.emit('bossPart',{B,q});
  const left=B.parts.filter(p=>!p.kill&&p.e.alive).length;if(!B.mini)say('bp'+left,left?`${q.P.name} down. ${left} to go.`:'Every weapon is down. Finish it!',left?1:2,0);return;}});
-Bs.die=(R,B)=>{if(B.state==='dying')return;B.state='dying';B.dying=B.mini?1.5:2.8;B.laser=null;B.lanes.length=0;for(const q of B.parts)if(q.e.alive)SF.enemies.remove(q.e);
+// the boss sags toward the side that lost weapons (roll from x offsets, pitch from y offsets)
+function leanFor(B){const rx=B.D.rx||60,ry=B.D.ry||50;let r=0,pi=0;for(const q of B.parts)if(!q.kill&&!q.e.alive){r+=-q.P.dx/rx;pi+=q.P.dy/ry;}
+ B.leanT=clamp(r*.07,-.22,.22);B.pitchT=clamp(pi*.05,-.14,.14);}
+Bs.die=(R,B)=>{if(B.state==='dying')return;B.state='dying';B.dying=B.mini?1.5:3.8;B.dieT=B.dying;B.laser=null;B.lanes.length=0;for(const q of B.parts)if(q.e.alive)SF.enemies.remove(q.e);
  if(!B.mini){SF.enemies.ebPool.clear();R.marks.length=0;R.bossTime=R.t-R.bossStart;R.slow=.7;R.camZ=1.06;}else{R.slow=.25;}
  SF.emit('bossDown',{B,mini:B.mini});vib(150);};
 // ---------- step ----------
 const ORIG=(B,id)=>{const q=id&&B.parts.find(p=>p.id===id);return q?{x:q.e.x,y:q.e.y}:{x:B.x,y:B.y+(B.D.ry||40)*.3};};
-Bs.step=(R,dt)=>{for(let i=Bs.list.length-1;i>=0;i--){const B=Bs.list[i];B.ox=B.x;B.oy=B.y;B.t+=dt;const D=B.D,p=R.p;
- if(B.state==='dying'){B.dying-=dt;const rx=D.rx||60,ry=D.ry||50;if(Math.random()<dt*(B.mini?10:16)){SF.fx.explode(B.x+rnd(-rx,rx)*.8,B.y+rnd(-ry,ry)*.8,rnd(1,2.4),D.ground);sfx('pop');SF.fx.addShake(.2);}
+Bs.step=(R,dt)=>{const tn=R.taunt;if(tn){tn.l-=dt;if(tn.rt>0){tn.rt-=dt;if(tn.rt<=0)say('taunt'+tn.key,tn.reply,2,0);}if(tn.l<=0)R.taunt=null;}
+ for(let i=Bs.list.length-1;i>=0;i--){const B=Bs.list[i];B.ox=B.x;B.oy=B.y;B.t+=dt;const D=B.D,p=R.p;
+ for(const k in B.melt){B.melt[k]-=dt;if(B.melt[k]<=0)delete B.melt[k];}
+ B.lean+=(B.leanT-B.lean)*Math.min(1,dt*2);B.pitch+=(B.pitchT-B.pitch)*Math.min(1,dt*2);if(B.jolt>0)B.jolt-=dt;
+ if(B.state==='dying'){B.dying-=dt;const rx=D.rx||60,ry=D.ry||50,ov=!B.mini&&B.dying<.9;   // last 0.9 s of a main boss: the core overloads
+  if(ov){B.over=1-B.dying/.9;if(Math.random()<dt*20)SF.fx.spark(B.x+rnd(-20,20),B.y+rnd(-20,20),'#fff3c4',3,1.6);SF.fx.addShake(.15+B.over*.3);}
+  if(!ov&&Math.random()<dt*(B.mini?10:16)){SF.fx.explode(B.x+rnd(-rx,rx)*.8,B.y+rnd(-ry,ry)*.8,rnd(1,2.4),D.ground);sfx('pop');SF.fx.addShake(.2);}
   B.y+=dt*(B.mini?30:12);B.tilt+=dt*.05;
-  if(B.dying<=0){SF.fx.explode(B.x,B.y,B.mini?3:5,D.ground);if(!B.mini){for(const s of[-1,1])SF.fx.explode(B.x+s*rx*.5,B.y,3,D.ground);for(let k=0;k<3;k++)SF.fx.ring(B.x,B.y,80+k*60,k?'#ffb347':'#ffffff',.5+k*.15);SF.fx.flash=.9;}
+  if(B.dying<=0){SF.fx.explode(B.x,B.y,B.mini?3:5,D.ground);if(!B.mini){for(const s of[-1,1])SF.fx.explode(B.x+s*rx*.5,B.y,3,D.ground);for(const s of[-1,1])SF.fx.explode(B.x,B.y+s*ry*.5,2.5,D.ground);for(let k=0;k<3;k++)SF.fx.ring(B.x,B.y,80+k*60,k?'#ffb347':'#ffffff',.5+k*.15);SF.fx.flash=1;R.rays={x:B.x,y:B.y,l:1.6,m:1.6};
+    for(let k=0;k<(save.hq?24:10);k++){const a=Math.random()*TAU,v=rnd(150,420);SF.fx.add('d',B.x,B.y,Math.cos(a)*v,Math.sin(a)*v,rnd(1,1.8),pick(['#2a2c30','#4a4d52','#3a3026','#6b5a44']),rnd(3,6),{a:Math.random()*6,va:rnd(-8,8),drag:.96,trail:.025,tt:0});}}
    SF.fx.addShake(B.mini?.5:1);sfx('boom');if(D.ground)addDecal(B.x,B.y,B.mini?40:90);
    for(let k=0;k<(D.gears||10);k++)SF.pickups.drop('gear',B.x+rnd(-50,50),B.y+rnd(-30,30),1);SF.pickups.rollTable('heavy',B.x,B.y,true);
    if(B.mdl)B.mdl.g.visible=false;if(B.legacy)B.legacy.g.visible=false;Bs.list.splice(i,1);SF.emit('bossGone',{B,mini:B.mini,score:D.score||0});}
@@ -66,6 +78,7 @@ Bs.step=(R,dt)=>{for(let i=Bs.list.length-1;i>=0;i--){const B=Bs.list[i];B.ox=B.
  else{const mv=D.move;B.y+=(B.ty+B.sink*H-B.y)*dt;
   if(mv.type==='sway')B.x=W/2+Math.sin(B.t*mv.freq*Math.min(1.3,B.rage))*mv.amp;
   else if(mv.type==='strafe')B.x=W/2+Math.sin(B.t*mv.freq)*mv.amp+Math.sin(B.t*mv.freq*2.3)*mv.amp*.35;
+  if(mv.type==='sway'||mv.type==='strafe')B.x+=Math.sin(B.t*6.3)*Math.min(1,B.lost/4)*4+B.lean*40;   // limps and drifts toward its damaged side
   else if(mv.type==='blink'){B.blinkT-=dt;if(B.gone>0){B.gone-=dt;B.vis=Math.max(0,B.vis-dt*5);if(B.gone<=0){B.x=rnd(110,290);B.ty=lyAt(rnd(.16,.3));B.y=B.ty;B.ox=B.x;B.oy=B.y;SF.fx.spark(B.x,B.y,'#c07bff',16);sfx('blink');}}
    else{B.vis=Math.min(1,B.vis+dt*5);if(B.blinkT<=0){B.blinkT=mv.every/Math.min(1.5,B.rage);B.gone=mv.gone;SF.fx.spark(B.x,B.y,'#c07bff',16);sfx('blink');}}}}
  // submerge cycle (whole boss dives: invulnerable, silent, moves)
@@ -85,12 +98,13 @@ Bs.step=(R,dt)=>{for(let i=Bs.list.length-1;i>=0;i--){const B=Bs.list[i];B.ox=B.
   if(P.wave)q.e.dx=P.dx+Math.sin(B.t*P.wave.freq-P.wave.lag)*P.wave.amp;}
  B.shielded=shields;
  // smoke from broken parts
- B.smokeT-=dt;if(B.smokeT<=0){B.smokeT=save.hq?.08:.18;for(const q of B.parts)if(!q.e.alive&&!q.kill)SF.fx.add('s',B.x+(q.e.dx)+rnd(-4,4),B.y+q.P.dy,rnd(-8,8),-30,rnd(.6,1),'#2e2a28',rnd(4,7),{drag:.98});}
+ B.smokeT-=dt;if(B.smokeT<=0){B.smokeT=save.hq?.08:.18;for(const q of B.parts)if(!q.e.alive&&!q.kill){const x=B.x+q.e.dx,y=B.y+q.P.dy;SF.fx.add('s',x+rnd(-4,4),y,rnd(-8,8),-30,rnd(.8,1.3),'#2e2a28',rnd(4,7),{drag:.98,d:.55});
+   const m=B.melt[q.id];if(m)SF.fx.add('f',x+rnd(-5,5),y+rnd(-5,5),rnd(-10,10),-20,.3,Math.random()<.5?'#ff7a2e':'#ffcf6a',rnd(4,8)*(.4+m/3.5));}}
  for(const L of B.lanes){L.t-=dt;if(L.t<=0&&!L.fired){L.fired=true;for(let c=0;c<3;c++)for(let r=0;r<6;r++)SF.enemies.shoot(L.x+(c-1)*L.w/3,B.y+20-r*36,Math.PI/2,520,'needle');sfx('lance');SF.fx.addShake(.15);}}
  prune(B.lanes,L=>!L.fired||L.t>-.4);
  if(B.state!=='fight'||hidden)continue;
  // attacks: phase attacks + attacks of living parts
- const fm=SF.dm('enemyFire')*B.rage,bs=SF.dm('bulletSpeed');
+ const fm=SF.dm('enemyFire')*B.rage*(1+.05*B.lost),bs=SF.dm('bulletSpeed');   // fewer guns, angrier fire
  const run=a=>{a.t-=dt*fm;if(a.t>0)return;a.t=a.every;fireAttack(R,B,a,bs);};
  for(const a of B.attacks){if(a.from&&!B.parts.find(q=>q.id===a.from&&q.e.alive))continue;run(a);}
  for(const q of B.parts)if(q.e.alive)for(const a of q.attacks)run(a);
@@ -130,10 +144,13 @@ Bs.sync=(A,dt)=>{const R=SF.R;for(const B of Bs.list){const x=B.ox+(B.x-B.ox)*A,
  if(B.legacy){const bm=B.legacy;bm.g.visible=true;place(bm.g,x,y,!!D.ground,0);bm.g.rotation.set(0,0,0);for(const r of bm.rots)r.rotation.y+=dt*14;
   B.parts.forEach(q=>{if(q.node===undefined||!bm.turs[q.node])return;const gun=bm.turs[q.node].getObjectByName('gun');if(gun)gun.rotation.y=yawFrom(Math.atan2(R.p.y-q.e.y,R.p.x-q.e.x));});
   const core=B.parts.find(q=>q.kill),open=core&&!core.e.invuln&&!core.e.guard,pulse=.6+.4*Math.sin(B.t*(B.rage>1?14:6));bm.coreM.emissiveIntensity=1+pulse*1.5;bm.coreM.emissive.copy(col(B.rage>1?'#ff2a3a':'#ff7a1f'));bm.ring.visible=!open;bm.ring.rotation.z+=dt*2;
-  if(B.state==='dying'){bm.g.position.y-=(2.8-B.dying)*1.5;bm.g.rotation.z=(2.8-B.dying)*.08;}continue;}
+  if(B.state==='dying'){bm.g.position.y-=(B.dieT-B.dying)*1.5;bm.g.rotation.z=(B.dieT-B.dying)*.08;}continue;}
  const M=B.mdl;if(!M)continue;const g=M.g;g.visible=B.vis>.02;
  place(g,x,y,!!D.ground,B.sub>0?-Math.min(1,(D.submerge.time-B.sub)*2,B.sub*2)*3.2:0);g.scale.multiplyScalar(B.vis<1?Math.max(.05,B.vis):1);
- g.rotation.set(0,0,B.tilt*(B.x<W/2?1:-1));if(B.state==='dying'){g.position.y-=(2.8-B.dying)*(B.mini?2:1.4);g.rotation.z+=(2.8-B.dying)*.08;g.rotation.x=(2.8-B.dying)*.05;}
+ g.rotation.set(B.pitch,0,B.tilt*(B.x<W/2?1:-1)+B.lean);if(B.jolt>0){const j=B.jolt*.06;g.rotation.z+=Math.sin(B.t*40)*j;g.position.x+=Math.sin(B.t*53)*j*4;}
+ if(B.state==='dying'){const u=B.dieT-B.dying;g.position.y-=u*(B.mini?2:1.1);g.rotation.z+=u*.07;g.rotation.x+=u*.04;}
+ for(const k in M.stumps){const st=M.stumps[k],m=B.melt[k];if(!st.visible)continue;if(m){st.material.emissive.setHex(0xff4a10);st.material.emissiveIntensity=m/3.5*2.6;}else st.material.emissiveIntensity=0;}
+ if(!M.spins){M.spins=[];M.g.traverse(o=>{if(o.name==='spin')M.spins.push(o);});}for(const r of M.spins)r.rotation.z+=dt*(B.state==='fight'?18:3);
  for(const r of M.rots)r.rotation.y+=dt*(B.state==='dying'?6:16);if(M.halo)M.halo.rotation.z+=dt*(B.rage>1?2:.8);
  for(const q of B.parts){const n=M.nodes[q.id];if(!n||!q.e.alive)continue;if(q.P.wave)n.position.x=q.e.dx*K;
   const gun=n.getObjectByName('gun');if(gun){const a=Math.atan2(R.p.y-q.e.y,R.p.x-q.e.x);gun.rotation.y=yawFrom(a)-(q.P.ry||0);}
@@ -143,8 +160,17 @@ Bs.sync=(A,dt)=>{const R=SF.R;for(const B of Bs.list){const x=B.ox+(B.x-B.ox)*A,
 Bs.draw=(R,A)=>{for(const B of Bs.list){
  for(const L of B.lanes){if(L.fired)continue;const a=1-L.t/L.m;pj(L.x-L.w/2,B.y);const x0=PX,y0=PY;pj(L.x+L.w/2,H);cx.fillStyle=`rgba(255,40,60,${.08+a*.22})`;cx.fillRect(x0,y0,PX-x0,PY-y0);
   cx.strokeStyle=`rgba(255,60,80,${.4+.5*Math.abs(Math.sin(L.t*16))})`;cx.lineWidth=2;cx.setLineDash([8,6]);cx.strokeRect(x0,y0,PX-x0,PY-y0);cx.setLineDash([]);}
- if(B.state==='dying'||B.vis<.3||B.sub>0)continue;
+ if(B.state==='dying'){if(B.over>0){const c=B.parts.find(q=>q.kill),x=c?c.e.x:B.x,y=c?c.e.y:B.y;cx.globalCompositeOperation='lighter';pdg(x,y,40+B.over*120,'#ffd27a');pdg(x,y,20+B.over*60,'#ffffff');cx.globalCompositeOperation='source-over';}continue;}
+ if(B.vis<.3||B.sub>0)continue;
+ // per-weapon health bars (shown once a weapon has taken damage)
+ for(const q of B.parts){if(q.kill||!q.e.alive||q.e.hp>=q.e.max)continue;const f=q.e.hp/q.e.max;pj(q.e.x,q.e.y-q.e.r-8);const w=30,h=4;
+  cx.fillStyle='rgba(0,0,0,.6)';cx.fillRect(PX-w/2-1,PY-1,w+2,h+2);cx.fillStyle=f>.5?'#7dff9a':f>.25?'#ffd23f':'#ff4d5d';cx.fillRect(PX-w/2,PY,w*f,h);
+  cx.font='600 8px "Chakra Petch", sans-serif';cx.textAlign='center';cx.fillStyle='rgba(255,255,255,.8)';cx.fillText(Math.ceil(f*100)+'%',PX,PY-2);}
  cx.globalCompositeOperation='lighter';
+ // exposed core: crackling arcs
+ {const c=B.parts.find(q=>q.kill);if(c&&c.e.alive&&!c.e.invuln&&!c.e.guard){pj(c.e.x,c.e.y);const r0=c.e.r*PS;cx.strokeStyle='rgba(170,220,255,.85)';cx.lineWidth=1.6;
+  for(let k=0;k<3;k++){if(Math.random()<.35)continue;let a=Math.random()*TAU,x=PX+Math.cos(a)*r0*.5,y=PY+Math.sin(a)*r0*.5;cx.beginPath();cx.moveTo(x,y);for(let s2=0;s2<5;s2++){a+=rnd(-.8,.8);x+=Math.cos(a)*r0*.35;y+=Math.sin(a)*r0*.35;cx.lineTo(x,y);}cx.stroke();}
+  if(Math.random()<.2)SF.fx.spark(c.e.x,c.e.y,'#bfe6ff',2,1.2);}}
  for(const q of B.parts){if(!q.e.alive)continue;if(q.e.flash>0)pdg(q.e.x,q.e.y,q.e.r*1.2,'#ffffff');
   if(q.kill){const open=!q.e.invuln&&!q.e.guard;pdg(q.e.x,q.e.y,(open?30:20)+Math.sin(B.t*6)*6,B.rage>1?'#ff3c50':open?'#ff9d2e':'#5fa8ff');}
   else if(!q.e.invuln&&Math.floor(B.t*3)%2===0)pdg(q.e.x,q.e.y,q.e.r*.6,q.P.shield?'#5fd0ff':'#ffb347');}
@@ -159,6 +185,22 @@ Bs.drawBar=R=>{const B=R.boss;if(!B||B.state==='dying'||!Bs.list.includes(B))ret
  const parts=B.parts.filter(q=>!q.kill);parts.forEach((q,i)=>{const px=x0+i*16;cx.fillStyle=q.e.alive?(q.P.shield?'#5fd0ff':'#ffd27a'):'rgba(255,255,255,.15)';cx.fillRect(px,y+12,12,5);});
  cx.font='600 11px "Chakra Petch", sans-serif';cx.textAlign='left';cx.fillStyle='#fff';cx.fillText(B.D.name.toUpperCase(),x0,y-5);cx.textAlign='right';
  cx.fillStyle=k.e.invuln?'#9fd8ff':k.e.guard?'#ffd27a':'#ff8a9c';cx.fillText(B.sub>0?'SUBMERGED':B.gone>0?'PHASING':k.e.invuln?'CORE SEALED':k.e.guard?'CORE GUARDED':'CORE EXPOSED',OW-30,y-5);};
+// finale: light rays from the boss's last position (screen space, over the vignette)
+Bs.drawFinale=(R,dt)=>{const r=R.rays;if(!r)return;r.l-=dt;if(r.l<=0){R.rays=null;return;}const a=r.l/r.m;pj(r.x,r.y);const x=PX,y=PY;
+ cx.save();cx.globalCompositeOperation='lighter';for(let i=0;i<14;i++){const an=i/14*TAU+r.m*.3+(1-a)*.4,w=.07+.04*Math.sin(i*3.7),L=OH*1.2;
+  const g=cx.createLinearGradient(x,y,x+Math.cos(an)*L,y+Math.sin(an)*L);g.addColorStop(0,`rgba(255,240,200,${.55*a})`);g.addColorStop(1,'rgba(255,160,60,0)');cx.fillStyle=g;
+  cx.beginPath();cx.moveTo(x,y);cx.lineTo(x+Math.cos(an-w)*L,y+Math.sin(an-w)*L);cx.lineTo(x+Math.cos(an+w)*L,y+Math.sin(an+w)*L);cx.closePath();cx.fill();}
+ cx.restore();};
+// enemy commander's taunt strip with an original portrait (visored helmet), ORION replies after it
+Bs.drawTaunt=R=>{const t=R.taunt;if(!t)return;const a=Math.min(1,t.l*2,(4.6-t.l)*4),y=OH*.24;cx.save();cx.globalAlpha=a;
+ cx.fillStyle='rgba(30,4,8,.82)';cx.fillRect(0,y-30,OW,56);cx.fillStyle='#ff3c50';cx.fillRect(0,y-30,OW,2);cx.fillRect(0,y+24,OW,2);
+ const px=OW-44,py=y-2;const g=cx.createRadialGradient(px,py,4,px,py,30);g.addColorStop(0,'#ff5a6a');g.addColorStop(1,'#5a0812');cx.fillStyle=g;cx.beginPath();cx.arc(px,py,27,0,TAU);cx.fill();
+ cx.fillStyle='#16181c';cx.beginPath();cx.moveTo(px-17,py+20);cx.quadraticCurveTo(px-20,py-18,px,py-21);cx.quadraticCurveTo(px+20,py-18,px+17,py+20);cx.closePath();cx.fill();
+ cx.fillStyle='#ff9a3a';cx.beginPath();cx.moveTo(px-13,py-4);cx.lineTo(px+13,py-4);cx.lineTo(px+9,py+3);cx.lineTo(px-9,py+3);cx.closePath();cx.fill();
+ cx.strokeStyle='#ffd27a';cx.lineWidth=2;cx.beginPath();cx.arc(px,py,27,0,TAU);cx.stroke();
+ cx.textAlign='left';cx.fillStyle='#ff8a9c';cx.font='600 10px "Chakra Petch", sans-serif';cx.fillText('ADMIRAL VARN · ASHEN FLEET',12,y-14);
+ cx.fillStyle='#fff';cx.font='600 12px "Chakra Petch", sans-serif';const words=t.text.split(' ');let line='',ly=y+2;for(const w of words){if(cx.measureText(line+w).width>OW-90){cx.fillText(line,12,ly);line='';ly+=15;}line+=w+' ';}cx.fillText(line,12,ly);
+ cx.restore();};
 // boss name card (entrance)
 Bs.drawCard=R=>{const c=R.bossCard;if(!c||c.l<=0)return;const a=Math.min(1,c.l*2,(c.mini?2.2:3)-c.l<.3?((c.mini?2.2:3)-c.l)/.3:1);cx.globalAlpha=a;const y=OH*.66;
  cx.fillStyle='rgba(0,0,0,.55)';cx.fillRect(0,y-40,OW,70);cx.fillStyle=c.mini?'#ffb352':'#ff4d6d';cx.fillRect(0,y-40,OW,2);cx.fillRect(0,y+28,OW,2);

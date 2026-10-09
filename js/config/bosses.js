@@ -173,3 +173,40 @@ SF.MINIBOSSES={
 };
 // which boss each stage uses
 ['tidebreaker','harvestReaper','duneCrawler','ridgeGunship','ironLeviathan','reefCarrier','canyonColossus','polarTalon','skylineSentinel','infernoThrone'].forEach((b,i)=>{if(SF.STAGE_DEFS&&SF.STAGE_DEFS[i])SF.STAGE_DEFS[i].boss=b;});
+// ---------- extra weapon modules (v5.3): every main boss carries 6-10 weapons ----------
+// New part meshes: gatling (spinning barrels), beam (charge lance), orb (spiral pod), mortar (lobbed shells).
+// Inserted before the core; every 'parts<=N' condition of that boss is raised by the number of extras, so the
+// original pacing (how many weapons must fall before a phase) stays the same.
+SF.BOSS_TAUNTS={};
+(()=>{const G=(id,name,dx,dy,hp,o)=>Object.assign({id,name,mesh:'gatling',dx,dy,r:17,hp,score:2200,gears:4,attacks:[_A('aimed',1.1,{count:3,spread:7,speed:200})]},o||{}),
+ L=(id,name,dx,dy,hp,o)=>Object.assign({id,name,mesh:'beam',dx,dy,r:18,hp,score:2800,gears:5,attacks:[_A('laser',6.5,{charge:1.2,fire:.6,dmg:14,offset:2})]},o||{}),
+ O=(id,name,dx,dy,hp,o)=>Object.assign({id,name,mesh:'orb',dx,dy,r:17,hp,score:2500,gears:5,attacks:[_A('spiral',.16,{arms:3,speed:120})]},o||{}),
+ M=(id,name,dx,dy,hp,o)=>Object.assign({id,name,mesh:'mortar',dx,dy,r:17,hp,score:2400,gears:4,attacks:[_A('mortar',4.2,{delay:1.4,radius:34,damage:18,offset:1.5})]},o||{});
+ const X={
+  tidebreaker:[G('gatF','Fore gatling',-80,-22,80),G('gatA','Aft gatling',80,22,80),L('lance','Bow lance',140,-6,95),M('mortar','Deck mortar',-145,12,85)],
+  harvestReaper:[G('gatL','Left gatling',-62,42,110),G('gatR','Right gatling',62,42,110),O('orb','Thresher orb',-72,-52,100),M('mortar','Grain mortar',72,-52,100)],
+  duneCrawler:[G('gatL','Flank gatling',-36,-82,75,{dy:-82}),G('gatR','Flank gatling',36,-122,75)],
+  ridgeGunship:[G('gatL','Door gun L',-50,40,95),G('gatR','Door gun R',50,40,95),L('lance','Spine lance',0,28,110)],
+  ironLeviathan:[G('deckL','Fore deck gun',-120,0,90,{mesh:'turret'}),G('deckR','Aft deck gun',120,0,90,{mesh:'turret'}),O('orb','Sonar orb',-40,12,95),M('mortar','Deck mortar',40,12,95)],
+  reefCarrier:[G('gat1','Island gatling',-40,-30,90),G('gat2','Stern gatling',130,-22,90),L('lance','Island lance',-140,20,105)],
+  canyonColossus:[G('gatL','Hip gatling L',-55,-22,95),G('gatR','Hip gatling R',55,-22,95)],
+  polarTalon:[G('gatL','Wing gatling L',-92,-18,100),G('gatR','Wing gatling R',92,-18,100),L('lance','Frost lance',0,-46,115)],
+  skylineSentinel:[G('gatL','Flank gun L',-45,45,100),G('gatR','Flank gun R',45,45,100),O('orbL','Pulse orb L',-42,-40,105),O('orbR','Pulse orb R',42,-40,105,{attacks:[_A('spiral',.16,{arms:3,speed:120,offset:.5})]})],
+  infernoThrone:[G('gatL','Throne gatling L',-110,30,120),G('gatR','Throne gatling R',110,30,120),L('lanceL','Magma lance L',-38,46,130),L('lanceR','Magma lance R',38,46,130,{attacks:[_A('laser',6.5,{charge:1.2,fire:.6,dmg:16,offset:5})]})],
+ };
+ const up=(s,n)=>s&&s.replace(/parts<=(\d+)/g,(m,v)=>'parts<='+(+v+n));
+ for(const k in X){const D=SF.BOSSES[k];if(!D)continue;const n=X[k].length,ci=D.parts.findIndex(p=>p.kill);D.parts.splice(ci<0?D.parts.length:ci,0,...X[k]);
+  for(const p of D.parts)if(p.vulnerableWhen)p.vulnerableWhen=up(p.vulnerableWhen,n);for(const ph of D.phases)ph.when=up(ph.when,n);}
+ // the enemy commander (an original Skyfire villain) taunts at each main boss; ORION answers
+ const T=SF.BOSS_TAUNTS;
+ T.tidebreaker=['Admiral Varn here. Your little harbor is mine, pilot.','Varn again. Ignore her, Rex. Sink that ship.'];
+ T.harvestReaper=['The fields will feed my Ashen Fleet. Turn back.','Big blades, slow turns. Stay on its flanks.'];
+ T.duneCrawler=['The desert swallows everything. You are next.','Hit the segments first. The head opens when they fall.'];
+ T.ridgeGunship=['From the ridge I see every move you make.','Take out the rotors and it falls.'];
+ T.ironLeviathan=['My Leviathan hunts beneath you. You will never see it coming.','Watch the water. Strike when it surfaces.'];
+ T.reefCarrier=['Every wing I own is coming for you.','Knock out the launch decks before it fills the sky.'];
+ T.canyonColossus=['The Colossus has never fallen. Not once.','Legs first. Make it limp.'];
+ T.polarTalon=['Cold out here, pilot. Colder when you fall.','Its shield pylons first, then the core.'];
+ T.skylineSentinel=['My city, my rules. Light them up!','It blinks around. Track the core when it lands.'];
+ T.infernoThrone=['You made it to my throne. This is where your flight ends.','This is it, Rex. Bring everything you have.'];
+})();

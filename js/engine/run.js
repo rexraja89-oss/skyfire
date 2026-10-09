@@ -144,7 +144,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  const vg=cx.createRadialGradient(OW/2,OH/2,OH*.35,OW/2,OH/2,OH*.8);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,SF.fx.hurt>0?`rgba(200,0,30,${.25+SF.fx.hurt})`:'rgba(0,0,0,.35)');cx.fillStyle=vg;cx.fillRect(0,0,OW,OH);
  if(R.slow>0){cx.fillStyle='rgba(20,0,10,.18)';cx.fillRect(0,0,OW,OH);}
  if(SF.fx.flash>0){cx.fillStyle=`rgba(255,250,235,${Math.min(1,SF.fx.flash)})`;cx.fillRect(0,0,OW,OH);}
- SF.boss.drawBar(R);SF.boss.drawCard(R);
+ SF.boss.drawFinale(R,dt);SF.boss.drawBar(R);SF.boss.drawCard(R);SF.boss.drawTaunt(R);
  if(R.kind==='stage'&&R.t<3.2){cx.globalAlpha=Math.min(1,(3.2-R.t)*1.5);cx.textAlign='center';cx.fillStyle='rgba(0,0,0,.5)';cx.fillRect(0,OH*.4-50,OW,78);cx.fillStyle='#ffb352';cx.font='600 13px "Chakra Petch", sans-serif';cx.fillText(`MISSION ${R.si+1} · ${R.mode.toUpperCase()}`,OW/2,OH*.4-26);cx.fillStyle='#fff';cx.font='26px Bungee, Impact, sans-serif';cx.fillText(R.st.name.toUpperCase(),OW/2,OH*.4+6);cx.globalAlpha=1;}
  if(R.warnT>0){const a=.5+.5*Math.sin(R.warnT*12);cx.fillStyle=`rgba(255,40,70,${.12*a})`;cx.fillRect(0,0,OW,OH);cx.textAlign='center';cx.fillStyle=`rgba(255,77,109,${a})`;cx.font='30px Bungee, Impact, sans-serif';cx.fillText('WARNING',OW/2,OH*.42);cx.fillStyle='#fff';cx.font='600 14px "Chakra Petch", sans-serif';cx.fillText(R.st.boss.name.toUpperCase()+' APPROACHING',OW/2,OH*.42+26);}
  if(R.banner){const b=R.banner,a=Math.min(1,b.l*3);cx.globalAlpha=a;cx.textAlign='center';cx.fillStyle='rgba(0,0,0,.45)';cx.fillRect(0,OH*.3-34,OW,b.sub?58:44);

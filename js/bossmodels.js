@@ -45,6 +45,17 @@ function partMesh(kind,c,r){const g=new T3.Group(),mm=std('#5a6068',.6,.38),md=s
  else if(kind==='hangar'){g.add(mesh(new T3.BoxGeometry(5*s,1.6,3.4*s),std('#4a5058',.4,.5),0,.8,0));g.add(mesh(new T3.BoxGeometry(4*s,1.1,.2),std('#ffb347',.2,.6,{em:'#ff7a1f',ei:.6}),0,.7,1.72*s));}
  else if(kind==='leg'){g.add(mesh(new T3.BoxGeometry(1.4*s,8,1.4*s),mm,0,4,0));g.add(mesh(new T3.BoxGeometry(3*s,.8,3.4*s),md,0,.4,0));}
  else if(kind==='segment'){const b=mesh(new T3.SphereGeometry(1,16,10),std(c,.55,.4));b.scale.set(2.8*s,2*s,2.6*s);b.position.y=1.4;g.add(b);g.add(mesh(new T3.BoxGeometry(5.4*s,.5,.8*s),md,0,1.2,0));}
+ else if(kind==='gatling'){g.add(mesh(new T3.CylinderGeometry(1.3*s,1.5*s,.7,14),std('#5c636b',.65,.32)));const gun=new T3.Group();gun.name='gun';gun.position.y=.75;
+  gun.add(mesh(new T3.BoxGeometry(1.5*s,.9,1.8*s),std('#454b52',.6,.4)));const sp=new T3.Group();sp.name='spin';sp.position.set(0,0,-1.9*s);
+  for(let i=0;i<6;i++){const a=i/6*TAU;sp.add(mesh(new T3.CylinderGeometry(.11*s,.11*s,2.6*s,6).rotateX(Math.PI/2),md,Math.cos(a)*.3*s,Math.sin(a)*.3*s,0));}
+  sp.add(mesh(new T3.CylinderGeometry(.42*s,.42*s,.25,10).rotateX(Math.PI/2),mm,0,0,-1.1*s));gun.add(sp);g.add(gun);}
+ else if(kind==='beam'){g.add(mesh(new T3.CylinderGeometry(1.4*s,1.7*s,1,8),std('#4d535b',.6,.35),0,.5,0));const gun=new T3.Group();gun.name='gun';gun.position.y=1.2;
+  gun.add(mesh(new T3.BoxGeometry(1.2*s,1,3.2*s),std('#3a3f46',.65,.3)));for(const sx of[-1,1])gun.add(mesh(new T3.BoxGeometry(.25*s,.6,3.6*s),std('#8a929c',.7,.3),sx*.75*s,0,-.6*s));
+  const lens=new T3.Mesh(new T3.SphereGeometry(.45*s,12,8),basic('#ff4a6a'));lens.position.set(0,0,-2.1*s);lens.name='glow';gun.add(lens);g.add(gun);}
+ else if(kind==='orb'){g.add(mesh(new T3.CylinderGeometry(1.2*s,1.5*s,.8,10),std('#4a5058',.6,.35),0,.4,0));const o=new T3.Mesh(new T3.SphereGeometry(.95*s,16,12),basic('#c07bff'));o.position.y=1.7;o.name='glow';g.add(o);
+  const cage=new T3.Group();cage.name='spin';cage.position.y=1.7;for(let i=0;i<3;i++){const r=new T3.Mesh(new T3.TorusGeometry(1.3*s,.08,6,24),std('#9aa4ad',.8,.3));r.rotation.set(i*Math.PI/3,i*.7,0);cage.add(r);}g.add(cage);}
+ else if(kind==='mortar'){g.add(mesh(new T3.BoxGeometry(2.6*s,1,2.6*s),mm,0,.5,0));const t=mesh(new T3.CylinderGeometry(.75*s,.9*s,1.8,12),std('#3b4047',.6,.4),0,1.6,0);t.rotation.x=-.25;g.add(t);
+  g.add(mesh(new T3.CylinderGeometry(.55*s,.55*s,.12,12),std('#120f0d',.2,.9),0,2.5,-.22));}
  else if(kind==='armor'){g.add(mesh(new T3.BoxGeometry(4.6*s,1.4,1.4*s),std('#9aa4ad',.8,.3),0,.8,0));}
  return g;}
 // core: glowing reactor with a shield ring (ring shows while the core is guarded/invulnerable)
@@ -56,8 +67,8 @@ BossModels.build=(id,D)=>{if(BossModels.cache[id])return BossModels.cache[id];co
  for(const p of D.parts){const y=(p.y!==undefined?p.y:B.top);let n;
   if(p.kill&&p.mesh!=='none'){core=coreMesh(p.r);n=core.g;}else if(p.mesh&&p.mesh!=='none')n=partMesh(p.mesh,M.color||'#59606b',p.r);else continue;
   n.position.set(p.dx*K,y,p.dy*K);if(p.ry)n.rotation.y=p.ry;g.add(n);nodes[p.id]=n;
-  const st=new T3.Mesh(stumpGeo,std('#1a1614',.2,.9));st.position.copy(n.position);st.scale.setScalar(p.r/20);st.visible=false;g.add(st);stumps[p.id]=st;}
+  const st=new T3.Mesh(stumpGeo,std('#1a1614',.2,.9).clone());/* own material: glows red-hot when its part is destroyed */st.position.copy(n.position);st.scale.setScalar(p.r/20);st.visible=false;g.add(st);stumps[p.id]=st;}
  g.traverse(o=>{if(o.isMesh)o.castShadow=true;});const rots=[];g.traverse(o=>{if(o.name==='rotor')rots.push(o);});const halo=g.getObjectByName('halo');
- g.visible=false;scene.add(g);return BossModels.cache[id]={g,nodes,stumps,core,rots,halo};};
-BossModels.reset=m=>{m.g.visible=false;m.g.rotation.set(0,0,0);for(const k in m.nodes)m.nodes[k].visible=true;for(const k in m.stumps)m.stumps[k].visible=false;};
+ g.visible=false;scene.add(g);return BossModels.cache[id]={g,nodes,stumps,core,rots,halo,top:B.top};};
+BossModels.reset=m=>{m.g.visible=false;m.g.rotation.set(0,0,0);for(const k in m.nodes)m.nodes[k].visible=true;for(const k in m.stumps){const st=m.stumps[k];st.visible=false;st.material.emissive.setHex(0);st.material.emissiveIntensity=0;}};
 })();
