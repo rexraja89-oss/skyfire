@@ -1,8 +1,8 @@
 {
-  "build": 36,
-  "version": "5.15",
+  "build": 37,
+  "version": "5.16",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Detailed Steel Docks and city rooftops"
+    "Fix: flickering stripes in High graphics"
   ]
 }

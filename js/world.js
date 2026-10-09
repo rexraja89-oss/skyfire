@@ -236,10 +236,11 @@ const BIOME={
   cf(o,x,z,h,sl){if(h>2){const b=Math.floor(h/3)%4;mixc(o,o,lc(['#a95a3b','#c4714a','#8d4630','#d98d5f'][b]),.7);}},
   props(R,z0,put,HF){for(let i=0;i<70;i++){const x=R()*140-70,z=z0-R()*TL,h=HF(x,z);if(h>-.2){if(R()<.6)put(R()<.5?'boulder':'boulder2',x,z,1+R()*2,R()*TAU,pick(['#d88a60','#c47a52','#e09a70']),.8,-.3);else put('canopy',x,z,3.5+R()*2.5,R()*TAU,'#d8d4b0');}}}},
  arctic:{sky:['#7aa8d8','#eaf2fa','#c8d8e6'],fog:'#e2ecf4',fogN:.75,sun:['#fff8ee',2.4],sunDir:[-.4,.6,-.6],hemi:['#e6f0ff','#8aa0b8',.8],exp:.95,water:{c:'#1b3e56',op:.95},wl:0,clouds:6,
-  HF(x,z){const ic=14+3*Math.sin(z*.013);let h;if(x<ic)h=.6+fbm(x*.03,z*.03,3)*1.2+(x<0?mtn(x,z,34,28,85):0);else{h=-3;if(fbm(x*.07,z*.07,2)>.18)h=.15;}if(x>60)h=Math.max(h,mtn(x,z,18,60,95)-3);return h;},
-  P:{low:'#e8f0f6',mid:'#f4f8fb',m0:1,m1:4,high:'#dfe8ef',h0:6,h1:12,rock:'#5a6470',snow:10,sand:1,wl:.05,sandc:'#cfe6f0',deep:'#1a3040'},
+  HF(x,z){const ic=14+3*Math.sin(z*.013);let h;if(x<ic)h=Math.max(.9,.6+fbm(x*.03,z*.03,3)*1.2)+(x<0?mtn(x,z,34,28,85):0);else h=-3;/* shelf stays above the sea; floating ice is the 'floe' prop (smooth outlines) */if(x>60)h=Math.max(h,mtn(x,z,18,60,95)-3);return h;},
+  P:{low:'#e8f0f6',mid:'#f4f8fb',m0:1,m1:4,high:'#dfe8ef',h0:6,h1:12,rock:'#5a6470',snow:10,sand:1,wl:.05,sandc:'#cfe6f0',deep:'#1a3040'},uses:['floe'],
   props(R,z0,put,HF){if(R()<.9){const z=z0-20-R()*(TL-40),x=-6+R()*8;put('hut',x,z,1,0,null);put('hut',x+5,z-4,1,0,null);put('radar',x-5,z+3,1,0,null);put('tankf',x+3,z+6,1,0,'#f4f4f4');put('tankf',x+6,z+6,1,0,'#f4f4f4');}
    for(let i=0;i<160;i++){const x=-26-R()*60,z=z0-R()*TL,h=HF(x,z);if(h>.6&&h<12)put('pine',x,z,.8+R()*.5,R()*6,'#c2d0c8');}
+   for(let i=0;i<70;i++){const z=z0-R()*TL,ic=14+3*Math.sin(z*.013),x=ic+1.5+Math.pow(R(),1.6)*60;if(x>62)continue;const h=HF(x,z);if(h>-1)continue;const sc=.7+R()*R()*3.4;put('floe',x,z,1,R()*TAU,pick(['#eef5fa','#e2eef6','#d6e6f0']),1,-h+.04,[sc*(.8+R()*.5),1,sc*(.8+R()*.5)]);}
    for(let i=0;i<25;i++){const x=R()*110-55,z=z0-R()*TL,h=HF(x,z);if(h>.3)put('rock',x,z,.7+R()*1.2,R()*6,'#6a7480');}}},
  city:{sky:['#05070f','#1a2440','#0a0c14'],fog:'#121a2c',fogN:.8,sun:['#9fb4ff',.7],sunDir:[-.3,.8,-.5],hemi:['#3a4a7a','#151020',.55],exp:1.25,wl:-60,clouds:3,night:1,
   HF(x,z){let h=.3;if(Math.abs(x)>45)h+=mtn(x,z,18,45,90)*.7;return h;},
@@ -352,6 +353,9 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
   k.push([B(.012,.6,.012),'#8a8e94',MT(-.35,.3,.33)]);for(let i=0;i<4;i++)k.push([B(.3,.01,.06),'#1e2a3c',MT(-.15,.04,.22+i*.075,-.3)]);
   for(let i=0;i<4;i++)k.push([B(.03,.05,.03),'#8a8e94',MT(-.4+i*.08,.025,-.4)]);
   PROPS.roofkit={geo:merge(k),mat:plain,cap:420};}
+ // sea-ice floe: flat slab with an irregular rounded outline, a pale rim and a sunken blue-green underside
+ {const R=srng(31),pts=[];for(let i=0;i<18;i++){const a=i/18*TAU,r=1+.22*Math.sin(a*3+1)+.12*Math.sin(a*5+R()*6)+(R()-.5)*.12;pts.push([Math.cos(a)*r,Math.sin(a)*r]);}
+  PROPS.floe={geo:merge([[shapeGeo(pts,.22,.05),'#ffffff',MT(0,-.12,0)],[shapeGeo(pts.map(([x,y])=>[x*1.12,y*1.12]),.05),'#7fb0bc',MT(0,-.2,0)]]),mat:plain,cap:120};}
  PROPS.beacon={geo:new T3.SphereGeometry(.12,6,4),mat:new T3.MeshBasicMaterial({color:col('#ff3030')}),cap:200,noShadow:1};
  // CC0 KayKit City Builder Bits models (js/assets/kaykit.js): low-rise buildings, cars, street lights, water tower
  if(typeof SF!=='undefined'&&SF.KK){kkMat=new T3.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.7,metalness:.05});

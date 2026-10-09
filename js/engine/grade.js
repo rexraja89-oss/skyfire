@@ -18,9 +18,9 @@ function build(){const U={t:{value:null},hi:{value:new T3.Color()},sh:{value:new
     gl_FragColor=vec4(clamp(c,0.,1.),1.);}`});
  Q=new T3.Mesh(new T3.PlaneGeometry(2,2),m);Q.frustumCulled=false;QS=new T3.Scene();QS.add(Q);QC=new T3.OrthographicCamera(-1,1,1,-1,0,1);}
 function target(w,h){if(RT&&RT.width===w&&RT.height===h)return RT;if(RT)RT.dispose();
- const o={encoding:T3.sRGBEncoding,depthBuffer:true,stencilBuffer:false};
+ const o={encoding:T3.sRGBEncoding,depthBuffer:true,stencilBuffer:true};   // stencil on: three r128 then allocates 24-bit depth (depth-only would be 16-bit and z-fights at gameplay distance)
  RT=renderer.capabilities.isWebGL2&&T3.WebGLMultisampleRenderTarget?new T3.WebGLMultisampleRenderTarget(w,h,o):new T3.WebGLRenderTarget(w,h,o);
- if(RT.samples!==undefined)RT.samples=4;RT.texture.encoding=T3.sRGBEncoding;return RT;}
+ if(RT.samples!==undefined)RT.samples=4;RT.texture.encoding=T3.sRGBEncoding;Gd.rt=RT;return RT;}
 // render the 3D scene for a flight: graded in HQ, direct otherwise
 Gd.render=si=>{const st=STAGES[si],A=st&&SF.ATMOS[LV.bk||st.biome],g=A&&A.grade;Gd.on=!!(save.hq&&g);
  if(!Gd.on){renderer.render(scene,camera);return;}

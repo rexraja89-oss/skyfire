@@ -43,6 +43,7 @@ const results=[];const check=(name,ok,info)=>{results.push({name,ok:!!ok,info});
  const s1=await ev(()=>__rms());check('SFX on after silent start',s1>.002,{rms:s1});
  // 6. scene grade pass: on in HQ for a graded biome, off in Smooth
  await ev(()=>{save.hq=true;applyQuality();});await page.waitForTimeout(500);check('grade pass active in HQ',await ev(()=>SF.grade.on));
+ check('grade target keeps 24-bit depth (stencil on)',await ev(()=>!!SF.grade.rt&&SF.grade.rt.depthBuffer&&SF.grade.rt.stencilBuffer));
  await ev(()=>{save.hq=false;applyQuality();});await page.waitForTimeout(500);check('grade pass off in Smooth',await ev(()=>!SF.grade.on));
  await ev(()=>{save.hq=true;applyQuality();});
  // 7. Focus: lift after touch slows time
@@ -68,6 +69,7 @@ const results=[];const check=(name,ok,info)=>{results.push({name,ok:!!ok,info});
  await ev(()=>{goTitle();SF.run.start({kind:'stage',si:2,mode:'easy'});});for(let i=0;i<40&&!(await ev(()=>state==='run'&&SF.R.si===2));i++)await page.waitForTimeout(250);
  check('ocean off on the next stage',await ev(()=>!SF.ocean.on&&LV.weather!=='storm'));
  await ev(()=>{goTitle();SF.run.start({kind:'range'});});await page.waitForTimeout(1500);check('Test Range keeps the farmland',await ev(()=>LV.bk==='farm'&&!SF.ocean.on));
+ check('Frozen Outpost shelf stays above the sea',await ev(()=>{const B=BIOME.arctic;for(let z=-300;z<=300;z+=3)for(let x=-40;x<10.5+3*Math.sin(z*.013);x+=1.5)if(B.HF(x,z)<.85)return false;return true;}));
  // 10. old saves with stage-2 progress still load (stage slot kept, same key)
  check('save shape unchanged (ver 3)',await ev(()=>save.ver===3&&STAGES.length===10&&STAGES[1].key===47));
  check('no unexpected page errors',errors.length===0,errors.slice(0,5));
