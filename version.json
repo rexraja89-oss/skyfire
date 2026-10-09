@@ -1,8 +1,8 @@
 {
-  "build": 14,
-  "version": "4.3",
+  "build": 15,
+  "version": "4.4",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Rex's red Viper and HD engine flames"
+    "Rex's Titan with blue afterburners"
   ]
 }
