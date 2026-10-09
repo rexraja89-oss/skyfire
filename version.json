@@ -1,8 +1,8 @@
 {
-  "build": 17,
-  "version": "4.6",
+  "build": 18,
+  "version": "4.7",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "New desert with a live sandstorm"
+    "HD desert ground"
   ]
 }

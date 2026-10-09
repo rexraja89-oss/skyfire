@@ -157,12 +157,12 @@ const BIOME={
   P:{low:'#cf8a46',mid:'#e2a35a',m0:.6,m1:3,high:'#e9ad66',h0:5,h1:9,rock:'#b8703a'},
   cf(o,x,z,h,sl,gx,gz){   // gx,gz: height slope along x and z (from the tile grid)
    const nl=Math.hypot(gx,1,gz),lit=clamp(((-gx)*-.62+.42+(-gz)*-.42)/nl/.8,0,1.3);   // sun-facing sand is bright, slip faces fall into shadow
-   mixc(o,lc('#a85a26'),lc('#f6c27a'),Math.min(1,lit));if(lit>1)mixc(o,o,lc('#ffe0a8'),(lit-1)*2);
-   const r=Math.abs(x+6);if(r<3.2)mixc(o,o,lc('#5a5048'),.85*(.75+.25*fbm(x*.4,z*.4,2)));else if(r<4.4)mixc(o,o,lc('#d9a868'),.5);   // sand-dusted highway
-   if(r<3.2&&fbm(x*.15+3,z*.06,2)>.4)mixc(o,o,lc('#e0a560'),.55);},
+   // tint over the HD sand texture (art/tex_sand.jpg): slip faces darken and redden, crests catch the light
+   const sh=Math.min(1,lit),v=.55+.5*sh;o[0]=v*(1.02-.06*(1-sh));o[1]=v*(.97-.1*(1-sh));o[2]=v*(.93-.14*(1-sh));if(lit>1){const k=(lit-1)*.6;o[0]+=k;o[1]+=k*.9;o[2]+=k*.7;}
+   const r=Math.abs(x+6),grit=.85+.15*fbm(x*.4,z*.4,2);const drift=sst(.1,.45,fbm(x*.15+3,z*.06,2));if(r<3.2)mixc(o,[.07*grit,.065*grit,.06*grit],o,drift*.85);else if(r<4.4)mixc(o,o,[.5,.46,.42],.35);},   // sand-dusted highway
   uses:['palm','shrub','acacia','tent','whouse','wall','shrine','derrick','tankf','rock'],
   props(R,z0,put,HF){const off=(x,w=6)=>Math.abs(x+6)<w;
-   for(let i=0;i<150;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,5))continue;put('shrub',x,z,.5+R()*.6,R()*6,pick(['#6f7a3e','#7d8a46','#8a8a52','#5f6a34']));}
+   for(let i=0;i<150;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,5))continue;put('shrub',x,z,.7+R()*.7,R()*6,pick(['#6a6438','#7a7044','#5c5a34','#857a4c']));}
    for(let i=0;i<8;i++){const x=R()*140-70,z=z0-R()*TL;if(off(x,7))continue;put('acacia',x,z,1+R()*.5,R()*6,'#4e6a2e');}
    // oasis camp: palm grove, bushes and dark woven tents
    if(R()<.55){const sd=R()<.5?-1:1,ox=-6+sd*(16+R()*22),oz=z0-14-R()*(TL-28);
@@ -178,7 +178,7 @@ const BIOME={
     if(R()<.5)put('shrine',vx+R()*8-4,vz+R()*8-4,1.1,R()*6,'#f4efe6',1,-.3);
     for(let k=0;k<4;k++)put('acacia',vx+R()*26-13,vz+R()*26-13,1+R()*.4,R()*6,'#4e6a2e');}
    if(R()<.3){const x=(R()<.5?-1:1)*(22+R()*16),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
-   for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.5+R()*.8,R()*6,'#a8683a');}}},
+   for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.35+R()*.5,R()*6,pick(['#9a6a44','#8a5e3c','#a47450']));}}},
  forest:{sky:['#4f86c6','#dce8f0','#7d8f7a'],fog:'#c9d8de',fogN:.75,sun:['#fff4dc',2.3],sunDir:[-.4,.75,-.5],hemi:['#cfe0ff','#3a4a2a',.6],exp:1.05,water:{c:'#2a6b76',op:.92},wl:-.8,clouds:7,
   HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037);let h=1.2+fbm(x*.03,z*.03,4)*2.4+mtn(x,z,38,30,85);h-=3.4*Math.exp(-(((x-rx)/3.2)**2));return h;},
   P:{low:'#2f5a2b',mid:'#3d6b33',m0:2,m1:6,high:'#5a6a50',h0:12,h1:20,rock:'#6e6a64',snow:22,sand:1,wl:-.3,sandc:'#8a7a5a',deep:'#2a4a40'},
@@ -262,7 +262,8 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  PROPS.pier={geo:merge([[B(1,.25,1),'#ffffff',MT(.5,.35,0)],[Cy(.08,.08,1.4,5),'#4a3a28',MT(.5,-.3,.45)],[Cy(.08,.08,1.4,5),'#4a3a28',MT(.5,-.3,-.45)]]),mat:plain,cap:10};
  PROPS.ruin={geo:merge([[B(1,1,1),'#ffffff',MT(0,.5,0)]]),mat:plain,cap:10};
  // desert props
- PROPS.shrub={geo:merge([[new T3.IcosahedronGeometry(.6,0),'#ffffff',MT(0,.25,0,0,0,0,1,.55,1)],[new T3.IcosahedronGeometry(.4,0),'#ffffff',MT(.45,.2,.2,0,0,0,1,.5,1)]]),mat:veg,cap:220};
+ {const sb=[];const Rs=srng(77);for(let k=0;k<9;k++){const a=Rs()*TAU,d=Rs()*.5;sb.push([new T3.IcosahedronGeometry(.14+Rs()*.16,0),k%3?'#ffffff':'#d8d0b8',MT(Math.cos(a)*d,.1+Rs()*.12,Math.sin(a)*d,Rs()*3,Rs()*3,0,1,.6,1)]);}
+  PROPS.shrub={geo:merge(sb),mat:veg,cap:220};}   // dry desert scrub: a loose clump of small tufts
  PROPS.acacia={geo:merge([[Cy(.08,.13,2.2,5),'#5a3e26',MT(0,1.1,0,0,0,.1)],[Cy(.05,.07,1,4),'#5a3e26',MT(.35,1.9,0,0,0,-.6)],[Cy(1.7,1.3,.35,9),'#ffffff',MT(.15,2.4,0)],[Cy(1.1,.9,.28,8),'#ffffff',MT(.4,2.62,.2)]]),mat:veg,cap:60};
  const tr=new T3.CylinderGeometry(1,1,1,3);tr.rotateZ(Math.PI/2);
  PROPS.tent={geo:merge([[B(2.6,.7,2),'#ffffff',MT(0,.35,0)],[tr,'#ffffff',MT(0,.85,0,0,0,0,1.35,.42,1.05)]]),mat:plain,cap:30};
@@ -316,7 +317,11 @@ function rippleTex(){const N=256,c=document.createElement('canvas');c.width=c.he
   const v=196+Math.pow(w*.5+.5,1.6)*46+R()*18;im.data[k]=im.data[k+1]=im.data[k+2]=Math.min(255,v);im.data[k+3]=255;}
  g.putImageData(im,0,0);const t=new T3.CanvasTexture(c);t.wrapS=t.wrapT=T3.RepeatWrapping;t.anisotropy=4;return t;}
 let DETAIL,WNORM,LAVA,SCORCH,CLOUDT,RIPPLE;
-function initTerrain(){DETAIL=detailTex();RIPPLE=rippleTex();WNORM=waterNormal();LAVA=lavaTex();SCORCH=scorchTex();CLOUDT=cloudTex();
+// HD desert ground (tools/sand_tex.py): colour + normal map, tileable, ~20 world units per repeat; loaded in the background
+const SANDTX={map:null,n:null};
+function loadSandTex(){const L=new T3.TextureLoader(),set=(t,srgb)=>{t.wrapS=t.wrapT=T3.RepeatWrapping;t.repeat.set(.22,.22);t.anisotropy=8;if(srgb)t.encoding=T3.sRGBEncoding;return t;};
+ L.load('art/tex_sand.jpg?v='+BUILD,t=>{SANDTX.map=set(t,1);L.load('art/tex_sand_n.jpg?v='+BUILD,n=>{SANDTX.n=set(n);if(LV.B&&LV.B.ripples){TER.mat.map=SANDTX.map;TER.mat.normalMap=SANDTX.n;TER.mat.normalScale.set(.7,.7);TER.mat.roughness=.97;TER.mat.needsUpdate=true;}});});}
+function initTerrain(){DETAIL=detailTex();RIPPLE=rippleTex();loadSandTex();WNORM=waterNormal();LAVA=lavaTex();SCORCH=scorchTex();CLOUDT=cloudTex();
  TER.mat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.92,metalness:0,map:DETAIL});
  for(let i=0;i<NT;i++){const geo=gridGeo(),m=new T3.Mesh(geo,TER.mat);m.receiveShadow=true;m.frustumCulled=false;TER.g.add(m);TER.tiles.push({geo,m,n:-1,inst:{},hs:new Float32Array((NX+1)*(NZT+1))});}
  const wg=new T3.PlaneGeometry(700,900);wg.rotateX(-Math.PI/2);
@@ -351,7 +356,8 @@ function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;LV
  const sd=new T3.Vector3(...B.sunDir).normalize();skyMat.uniforms.sunDir.value.copy(sd);skyMat.uniforms.sunCol.value.set(B.sun[0]);
  sun.color.copy(col(B.sun[0]));sun.intensity=B.sun[1];LV.sunDir=sd;hemi.color.copy(col(B.hemi[0]));hemi.groundColor.copy(col(B.hemi[1]));hemi.intensity=B.hemi[2];
  renderer.toneMappingExposure=B.exp;scene.fog.color.copy(col(B.fog));
- const tm=B.ripples?RIPPLE:DETAIL;if(TER.mat.map!==tm){TER.mat.map=tm;TER.mat.needsUpdate=true;}
+ const hd=B.ripples&&SANDTX.map,tm=hd?SANDTX.map:B.ripples?RIPPLE:DETAIL,tn=hd?SANDTX.n:null;
+ if(TER.mat.map!==tm||TER.mat.normalMap!==tn){TER.mat.map=tm;TER.mat.normalMap=tn;TER.mat.normalScale.set(.7,.7);TER.mat.roughness=hd?.97:.92;TER.mat.needsUpdate=true;}
  // environment reflections from this sky
  if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;
  TER.water.visible=!!B.water;TER.lava.visible=!!B.lava;if(B.water){TER.water.material.color.copy(col(B.water.c));TER.water.material.opacity=B.water.op;TER.water.position.y=GY+B.wl;}
