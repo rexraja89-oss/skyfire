@@ -69,6 +69,8 @@ SF.WEAPONS={
 };
 // side weapons from hangar parts/drones (values per hangar level 0-8)
 SF.SIDEARMS={
+ wave:{fromLevel:4,twinLevel:7,interval:.22,speed:640,dmg:l=>.35+.07*l,amp:9,freq:15},   // wing pods: green wave bolts (by effective weapon level)
+ wingman:{fromLevel:10,interval:.14,speed:820,dmg:.8,dx:46,dy:26,follow:5},             // two wingmen at the top weapon level
  missile:{interval:l=>Math.max(.35,1.1-.09*l),dmg:l=>3+l,speed:560,turn:7},
  gundrone:{interval:.2,dmg:l=>1+.4*l,speed:760},
  laserdrone:{interval:l=>Math.max(.45,1-.06*l),dmg:l=>6+3*l,range:320},

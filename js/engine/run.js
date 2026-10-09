@@ -21,13 +21,13 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
- gz3=0;updTerrain(true);resetCopilot();WX.length=0;
+ gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);
  $('bombBtn').classList.add('sp');$('bombL').textContent='SKYBURST';$('pwPips').classList.add('lv');
  state='run';show('play');musicSet('combat',R.st.key);
  if(kind==='range')say('range','Test Range. Formations, ground targets and power-ups are all live. Chain your kills to build the combo.',3,0);
  else{say('brief',`${R.st.name}. ${R.st.brief}`,3,0);if(mode!=='easy')say('mode',`${MD===SF.DIFFICULTY.hard?'Hard':'Extreme'} mode. They have more of everything. Stay sharp.`,1,0);}
  updHud(true);};
-Rn.stop=()=>{SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();SF.boss.reset();$('combo').hidden=true;$('effRow').innerHTML='';for(const m of DRM)scene.remove(m);DRM.length=0;
+Rn.stop=()=>{SF.loadout.stop();SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();SF.boss.reset();$('combo').hidden=true;$('effRow').innerHTML='';for(const m of DRM)scene.remove(m);DRM.length=0;
  if(R&&R.kind==='range'&&R.score>(save.range.best||0)){save.range.best=Math.floor(R.score);store();}R=SF.R=null;SF.enemies.R=null;SF.BAL.run={};
  $('bombBtn').classList.remove('sp','ready');$('bombL').textContent='BOMB';$('pwPips').classList.remove('lv');};
 Rn.drag=(dx,dy)=>{if(R)SF.player.drag(R,dx,dy);};
@@ -51,7 +51,7 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  SF.player.step(R,dt);
  if(R.kind==='stage'){if(!R.over)SF.director.step(R,dt);}else SF.director.rangeStep(R,dt);
  SF.enemies.step(R,dt);SF.boss.step(R,dt);SF.boss.stepPending(R,dt);
- if(!R.over||R.won)SF.weapons.fire(R,dt);SF.weapons.step(R,dt);SF.pickups.step(R,dt);SF.fx.step(dt);
+ if(!R.over||R.won)SF.weapons.fire(R,dt);SF.loadout.step(R,dt);SF.weapons.step(R,dt);SF.pickups.step(R,dt);SF.fx.step(dt);
  R.gp=Math.max(0,R.gp-dt*4);SF.scoring.step(R,dt);SF.feel.step(R,dt);if(R.kind==='stage')SF.missions.step(R);
  if(R.warnT>0){R.warnT-=dt;R.camZ=1.1;}
  if(R.bossCard&&R.bossCard.l>0)R.bossCard.l-=dt;
@@ -120,6 +120,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  const px=p.ox+(p.x-p.ox)*A,py=p.oy+(p.y-p.oy)*A;
  if(PLM){const blink=p.inv>0&&p.alive&&Math.floor(R.t*20)%2===0&&!save.god;PLM.visible=(p.alive||p.dying>0)&&!blink&&!p.dead;
   place(PLM,px,py,false,p.dying>0?-(SF.BAL.player.deathTime-p.dying)*2:0);PLM.rotation.set(-.08+(p.dying>0?(SF.BAL.player.deathTime-p.dying)*.6:0),p.dying>0?(SF.BAL.player.deathTime-p.dying)*5:0,-p.bank*.75);}
+ SF.loadout.sync(R,A);
  R.drones.forEach((d,i)=>{const m=DRM[i];if(!m)return;m.visible=p.alive;place(m,d.x,d.y,false,.2);m.rotation.y+=dt*3;});
  SF.enemies.sync(A,dt);if(LV.boss&&!SF.boss.list.some(B=>B.legacy))LV.boss.g.visible=false;SF.boss.sync(A,dt);
  renderer.render(scene,camera);updProj();
@@ -128,6 +129,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  SF.fx.drawBack();SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
  cx.globalCompositeOperation='lighter';
  if(p.alive&&PLM&&PLM.visible&&p.dying<=0)SF.thrust.draw(R,px,py);
+ SF.loadout.drawThrust(R,A);
  cx.globalCompositeOperation='source-over';
  SF.boss.draw(R,A);SF.weapons.draw(R,A);SF.enemies.drawFlash(A);SF.fx.drawFront();SF.enemies.drawBullets(A);
  if(p.burst){const b=p.burst,a=1-b.t/SF.BAL.special.expandTime;pj(b.x,b.y);cx.globalCompositeOperation='lighter';cx.strokeStyle=`rgba(255,220,140,${.3+.6*a})`;cx.lineWidth=(6+10*a)*PS;cx.beginPath();cx.ellipse(PX,PY,b.r*PS,b.r*PS*.85,0,0,TAU);cx.stroke();
@@ -135,7 +137,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  if(p.alive&&p.dying<=0){let near=0;for(const b of SF.enemies.ebPool.live){if((b.x-p.x)**2+(b.y-p.y)**2<3600){near=1;break;}}
   pj(px,py);const hr=SF.BAL.player.hitR*PS;cx.fillStyle='rgba(255,255,255,.6)';cx.beginPath();cx.arc(PX,PY,hr*.7,0,TAU);cx.fill();
   cx.strokeStyle=near?'rgba(255,90,110,.95)':'rgba(43,209,192,.6)';cx.lineWidth=near?2:1.4;cx.beginPath();cx.arc(PX,PY,hr+(near?3.5:2.5),0,TAU);cx.stroke();}
- if(R.eff.shield&&p.alive){pj(px,py);cx.globalCompositeOperation='lighter';const a=.35+.15*Math.sin(R.t*8);cx.strokeStyle=`rgba(90,210,255,${a})`;cx.lineWidth=3;cx.beginPath();cx.arc(PX,PY,28*PS,0,TAU);cx.stroke();pdg(px,py,30,'#38c8ff');cx.globalCompositeOperation='source-over';}
+ SF.loadout.drawShield(R,px,py);
  if(save.god&&p.alive){pj(px,py);cx.strokeStyle='rgba(43,209,192,.45)';cx.lineWidth=2;cx.beginPath();cx.arc(PX,PY,32*PS,0,TAU);cx.stroke();}
  SF.fx.drawPops();SF.feel.draw(R,px,py);SF.dev.draw(R,A);
  cx.setTransform(oS,0,0,oS,0,0);

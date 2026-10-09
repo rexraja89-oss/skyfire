@@ -1,8 +1,8 @@
 {
-  "build": 22,
-  "version": "5.1",
+  "build": 23,
+  "version": "5.2",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Cinematic explosions and burning wrecks"
+    "Weapons you can see on your jet"
   ]
 }
