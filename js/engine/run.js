@@ -21,7 +21,7 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
- gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);
+ gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);SF.atmos.start(si);
  $('bombBtn').classList.add('sp');$('bombL').textContent='SKYBURST';$('pwPips').classList.add('lv');
  state='run';show('play');musicSet('combat',R.st.key);
  if(kind==='range')say('range','Test Range. Formations, ground targets and power-ups are all live. Chain your kills to build the combo.',3,0);
@@ -59,7 +59,7 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  for(const t of R.toasts)t.l-=dt;prune(R.toasts,t=>t.l>0);
  if(R.over&&R.won)for(const g of SF.pickups.pool.live)if(g.k==='gear'){const dx=R.p.x-g.x,dy=R.p.y-g.y,d=Math.hypot(dx,dy)||1;g.vx=dx/d*520;g.vy=dy/d*520;}
  if(R.endT>=0){R.endT-=dt;if(R.endT<0){Rn.finish(R.won);return;}}
- stepWeather(dt);stepCopilot(dt);
+ stepWeather(dt);stepCopilot(dt);SF.atmos.step(dt);
  R.shown+=Math.max(1,(R.score-R.shown)*Math.min(1,dt*8));if(R.shown>R.score)R.shown=R.score;
  updHud();};
 Rn.realTick=dt=>{if(!R)return;if(R.slow>0)R.slow-=dt;SF.feel.realTick(R,dt);};
@@ -124,7 +124,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  R.drones.forEach((d,i)=>{const m=DRM[i];if(!m)return;m.visible=p.alive;place(m,d.x,d.y,false,.2);m.rotation.y+=dt*3;});
  SF.enemies.sync(A,dt);if(LV.boss&&!SF.boss.list.some(B=>B.legacy))LV.boss.g.visible=false;SF.boss.sync(A,dt);
  renderer.render(scene,camera);updProj();
- cx.setTransform(oS,0,0,oS,0,0);cx.clearRect(0,0,OW,OH);drawWeather();
+ cx.setTransform(oS,0,0,oS,0,0);cx.clearRect(0,0,OW,OH);SF.atmos.drawUnder();drawWeather();
  if(SF.fx.shake>0){const k=Math.min(1.2,SF.fx.shake)*SF.BAL.fx.shake*6,u=tnow*1;cx.translate((Math.sin(u*61)+.6*Math.sin(u*37.3))*k,(Math.cos(u*53)+.6*Math.sin(u*29.1))*k);}   // smooth shake (no random jitter)
  SF.fx.drawBack();SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
  cx.globalCompositeOperation='lighter';
@@ -139,9 +139,10 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
   cx.strokeStyle=near?'rgba(255,90,110,.95)':'rgba(43,209,192,.6)';cx.lineWidth=near?2:1.4;cx.beginPath();cx.arc(PX,PY,hr+(near?3.5:2.5),0,TAU);cx.stroke();}
  SF.loadout.drawShield(R,px,py);
  if(save.god&&p.alive){pj(px,py);cx.strokeStyle='rgba(43,209,192,.45)';cx.lineWidth=2;cx.beginPath();cx.arc(PX,PY,32*PS,0,TAU);cx.stroke();}
- SF.fx.drawPops();SF.feel.draw(R,px,py);SF.dev.draw(R,A);
+ SF.atmos.drawOver();SF.fx.drawPops();SF.feel.draw(R,px,py);SF.dev.draw(R,A);
  cx.setTransform(oS,0,0,oS,0,0);
  const vg=cx.createRadialGradient(OW/2,OH/2,OH*.35,OW/2,OH/2,OH*.8);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,SF.fx.hurt>0?`rgba(200,0,30,${.25+SF.fx.hurt})`:'rgba(0,0,0,.35)');cx.fillStyle=vg;cx.fillRect(0,0,OW,OH);
+ SF.atmos.drawGrade();
  if(R.slow>0){cx.fillStyle='rgba(20,0,10,.18)';cx.fillRect(0,0,OW,OH);}
  if(SF.fx.flash>0){cx.fillStyle=`rgba(255,250,235,${Math.min(1,SF.fx.flash)})`;cx.fillRect(0,0,OW,OH);}
  SF.boss.drawFinale(R,dt);SF.boss.drawBar(R);SF.boss.drawCard(R);SF.boss.drawTaunt(R);

@@ -319,7 +319,8 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  if(typeof SF!=='undefined'&&SF.KK){kkMat=new T3.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.7,metalness:.05});
   kkMat.onBeforeCompile=sh=>{sh.uniforms.kkGlow=KKGLOW;sh.fragmentShader='uniform float kkGlow;\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n totalEmissiveRadiance+=vColor*kkGlow*smoothstep(.08,.3,vColor.b-vColor.r);');};
   const caps={building_A:40,building_C:40,building_E:40,building_G:40,car_sedan:60,car_taxi:40,car_hatchback:60,watertower:6};
-  for(const k in caps)if(SF.KK[k])PROPS['kk_'+k]={geo:kkGeo(k),mat:kkMat,cap:caps[k]};}}
+  for(const k in caps)if(SF.KK[k])PROPS['kk_'+k]={geo:kkGeo(k),mat:kkMat,cap:caps[k]};}
+ if(typeof SF!=='undefined'&&SF.setPieces)SF.setPieces({veg,plain,metal,B,Cy,Co});}
 // decode a KayKit mesh: footprint normalised to 1 unit (largest of x/z), base at y=0, centred on x/z
 let kkMat;const KKGLOW={value:0};
 function kkGeo(name){const D=SF.KK[name],b=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)).buffer;
@@ -402,7 +403,7 @@ function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;if
  sun.color.copy(col(B.sun[0]));sun.intensity=B.sun[1];LV.sunDir=sd;hemi.color.copy(col(B.hemi[0]));hemi.groundColor.copy(col(B.hemi[1]));hemi.intensity=B.hemi[2];
  renderer.toneMappingExposure=B.exp;scene.fog.color.copy(col(B.fog));
  const GS=B.ground&&GTX[B.ground],tm=GS?GS.map:DETAIL,tn=GS?GS.n:null;
- for(const t of TER.tiles)t.m.material=B.pbr&&SF.terrain?SF.terrain.mat():TER.mat;
+ for(const t of TER.tiles)t.m.material=B.pbr&&SF.terrain?SF.terrain.mat(B):TER.mat;
  if(TER.mat.map!==tm||TER.mat.normalMap!==tn){TER.mat.map=tm;TER.mat.normalMap=tn;if(GS)TER.mat.normalScale.set(GS.ns,GS.ns);TER.mat.roughness=GS?GS.rough:.92;TER.mat.needsUpdate=true;}
  // environment reflections from this sky
  if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;

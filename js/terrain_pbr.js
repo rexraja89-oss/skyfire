@@ -1,6 +1,7 @@
 'use strict';
 // ============ REALISTIC TERRAIN (Phase 1) ============
-// Opt-in per biome with `pbr:1` (only Jungle Ridge / BIOME.forest so far). Replaces the flat vertex-colour terrain with:
+// Opt-in per biome with `pbr:1` (Jungle Ridge's set) or `pbr:{tex:[base,soil,rock,moss,gravel],tint:[...5 rgb],strata,ns}`
+// to pick other layer textures (art/ter_*.jpg), tint them per layer and add coloured rock strata (canyon walls). Replaces the flat vertex-colour terrain with:
 //  - five blended material layers (grass, soil, rock, moss, gravel; art/ter_*.jpg from tools/terrain_tex.py), chosen per
 //    vertex by slope, height and noise (biome.splat) and blended per pixel by the textures' own heights (no hard edges)
 //  - triplanar rock on steep faces (no stretching), strata on cliff faces, macro variation against visible tiling
@@ -13,10 +14,9 @@ const T3=THREE,Tr=SF.terrain={};
 const E=4;                         // border cells sampled around each tile (normals and AO stay continuous across tiles)
 const PERIOD=600;                  // texture coordinates wrap every 600 units; every layer scale is a multiple of 1/600
 // ---------- material ----------
-let MAT=null;
 function tex(f){const t=new T3.TextureLoader().load('art/'+f+'?v='+BUILD);t.wrapS=t.wrapT=T3.RepeatWrapping;t.anisotropy=8;return t;}
 const HEAD=`
-uniform sampler2D tG,tS,tR,tM,tV,nG,nR,tX;
+uniform sampler2D tG,tS,tR,tM,tV,nG,nR,tX;uniform vec3 uT0,uT1,uT2,uT3,uT4,uSC;uniform float uStrata,uNS;
 varying vec4 vSplat;varying float vAO;varying vec3 vTP;varying vec3 vTN;
 vec3 L(vec4 c){return pow(c.rgb,vec3(2.2));}
 #define RS (54./600.)
@@ -25,8 +25,8 @@ const MAPF=`
 vec3 n0=normalize(vTN);vec2 P=vTP.xz;
 vec3 mac=texture2D(tX,P*(3./600.)).rgb;float brk=texture2D(tX,P*(22./600.)+.5).g;
 vec3 tw=pow(abs(n0),vec3(8.));tw/=tw.x+tw.y+tw.z;
-vec3 cG=mix(L(texture2D(tG,P*(102./600.))),L(texture2D(tG,P*(28./600.)+vec2(.31,.17))),.2+.6*mac.g);
-vec3 cS=L(texture2D(tS,P*(126./600.))),cM=L(texture2D(tM,P*(114./600.))),cV=L(texture2D(tV,P*(156./600.)));
+vec3 cG=mix(L(texture2D(tG,P*(102./600.))),L(texture2D(tG,P*(28./600.)+vec2(.31,.17))),.2+.6*mac.g)*uT0;
+vec3 cS=L(texture2D(tS,P*(126./600.)))*uT1,cM=L(texture2D(tM,P*(114./600.)))*uT3,cV=L(texture2D(tV,P*(156./600.)))*uT4;
 #ifdef SF_LITE
 vec3 cR=L(texture2D(tR,P*RS));
 #else
@@ -34,7 +34,8 @@ vec3 cR=tw.y*L(texture2D(tR,P*RS));
 if(tw.x+tw.z>.02)cR+=tw.x*L(texture2D(tR,vTP.zy*RS))+tw.z*L(texture2D(tR,vTP.xy*RS));   // side projections only on steep pixels
 #endif
 // weights: per-vertex splat, rock forced on steep pixels, noise breaks up the vertex grid
-vec4 w=vSplat;w.y=max(w.y,smoothstep(.36,.62,1.-n0.y));cR*=.86+.3*mix(mac.r,brk,.5);   // large-scale weathering from the macro map (no extra fetch)
+vec4 w=vSplat;w.y=max(w.y,smoothstep(.36,.62,1.-n0.y));cR*=(.86+.3*mix(mac.r,brk,.5))*uT2;   // large-scale weathering from the macro map (no extra fetch)
+if(uStrata>0.){float sb=.5+.5*sin(vTP.y*2.3+brk*2.5);cR*=mix(vec3(1.),uSC,uStrata*sb);}   // coloured rock bands follow height
 w.x*=.55+.9*brk;w.z*=.55+.9*(1.-brk);
 float wg=max(0.,1.-w.x-w.y-w.z-w.w);
 // height-based blending: each layer's brightness acts as its height, so pebbles and rock poke through grass
@@ -57,7 +58,7 @@ vec3 nr=texture2D(nR,P*RS).xyz*2.-1.;
 vec3 pr=tw.y*vec3(nr.x,0.,nr.y);
 if(tw.x+tw.z>.02){vec3 nrx=texture2D(nR,vTP.zy*RS).xyz*2.-1.,nrz=texture2D(nR,vTP.xy*RS).xyz*2.-1.;pr+=tw.x*vec3(0.,nrx.y,nrx.x)+tw.z*vec3(nrz.x,nrz.y,0.);}
 float fade=1.-.45*smoothstep(110.,190.,length(vViewPosition));   // calmer fine detail further away (less shimmer)
-vec3 nW=normalize(n0+mix(vec3(ng.x,0.,ng.y)*1.1,pr*1.,bRock)*fade);
+vec3 nW=normalize(n0+mix(vec3(ng.x,0.,ng.y)*1.1*uNS,pr*1.,bRock)*fade);
 #else
 vec3 nW=n0;
 #endif
@@ -67,11 +68,16 @@ const AOF=`reflectedLight.indirectDiffuse*=vAO;reflectedLight.indirectSpecular*=
 // HQ needs 8 terrain samplers + environment + shadow map; GPUs with fewer than 12 texture units use the lite shader
 Tr.hq=()=>!!save.hq&&renderer.capabilities.maxTextures>=12;
 Tr.path=()=>LV.B&&LV.B.pbr?(Tr.hq()?'terrain HQ':'terrain lite')+' · '+renderer.capabilities.maxTextures+' tex units':'';
-Tr.mat=()=>{if(MAT)return MAT;
- const U={tG:{value:tex('ter_grass.jpg')},tS:{value:tex('ter_soil.jpg')},tR:{value:tex('ter_rock.jpg')},tM:{value:tex('ter_moss.jpg')},tV:{value:tex('ter_gravel.jpg')},
-  nG:{value:tex('ter_ground_n.jpg')},nR:{value:tex('ter_rock_n.jpg')},tX:{value:tex('ter_macro.png')}};
- MAT=new T3.MeshStandardMaterial({vertexColors:true,roughness:.95,metalness:0});
- MAT.customProgramCacheKey=()=>Tr.hq()?'terrain-hq':'terrain-lite';
+const MATS={},TEXC={};
+const DEF_SET={tex:['grass','soil','rock','moss','gravel'],tint:[[1,1,1],[1,1,1],[1,1,1],[1,1,1],[1,1,1]],strata:0,sc:[1,1,1],ns:1};
+const texc=f=>TEXC[f]||(TEXC[f]=tex(f));
+Tr.mat=B=>{const S=Object.assign({},DEF_SET,B&&typeof B.pbr==='object'?B.pbr:{}),key=S.tex.join(',')+'|'+JSON.stringify(S.tint)+S.strata+S.ns;if(MATS[key])return MATS[key];
+ const v3=a=>({value:new T3.Vector3(a[0],a[1],a[2])});
+ const U={tG:{value:texc('ter_'+S.tex[0]+'.jpg')},tS:{value:texc('ter_'+S.tex[1]+'.jpg')},tR:{value:texc('ter_'+S.tex[2]+'.jpg')},tM:{value:texc('ter_'+S.tex[3]+'.jpg')},tV:{value:texc('ter_'+S.tex[4]+'.jpg')},
+  nG:{value:texc('ter_ground_n.jpg')},nR:{value:texc('ter_rock_n.jpg')},tX:{value:texc('ter_macro.png')},
+  uT0:v3(S.tint[0]),uT1:v3(S.tint[1]),uT2:v3(S.tint[2]),uT3:v3(S.tint[3]),uT4:v3(S.tint[4]),uSC:v3(S.sc),uStrata:{value:S.strata},uNS:{value:S.ns}};
+ const MAT=MATS[key]=new T3.MeshStandardMaterial({vertexColors:true,roughness:.95,metalness:0});
+ MAT.customProgramCacheKey=()=>(Tr.hq()?'terrain-hq':'terrain-lite');
  MAT.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
   sh.vertexShader='attribute vec4 splat;attribute float aoA;attribute vec3 tp;\nvarying vec4 vSplat;varying float vAO;varying vec3 vTP;varying vec3 vTN;\n'+
    sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSplat=splat;vAO=aoA;vTP=tp;vTN=normal;');
@@ -102,7 +108,8 @@ Tr.fill=(t,n)=>{const B=LV.B,HF=B.HF,z0=TZ0-n*TL,g=t.geo;ensure(g);
    for(let s=1;s<=E;s++){const d=H(i+a*s,j+b*s)-h,tn=d/(dl*s);if(tn>mt)mt=tn;if(d>under)under=d;}occ+=mt/Math.sqrt(1+mt*mt);}
   ao[k]=clamp(1-occ/8*1.35,.45,1);
   B.splat(o,x,z,h,sl,under);sp[k*4]=o[0];sp[k*4+1]=o[1];sp[k*4+2]=o[2];sp[k*4+3]=o[3];
-  const wet=B.wet?B.wet(x,z,h):0;cl[k*3]=1-.3*wet;cl[k*3+1]=1-.26*wet;cl[k*3+2]=1-.2*wet;}
+  if(B.tint){B.tint(o,x,z,h,sl);cl[k*3]=o[0];cl[k*3+1]=o[1];cl[k*3+2]=o[2];}   // per-vertex colour multiplier (e.g. lava glow, wet shores)
+  else{const wet=B.wet?B.wet(x,z,h):0;cl[k*3]=1-.3*wet;cl[k*3+1]=1-.26*wet;cl[k*3+2]=1-.2*wet;}}
  // contact occlusion under props (faded out near the tile's top/bottom rows so shared edges stay identical)
  for(const q in t.inst)t.inst[q].count=0;
  const R=srng(LV.si*7919+n*104729+3),foot=[];
