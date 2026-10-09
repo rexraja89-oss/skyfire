@@ -27,7 +27,8 @@ A.swap=(group,cv,len,wid)=>{for(const ch of group.children)ch.visible=false;cons
 A.have=new Set();
 // per-picture extras: exhaust nozzles as fractions of the picture from its centre (x right, y toward the tail)
 const META={jet_falcon:{nozzles:[[-.05,.4],[.05,.4]],nozzleR:2.2},jet_viper:{nozzles:[[-.2,.417],[.2,.417]],nozzleR:2.8},
- jet_titan:{nozzles:[[-.111,.43],[-.001,.48],[.109,.43]],nozzleR:3.2,flame:'blue',size:1.15}};
+ jet_titan:{nozzles:[[-.111,.43],[-.001,.48],[.109,.43]],nozzleR:3.2,flame:'blue',size:1.15},
+ jet_phantom:{nozzles:[[-.212,.382],[-.166,.439],[-.115,.494],[.213,.382],[.167,.439],[.116,.494]],nozzleR:2.4,flame:'purple',size:1.2}};
 A.applyJets=async()=>{for(const k in PLANES){if(!A.have.has('jet_'+k))continue;const cv=await A.load('jet_'+k);if(!cv)continue;const g=MODELS['pl_'+k];if(!g)continue;
   // fit inside the jet's box: span up to S×1.75, length up to L×1.4 (logic px)
   const J=PLANES[k].jet,M=META['jet_'+k]||{},f=Math.min(J.S*1.75/cv.width,J.L*1.4/cv.height)*(M.size||1),w=cv.width*f,l=cv.height*f;

@@ -7,6 +7,7 @@
 const Th=SF.thrust={};
 // flame palettes: hot core, inner plume, outer plume, glow, core fade, ember colour
 const PAL={orange:{hot:'rgba(255,255,255,',mid:'rgba(255,214,120,',out:'rgba(255,120,40,',glow:'rgba(255,110,40,',fade:'rgba(200,230,255,',fade2:'rgba(140,190,255,',ember:'#ffb347'},
+ purple:{hot:'rgba(255,255,255,',mid:'rgba(230,170,255,',out:'rgba(140,60,255,',glow:'rgba(150,80,255,',fade:'rgba(220,200,255,',fade2:'rgba(120,140,255,',ember:'#c79bff'},
  blue:{hot:'rgba(255,255,255,',mid:'rgba(150,240,255,',out:'rgba(30,150,255,',glow:'rgba(40,160,255,',fade:'rgba(190,250,255,',fade2:'rgba(90,200,255,',ember:'#7fe8ff'}};
 function plume(x0,y0,w,len,dx,dy,stops,alpha){ // teardrop from (x0,y0) along (dx,dy), width w, length len (screen px)
  const nx=-dy,ny=dx,tx=x0+dx*len,ty=y0+dy*len,g=cx.createLinearGradient(x0,y0,tx,ty);
