@@ -53,7 +53,8 @@ SF.BAL={
   formationPerMember:200,setupPerPiece:400,
   noHitEvery:25,noHitBonus:2000,
  },
- ground:{wreckSmoke:4,smokeBelow:.5},
+ ground:{wreckSmoke:9,smokeBelow:.5},   // wreckSmoke: seconds a destroyed ground target keeps burning and smoking (HQ; half in Smooth)
+ fx:{smokeLife:1,shake:1},  // explosion smoke lifetime and screen-shake strength multipliers
  focus:{                 // Focus: time slows while the finger is off the screen
   scale:.35,              // game speed while focused
   max:4,                  // seconds of slow time in a full meter (real time)

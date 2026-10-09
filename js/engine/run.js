@@ -124,7 +124,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  SF.enemies.sync(A,dt);if(LV.boss&&!SF.boss.list.some(B=>B.legacy))LV.boss.g.visible=false;SF.boss.sync(A,dt);
  renderer.render(scene,camera);updProj();
  cx.setTransform(oS,0,0,oS,0,0);cx.clearRect(0,0,OW,OH);drawWeather();
- if(SF.fx.shake>0)cx.translate(rnd(-4,4)*SF.fx.shake*1.6,rnd(-4,4)*SF.fx.shake*1.6);
+ if(SF.fx.shake>0){const k=Math.min(1.2,SF.fx.shake)*SF.BAL.fx.shake*6,u=tnow*1;cx.translate((Math.sin(u*61)+.6*Math.sin(u*37.3))*k,(Math.cos(u*53)+.6*Math.sin(u*29.1))*k);}   // smooth shake (no random jitter)
  SF.fx.drawBack();SF.enemies.drawTele(R,A);SF.pickups.draw(R,A);
  cx.globalCompositeOperation='lighter';
  if(p.alive&&PLM&&PLM.visible&&p.dying<=0)SF.thrust.draw(R,px,py);
