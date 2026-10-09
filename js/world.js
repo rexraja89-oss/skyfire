@@ -130,10 +130,13 @@ const BIOME={
  harbor:{sky:['#4f8fd0','#ffcf9e','#c79c7a'],fog:'#f2c9a2',fogN:.9,sun:['#ffd2a0',2.4],sunDir:[-.45,.5,-.75],hemi:['#bcd5ff','#6b5a40',.55],exp:1.05,water:{c:'#1d6e95',op:.8},wl:0,clouds:5,
   HF(x,z){const c=-9+2.5*Math.sin(z*.012)+1.2*Math.sin(z*.041),d=c-x;let h=d>0?.8+Math.min(2.2,d*.22)+fbm(x*.06,z*.06,3)*.7:-.6-Math.min(6,-d*.16);
    if(x<-30)h+=mtn(x,z,30);if(x>48)h=Math.max(h,mtn(x,z,22,48,95)-4);return h;},
-  P:{low:'#5f8f48',mid:'#6f9a52',m0:1,m1:4,high:'#6b6b5a',h0:8,h1:16,rock:'#7a6e60',snow:24,sand:1,wl:.6,sandc:'#e0cf9f',deep:'#2a5560'},uses:['canopy','boulder','boulder2','kk_building_A','kk_building_E'],
-  props(R,z0,put,HF){for(let z=z0-2;z>z0-TL;z-=4.4+R()*1.6){const x=-15-R()*6;if(HF(x,z)>.6){if(R()<.45)put(pick(['kk_building_A','kk_building_E']),x,z,2.4+R()*.5,Math.floor(R()*4)*Math.PI/2,null);else put(R()<.75?'house':'ware',x,z,1+R()*.4,R()*.4-.2,pick(['#f2e6d0','#e8d8c0','#dfe6ea','#f4d6b8']),1,0);}}
+  P:{low:'#5f8f48',mid:'#6f9a52',m0:1,m1:4,high:'#6b6b5a',h0:8,h1:16,rock:'#7a6e60',snow:24,sand:1,wl:.6,sandc:'#e0cf9f',deep:'#2a5560'},uses:['canopy','boulder','boulder2','kk_building_A','kk_building_E','house','dinghy','pier'],
+  props(R,z0,put,HF){for(let z=z0-2;z>z0-TL;z-=7+R()*5){const cx=-14-R()*8,n=2+Math.floor(R()*4),ry=R()*.5-.25;   // fishing-village clusters along the shore road
+    for(let k=0;k<n;k++){const x=cx+(R()-.5)*7,zz=z-(R()-.5)*5;if(HF(x,zz)<=.7)continue;if(R()<.3)put(pick(['kk_building_A','kk_building_E']),x,zz,2.2+R()*.5,Math.floor(R()*4)*Math.PI/2,null);
+     else put('house',x,zz,.9+R()*.5,ry+Math.floor(R()*2)*Math.PI/2+(R()-.5)*.2,pick(['#f2e6d0','#e8d8c0','#dfe6ea','#f4d6b8','#e6dcc8','#d8e0d8']),.9+R()*.3,0);}}
    for(let i=0;i<120;i++){const x=-24-R()*70,z=z0-R()*TL,h=HF(x,z);if(h>.9&&h<14)put('canopy',x,z,5.5+R()*4,R()*TAU,pick(['#e0ead6','#d6e2cc','#eef2e2']));}
-   for(let i=0;i<3;i++){const z=z0-10-R()*(TL-20),c=-9+2.5*Math.sin(z*.012)+1.2*Math.sin(z*.041);put('pier',c+3,z,1,0,'#7b6248',1,0,[7,1,1]);}
+   for(let i=0;i<3;i++){const z=z0-10-R()*(TL-20),c=-9+2.5*Math.sin(z*.012)+1.2*Math.sin(z*.041);put('pier',c+3,z,1,0,'#7b6248',1,0,[7,1,1]);
+    for(let k=0;k<3;k++){if(R()<.3)continue;const bx=c+4+k*2.2,bz=z+(R()<.5?-1.4:1.4),h=HF(bx,bz);put('dinghy',bx,bz,1.2+R()*.5,Math.PI/2+(R()-.5)*.4,pick(['#ffffff','#e0eaf2','#f2e2c8','#c8dce8']),1,-h+.02);}}
    for(let i=0;i<30;i++){const x=48+R()*50,z=z0-R()*TL;if(HF(x,z)>1)put(R()<.5?'boulder':'boulder2',x,z,1.4+R()*2.4,R()*TAU,'#e8e0d4',.8,-.3);}}},
  farm:{sky:['#4a90e2','#cfe3f5','#a8b890'],fog:'#d6e4ee',fogN:1,sun:['#fff1d6',2.6],sunDir:[-.35,.8,-.4],hemi:['#cfe3ff','#5a6a3a',.55],exp:1,wl:-60,clouds:6,
   HF(x,z){let h=.6+fbm(x*.025,z*.025,3)*1.6+mtn(x,z,20,30,90)*.8;const r=Math.abs(x-4);if(r<4)h=lerp(.6,h,sst(1.6,4,r));return h;},
@@ -231,7 +234,7 @@ const BIOME={
    for(let i=0;i<14;i++){const x=R()*180-90,z=z0-R()*TL,h=HF(x,z);if(h>-.5&&h<1.5)put(R()<.5?'boulder':'boulder2',x,z,1+R()*1.8,R()*TAU,'#ece4d4',.7,-.3);}
    for(let i=0;i<10;i++){const x=R()*120-60,z=z0-R()*TL,h=HF(x,z);if(h>.4&&h<2)put('house',x,z,.8,R()*6,'#c9a46a');}}},
  canyon:{sky:['#4a86d0','#f4d4b0','#b06a48'],fog:'#e8c0a0',fogN:.9,sun:['#ffe0b8',2.8],sunDir:[-.5,.7,-.4],hemi:['#d8e2ff','#8a4a30',.55],exp:1,water:{c:'#2c6a72',op:.72},wl:-.8,clouds:3,uses:['boulder','boulder2','canopy'],
-  HF(x,z){const rv=2+6*Math.sin(z*.009),d=Math.abs(x-rv);let p=sst(10,24,d+fbm(x*.05,z*.05,2)*4)*20+fbm(x*.03,z*.03,3)*2;p=Math.floor(p/3)*3+(p%3)*.3;let h=.6+p+mtn(x,z,14,50,95);h-=2.6*Math.exp(-((d/2.8)**2));return h;},
+  HF(x,z){const rv=2+6*Math.sin(z*.009),d=Math.abs(x-rv);let p=sst(10,24,d+fbm(x*.05,z*.05,2)*4)*20+fbm(x*.03,z*.03,3)*2;p=Math.max(0,p);p=Math.floor(p/3)*3+(p%3)*.3;let h=.6+p+mtn(x,z,14,50,95);h-=3.4*(1-sst(5,12,d+fbm(x*.09,z*.06,2)*3))-1.4*Math.exp(-((d/3.5)**2));return h;}/* terraces never drop below the bank; the river is a smooth sloped channel so the waterline is not stair-stepped */,
   P:{low:'#c98a5a',mid:'#b4653f',m0:1,m1:4,high:'#d98d5f',h0:10,h1:16,rock:'#8d4630',sand:1,wl:-.2,sandc:'#a8704a',deep:'#5a3a2a'},
   cf(o,x,z,h,sl){if(h>2){const b=Math.floor(h/3)%4;mixc(o,o,lc(['#a95a3b','#c4714a','#8d4630','#d98d5f'][b]),.7);}},
   props(R,z0,put,HF){for(let i=0;i<70;i++){const x=R()*140-70,z=z0-R()*TL,h=HF(x,z);if(h>-.2){if(R()<.6)put(R()<.5?'boulder':'boulder2',x,z,1+R()*2,R()*TAU,pick(['#d88a60','#c47a52','#e09a70']),.8,-.3);else put('canopy',x,z,3.5+R()*2.5,R()*TAU,'#d8d4b0');}}}},
@@ -288,7 +291,12 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  PROPS.rock={geo:merge([[new T3.IcosahedronGeometry(1,0),'#ffffff',MT(0,.3,0,0,0,0,1,.7,1)]]),mat:veg,cap:200};
  PROPS.spike={geo:merge([[Co(.7,3,5),'#ffffff',MT(0,1.4,0)]]),mat:veg,cap:120};
  const roofG=new T3.CylinderGeometry(.95,.95,1.7,3);roofG.rotateZ(Math.PI/2);
- PROPS.house={geo:merge([[B(1.6,1.1,1.3),'#ffffff',MT(0,.55,0)],[roofG,'#b5533c',MT(0,1.32,0,0,0,0,1,.55,.75)]]),mat:plain,cap:120};
+ // house: plastered walls, hipped tile roof with eaves, chimney, windows and door; tinted per instance (wall colour)
+ {const hr=new T3.ConeGeometry(1,1,4);hr.rotateY(Math.PI/4);const h=[[B(1.6,1.1,1.3),'#ffffff',MT(0,.55,0)],[hr,'#b5533c',MT(0,1.38,0,0,0,0,1.27,.62,1.04)],[B(1.72,.06,1.42),'#8a3f2c',MT(0,1.1,0)],
+   [B(.18,.5,.18),'#9a8a7a',MT(.45,1.6,-.25)]];for(const s of[-1,1]){h.push([B(.02,.24,.2),'#2a3640',MT(s*.81,.7,.3)],[B(.02,.24,.2),'#2a3640',MT(s*.81,.7,-.3)]);}h.push([B(.3,.5,.02),'#5a3c28',MT(0,.25,.66)],[B(.25,.22,.02),'#2a3640',MT(.5,.7,.66)],[B(.25,.22,.02),'#2a3640',MT(-.5,.7,.66)]);
+  PROPS.house={geo:merge(h),mat:plain,cap:160};}
+ // moored boat: small hull with a cabin, for harbours
+ {const pts=[[0,1],[.35,.55],[.38,-.8],[.25,-1],[-.25,-1],[-.38,-.8],[-.35,.55]];PROPS.dinghy={geo:merge([[shapeGeo(pts,.3,.03),'#ffffff',MT(0,-.05,0)],[shapeGeo(pts.map(([x,y])=>[x*.86,y*.9]),.02),'#a08060',MT(0,.26,0)],[B(.45,.3,.6),'#e8ecef',MT(0,.4,.1)],[B(.4,.08,.2),'#2a3640',MT(0,.5,-.18)]]),mat:plain,cap:60};}
  PROPS.barn={geo:merge([[B(2.4,1.6,3.6),'#a33a2a',MT(0,.8,0)],[roofG,'#5a4a40',MT(0,1.9,0,0,Math.PI/2,0,2.1,.8,1.4)]]),mat:plain,cap:10};
  PROPS.silo={geo:merge([[Cy(.6,.6,2.8,10),'#d8dadc',MT(0,1.4,0)],[new T3.SphereGeometry(.6,10,6,0,TAU,0,Math.PI/2),'#a8aaac',MT(0,2.8,0)]]),mat:metal,cap:10};
  // warehouse (unit box, stretched by the props): walls, shallow gabled roof, skylight strips, ridge vents, dock doors
