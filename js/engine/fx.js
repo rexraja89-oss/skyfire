@@ -8,7 +8,7 @@ const parts=new SF.Pool(()=>({}),900),pops=new SF.Pool(()=>({}),40);
 const fx=SF.fx={shake:0,flash:0,hurt:0,parts,pops};
 const cap=()=>SF.BAL.caps.parts[save.hq?0:1];
 function add(k,x,y,vx,vy,l,c,r,extra){if(parts.live.length>=cap())return null;const q=parts.get();if(!q)return null;
- q.k=k;q.x=x;q.y=y;q.vx=vx;q.vy=vy;q.l=l;q.m=l;q.c=c;q.r=r;q.a=0;q.va=0;q.drag=.94;q.scroll=0;if(extra)Object.assign(q,extra);return q;}
+ q.k=k;q.x=x;q.y=y;q.vx=vx;q.vy=vy;q.l=l;q.m=l;q.c=c;q.r=r;q.a=0;q.va=0;q.drag=.94;q.scroll=0;q.rot=Math.random()*TAU;if(extra)Object.assign(q,extra);return q;}
 fx.add=add;
 fx.reset=()=>{parts.clear();wrecks.length=0;pops.clear();fx.shake=0;fx.flash=0;fx.hurt=0;};
 fx.explode=(x,y,size=1,ground)=>{SF.sndX=x;   // the next sound plays from this side
@@ -50,7 +50,17 @@ fx.step=dt=>{if(fx.shake>0)fx.shake-=dt;
   if(q.k!=='w'){const dr=Math.pow(q.drag,dt*60);q.vx*=dr;q.vy*=dr;}if(q.k==='d'){q.a+=q.va*dt;if(q.trail&&(q.tt-=dt)<=0){q.tt=q.trail;add('s',q.x,q.y,0,0,.75,'#3a332c',3.6,{d:.5});}}if(q.scroll)q.y+=SCROLL*dt*q.scroll;if(q.l<=0)parts.kill(q);}
  const P=pops.live;for(let i=P.length-1;i>=0;i--){const q=P[i];q.y-=40*dt;q.l-=dt;if(q.l<=0)pops.kill(q);}};
 // ---- drawing ----
-// soft smoke puff and fireball sprites (built once per colour)
+// animated flipbooks (art/fx_smoke.png, art/fx_fire.png from tools/fx_tex.py): 4x4 frames of 128 px played over each
+// particle's life with a fixed random rotation; smoke is tinted per colour (cached). Until they load, soft sprites below.
+const FB={smoke:new Image(),fire:new Image()},TINT={};
+FB.smoke.src='art/fx_smoke.png?v='+BUILD;FB.fire.src='art/fx_fire.png?v='+BUILD;
+const fbReady=im=>im.complete&&im.naturalWidth>0;
+function tinted(c){if(TINT[c])return TINT[c];const im=FB.smoke,W2=im.naturalWidth,H2=im.naturalHeight,s=document.createElement('canvas');s.width=W2;s.height=H2;const g=s.getContext('2d');
+ const[r,gg,b]=hexRGB(c).map(v=>Math.min(255,Math.round(v*1.9+18)));   // lift the colour: lit sides show it, shaded sides go darker
+ g.drawImage(im,0,0);g.globalCompositeOperation='multiply';g.fillStyle=`rgb(${r},${gg},${b})`;g.fillRect(0,0,W2,H2);g.globalCompositeOperation='destination-in';g.drawImage(im,0,0);return TINT[c]=s;}
+function frame(img,u,x,y,r,rot){const i=Math.min(15,Math.floor(u*16)),fs=img.width/4,sx=(i%4)*fs,sy=(i>>2)*fs;
+ if(rot){cx.save();cx.translate(x,y);cx.rotate(rot);cx.drawImage(img,sx,sy,fs,fs,-r,-r,r*2,r*2);cx.restore();}else cx.drawImage(img,sx,sy,fs,fs,x-r,y-r,r*2,r*2);}
+// soft smoke puff and fireball sprites (fallback, built once per colour)
 const SPR={};
 function puff(c){if(SPR[c])return SPR[c];const N=64,s=document.createElement('canvas');s.width=s.height=N;const g=s.getContext('2d');
  for(let i=0;i<9;i++){const a=i/9*TAU,o=i?rnd(6,13):0,x=N/2+Math.cos(a)*o,y=N/2+Math.sin(a)*o,r=i?rnd(11,17):20,gr=g.createRadialGradient(x,y,0,x,y,r);
@@ -60,7 +70,10 @@ function fireball(){if(SPR.fb)return SPR.fb;const N=96,s=document.createElement(
  for(let i=0;i<7;i++){const a=i/7*TAU,o=i?rnd(8,16):0,x=N/2+Math.cos(a)*o,y=N/2+Math.sin(a)*o,r=i?rnd(20,28):34,gr=g.createRadialGradient(x,y,0,x,y,r);
   for(const[k,c]of st)gr.addColorStop(k,c);g.fillStyle=gr;g.fillRect(0,0,N,N);}return SPR.fb=s;}
 fx.drawBack=()=>{const L=parts.live;
- for(const q of L){if(q.k==='s'){pj(q.x,q.y);const f=q.l/q.m,r=q.r*(2.2-f*1.2)*PS,sp=puff(q.c);cx.globalAlpha=Math.min(1,Math.max(0,Math.min(1,f*1.8,(1-f)*8))*(q.d||.5)*1.5);cx.drawImage(sp,PX-r,PY-r,r*2,r*2);}
+ const fbS=fbReady(FB.smoke);
+ for(const q of L){if(q.k==='s'){pj(q.x,q.y);const f=q.l/q.m;
+   if(fbS){const r=q.r*(1.7-f*.5)*PS;cx.globalAlpha=Math.min(1,(q.d||.5)*1.9*Math.min(1,(1-f)*10));frame(tinted(q.c),1-f,PX,PY,r,save.hq?q.rot:0);}
+   else{const r=q.r*(2.2-f*1.2)*PS,sp=puff(q.c);cx.globalAlpha=Math.min(1,Math.max(0,Math.min(1,f*1.8,(1-f)*8))*(q.d||.5)*1.5);cx.drawImage(sp,PX-r,PY-r,r*2,r*2);}}
   else if(q.k==='d'){pj(q.x,q.y);cx.globalAlpha=Math.max(0,q.l/q.m);cx.save();cx.translate(PX,PY);cx.rotate(q.a);cx.fillStyle=q.c;cx.fillRect(-q.r*PS,-q.r*.6*PS,q.r*2*PS,q.r*1.2*PS);cx.restore();}
   else if(q.k==='w'){pj(q.x,q.y);cx.globalAlpha=Math.max(0,q.l/q.m)*.55;cx.fillStyle=q.c;cx.beginPath();cx.arc(PX,PY,q.r*(2-q.l/q.m)*PS*.8,0,TAU);cx.fill();}}
  cx.globalAlpha=1;};
@@ -69,7 +82,8 @@ fx.drawFront=()=>{cx.globalCompositeOperation='lighter';
  cx.globalAlpha=1;
  for(const q of parts.live){if(q.k==='s'||q.k==='d'||q.k==='w')continue;const a=Math.max(0,q.l/q.m);cx.globalAlpha=a;pj(q.x,q.y);
   if(q.k==='f')dg(PX,PY,q.r*(.6+a*.6)*PS,q.c);
-  else if(q.k==='b'){const r=q.r*(1.6-a*.8)*PS,sp=fireball();cx.globalAlpha=a*a*.95;cx.drawImage(sp,PX-r,PY-r,r*2,r*2);}
+  else if(q.k==='b'){if(fbReady(FB.fire)){const r=q.r*(1.5-a*.4)*PS;cx.globalCompositeOperation='source-over';cx.globalAlpha=.97;frame(FB.fire,1-a,PX,PY,r,save.hq?q.rot:0);cx.globalCompositeOperation='lighter';}
+   else{const r=q.r*(1.6-a*.8)*PS,sp=fireball();cx.globalAlpha=a*a*.95;cx.drawImage(sp,PX-r,PY-r,r*2,r*2);}}
   else if(q.k==='e'){dg(PX,PY,q.r*3*PS,q.c);}
   else if(q.k==='g')dg(PX,PY,q.r*(1.4-a*.4)*PS,q.c);
   else if(q.k==='k'){const x0=PX,y0=PY;pj(q.x-q.vx*.04,q.y-q.vy*.04);cx.strokeStyle=q.c;cx.lineWidth=1.8;cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(PX,PY);cx.stroke();}

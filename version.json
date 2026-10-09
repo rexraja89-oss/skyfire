@@ -1,8 +1,8 @@
 {
-  "build": 28,
-  "version": "5.7",
+  "build": 29,
+  "version": "5.8",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Sound toggle fix and real colour grading"
+    "Animated fire and billowing smoke"
   ]
 }
