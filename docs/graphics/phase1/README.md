@@ -53,7 +53,7 @@ field, `splat`, `wet`, `occ`, props), small hooks in `fillTile()`, `buildLevel()
 5. Visual: shaded cliffs lifted (AO floor 0.28 → 0.45, sky fill 0.42 → 0.55), fine normal detail calmer in the
    distance (less shimmer), shadow band extends above the tallest terrain filled.
 Files: `fix_a/b/c.jpg` (same frames as before/after), `fix_compare_b.jpg` (v4.8-Phase-1 left, fixed right),
-`moving_hq.mp4` and `moving_smooth.mp4` (8 s each, jet weaving over the ridge).
+`moving_hq.mp4` (3.5 s, HQ, jet weaving over the ridge; software-GPU capture, not phone speed).
 
 ## Not verified
 - Android performance has NOT been measured. No real device is available here; the headless browser uses a software
