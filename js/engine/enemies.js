@@ -57,13 +57,21 @@ const MOVE={
  patrol(e,m,dt){e.y+=SCROLL*m.scroll*dt;if(!e.vx)e.vx=(Math.random()<.5?-1:1)*m.vx;e.x+=e.vx*dt;if(e.x<e.wx0||e.x>e.wx1)e.vx=-e.vx;e.x=clamp(e.x,e.wx0,e.wx1);e.hd=e.vx>0?0:Math.PI;
   if(Math.random()<dt*12)SF.fx.add('w',e.x-Math.sign(e.vx)*18,e.y+rnd(-3,3),0,SCROLL*m.scroll,1.2,'#ffffff',rnd(2,4));},
  convoy(e,m,dt){e.y+=(SCROLL+m.vy)*dt;e.hd=Math.PI/2;},
+ // sail: warships steam north (slower than the sea scrolls) with a slow weave; white water at the bow, a wake astern
+ sail(e,m,dt){e.y+=(SCROLL+m.vy)*dt;if(e.rx0===undefined){e.rx0=e.x;e.rph=Math.random()*TAU;}e.x=e.rx0+Math.sin(e.t*.35+e.rph)*(m.sway||0);
+  const L=e.r*(e.d.len||2.2),q=save.hq?1:.5;if(e.y>-L&&Math.random()<dt*26*q){const s=Math.random()<.5?-1:1;
+   SF.fx.add('w',e.x+s*rnd(2,e.r*.35),e.y-L*.95+rnd(0,8),s*rnd(14,30),SCROLL+m.vy*.3,rnd(1,1.8),'#ffffff',rnd(3,6));
+   SF.fx.add('w',e.x+rnd(-e.r*.3,e.r*.3),e.y+L*.9+rnd(0,L*.4),rnd(-10,10),SCROLL,rnd(1.6,2.6),'#e8f2f4',rnd(5,10));}},
  // rail: slides back and forth along a fixed track that scrolls with the ground
  rail(e,m,dt){e.y+=SCROLL*dt;if(e.rx0===undefined){e.rx0=clamp(e.x,m.range+12,W-m.range-12);e.rph=Math.random()*TAU;}e.x=e.rx0+Math.sin(e.t*m.speed+e.rph)*m.range;},
  attached(e,m,dt){const p=e.parent;if(p&&p.alive){e.x=p.x+e.dx;e.y=p.y+e.dy;}else e.y+=SCROLL*dt;},
 };
 En.MOVE=MOVE;
 // ---------- fire patterns ----------
-function firePattern(e,R){const f=e.d.fire,a=aimA(e,R),k=f.bullet||'pellet';e.ang=a;
+// muzzle flash + smoke and a fire sound (fire.sfx) for heavy guns
+function muzzle(e,a){const f=e.d.fire;if(!f.sfx)return;const L=(e.d.muzzle||1)*e.r,x=e.x+Math.cos(a)*L,y=e.y+Math.sin(a)*L;
+ SF.fx.glow(x,y,e.r*1.1,'#ffd27a',.09);SF.fx.spark(x,y,'#ffb347',3);SF.fx.smoke(x,y,e.r*.45,'#5a5856',.9);SF.sndX=e.x;sfx(f.sfx);}
+function firePattern(e,R){const f=e.d.fire,a=aimA(e,R),k=f.bullet||'pellet';e.ang=a;if(f.pattern!=='burst')muzzle(e,a);
  switch(f.pattern){
   case 'aimed':En.shoot(e.x,e.y+(e.ground?0:10),a,f.speed,k);break;
   case 'fan':{const n=f.count,arc=f.spread*deg;for(let i=0;i<n;i++)En.shoot(e.x,e.y+10,a+(n>1?(i/(n-1)-.5)*arc:0),f.speed,k);break;}
@@ -74,7 +82,7 @@ function firePattern(e,R){const f=e.d.fire,a=aimA(e,R),k=f.bullet||'pellet';e.an
   case 'mortar':{const dl=f.delay*Math.max(SF.DIFF_MIN_TELE,SF.BAL.run.tele||1);R.marks.push({x:R.p.x,y:R.p.y,t:dl,m:dl,r:f.radius,dmg:f.damage});sfx('mine');break;}}}
 En.firePattern=firePattern;
 function stepFire(e,dt,R){const f=e.d.fire;if(!f||f.pattern==='none'||e.scatter)return;
- if(e.burst>0){e.burstT-=dt;if(e.burstT<=0){e.burst--;e.burstT=f.gap;e.ang=aimA(e,R);En.shoot(e.x,e.y+(e.ground?0:10),e.ang,f.speed,f.bullet);}}
+ if(e.burst>0){e.burstT-=dt;if(e.burstT<=0){e.burst--;e.burstT=f.gap;e.ang=aimA(e,R);muzzle(e,e.ang);En.shoot(e.x,e.y+(e.ground?0:10),e.ang,f.speed,f.bullet);}}
  if(f.pattern==='sniper'){stepSniper(e,f,dt,R);return;}
  if(e.ground)e.ang+=(((aimA(e,R)-e.ang+Math.PI*3)%TAU)-Math.PI)*Math.min(1,dt*4); // turrets track the player
  if(f.on)return; // fired by an ability (reveal / arrive / open)
@@ -172,6 +180,8 @@ En.step=(R,dt)=>{const p=R.p,L=pool.live,mv=SF.dm('enemySpeed'),pad=BAL().enemy.
 En.sync=(A,dt)=>{for(const e of pool.live){if(!e.alive||!e.d.model)continue;if(!e.m)e.m=acquire(e.d.model);const m=e.m;m.visible=!e.delay;if(!m.visible)continue;
  const x=e.ox+(e.x-e.ox)*A,y=e.oy+(e.y-e.oy)*A,T=e.d.model;place(m,x,y,e.ground,T==='mine'?-.5:0);if(e.d.scale)m.scale.multiplyScalar(e.d.scale);
  const a=e.hd!==undefined?e.hd:Math.PI/2+(e.rot||0);m.rotation.set(0,e.ground&&e.d.move.type!=='convoy'&&e.d.move.type!=='patrol'?0:yawFrom(a),e.ground?0:e.roll);
+ if(e.d.naval&&SF.ocean&&SF.ocean.on){const p=e.parent&&e.parent.alive?e.parent:e,ph=p.rph||0;   // ride the swell: heave from the wave field, slow roll and pitch
+  m.position.y+=(SF.ocean.h(p.x,p.y)*.55+(e.d.deck||0))*m.scale.x;if(!e.parent){m.rotation.z=Math.sin(e.t*.8+ph)*.035;m.rotation.x=Math.sin(e.t*.55+ph)*.018;}}
  if(T==='drone'||T==='sower'||T==='hydra'||T==='mine')m.rotation.y=e.rot;
  if(T==='heli'||T==='hornet'||T==='mender')m.rotation.set(.12,yawFrom(Math.PI/2),e.rot);
  for(const r of m.R.rotor)r.rotation.y+=dt*30;if(m.R.trot)m.R.trot.rotation.x+=dt*40;

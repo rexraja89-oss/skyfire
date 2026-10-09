@@ -45,6 +45,13 @@ const DEF={
  // boss part breaking: metal tear + explosion
  part:[2.2,(c,o)=>{const rv=room(c,o,.4,1.8,2.5);rec(c,o,0,REC.ex1,1,.9);rec(c,o,.02,REC.rock,.9,.85);rec(c,o,.14,REC.rock,.6,.7);rec(c,rv,0,REC.ex1,.6,.9);for(const d of[o,rv]){noiseL(c,d,0,1.2,'lowpass',3000,120,1,.004);noiseL(c,d,0,.4,'bandpass',700,300,.5,.002,6);}toneL(c,o,0,.6,'sine',65,30,1);
   for(let i=0;i<5;i++)toneL(c,o,.05+i*.07,.25,'triangle',600+Math.random()*900,300,.12);crackle(c,o,.1,1.6,16,.22);}],
+ // naval gun (v5.14): heavy muzzle crack, deep pressure thump, long sea-air tail
+ naval:[2.2,(c,o)=>{const rv=room(c,o,.4,2.2,2.2);rec(c,o,0,REC.ex1,.9,.62);rec(c,rv,0,REC.ex1,.5,.62);noiseL(c,o,0,.05,'highpass',3200,1500,.6,.0005);
+  for(const d of[o,rv])noiseL(c,d,0,1.4,'lowpass',1600,70,.75,.003);toneL(c,o,0,.55,'sine',62,30,1.3,.002);toneL(c,o,0,.18,'triangle',140,55,.4,.001);}],
+ // thunder (v5.14): close crack, tearing rattle, long rolling rumble
+ thunder:[5.5,(c,o)=>{const rv=room(c,o,.55,3.5,1.6),L=pan(c,o,-.3),Rr=pan(c,o,.3);noiseL(c,L,0,.18,'highpass',1800,900,.55,.002);crackle(c,Rr,.02,.6,22,.3);
+  for(let i=0;i<6;i++){const t=.1+i*.45+Math.random()*.3;noiseL(c,i%2?L:Rr,t,1.6+Math.random(),'lowpass',420,60,.55*(1-i*.12),.15);}
+  noiseL(c,rv,0,4.8,'lowpass',300,50,.8,.3);toneL(c,o,.05,3,'sine',48,26,.7,.2);}],
  // gear pickup: bright double chime
  gear:[.35,(c,o)=>{const rv=room(c,o,.25,.6,3);for(const d of[o,rv]){toneL(c,d,0,.22,'sine',1568,1568,.18,.002);toneL(c,d,.04,.25,'sine',2349,2349,.12,.002);}},1],
  // weapon level up: rising power chord
@@ -52,7 +59,7 @@ const DEF={
 };
 // render the bank (async, a few hundred ms total; sounds fall back to the synth until ready)
 Bk.build=async()=>{if(Bk.building||!AC||typeof OfflineAudioContext==='undefined')return;Bk.building=true;
- try{for(const[k,f]of[['ex1','k_explosion1'],['ex2','k_explosion2'],['rock','k_rockHit2']]){try{const r=await fetch('art/snd/'+f+'.ogg?v='+BUILD);REC[k]=await AC.decodeAudioData(await r.arrayBuffer());}catch(e){}}
+ try{for(const[k,f]of[['ex1','k_explosion1'],['ex2','k_explosion2'],['rock','k_rockHit2'],['storm','storm']]){try{const r=await fetch('art/snd/'+f+'.ogg?v='+BUILD);REC[k]=await AC.decodeAudioData(await r.arrayBuffer());}catch(e){}}
   for(const k in DEF){const[sec,fn,mono]=DEF[k],b=await render(sec,fn,mono?1:2);let pk=0;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++)pk=Math.max(pk,Math.abs(d[i]));}
    if(pk>0){const g=.95/pk;for(let c=0;c<b.numberOfChannels;c++){const d=b.getChannelData(c);for(let i=0;i<d.length;i++)d[i]*=g;}}Bk.buf[k]=b;}   // normalise every sound to the same peak; BANKV in audio.js sets the mix
   Bk.buf.boomB=Bk.buf.boom;Bk.ready=true;}catch(e){console.warn('sfx bank',e);}};
@@ -77,8 +84,11 @@ Bk.engineStart=()=>{if(!AC||ENG)return;if(!LB){LB=AC.createGain();LB.connect(SB)
  s.connect(f).connect(g);o.connect(of).connect(og).connect(g);g.connect(LB);s.start();o.start();ENG={s,o,f,g};g.gain.linearRampToValueAtTime(.16,AC.currentTime+1);}catch(e){}};
 Bk.engineSet=(climb,od)=>{if(!ENG)return;const t=AC.currentTime;ENG.f.frequency.setTargetAtTime(420+climb*900+od*400,t,.15);ENG.o.frequency.setTargetAtTime(58+climb*30+od*20,t,.2);ENG.g.gain.setTargetAtTime(.14+climb*.08,t,.2);};
 Bk.engineStop=()=>{if(!ENG)return;const e=ENG;ENG=null;try{e.g.gain.setTargetAtTime(0,AC.currentTime,.2);setTimeout(()=>{try{e.s.stop();e.o.stop();}catch(_){}},900);}catch(_){}};
-const AMBS={rain:{f:2600,type:'highpass',v:.07},snow:{f:700,type:'lowpass',v:.06},sand:{f:900,type:'bandpass',v:.08},embers:{f:180,type:'lowpass',v:.12},mist:{f:500,type:'lowpass',v:.04},'':{f:400,type:'lowpass',v:.035}};
-Bk.ambStart=w=>{if(!AC||AMB)return;if(!LB){LB=AC.createGain();LB.connect(SB);}try{const A=AMBS[w]||AMBS[''],s=AC.createBufferSource();s.buffer=loopNoise(3);s.loop=true;const f=AC.createBiquadFilter();f.type=A.type;f.frequency.value=A.f;const g=AC.createGain();g.gain.value=0;
+const AMBS={storm:{f:1400,type:'bandpass',v:.32},rain:{f:2600,type:'highpass',v:.07},snow:{f:700,type:'lowpass',v:.06},sand:{f:900,type:'bandpass',v:.08},embers:{f:180,type:'lowpass',v:.12},mist:{f:500,type:'lowpass',v:.04},'':{f:400,type:'lowpass',v:.035}};
+// storm (Storm Fleet): one looping instance of the original storm bed (wind, rain, sea, distant machinery), louder than
+// the other beds and gently ducked by the weapons via the sfx limiter; thunder one-shots are layered by scene.js
+Bk.ambStart=w=>{if(!AC||AMB)return;if(!LB){LB=AC.createGain();LB.connect(SB);}try{const A=AMBS[w]||AMBS[''],s=AC.createBufferSource(),st=w==='storm'&&REC.storm;s.buffer=st?REC.storm:loopNoise(3);s.loop=true;const f=AC.createBiquadFilter();f.type=st?'lowpass':A.type;f.frequency.value=st?12000:A.f;const g=AC.createGain();g.gain.value=0;
  s.connect(f).connect(g).connect(LB);s.start();g.gain.linearRampToValueAtTime(A.v,AC.currentTime+2);AMB={s,g};Bk.applyMute();}catch(e){}};
+Bk.ambOn=()=>!!AMB;
 Bk.ambStop=()=>{if(!AMB)return;const a=AMB;AMB=null;try{a.g.gain.setTargetAtTime(0,AC.currentTime,.3);setTimeout(()=>{try{a.s.stop();}catch(_){}},1500);}catch(_){}};
 })();

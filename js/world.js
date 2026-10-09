@@ -401,7 +401,7 @@ function updTerrain(force){const n0=Math.floor(gz3/TL);TER.g.position.z=gz3;
  const B=LV.B;if(TER.water.visible){WNORM.offset.y+=0;}
  TER.water.position.z=C3.z-380;TER.lava.position.z=C3.z-380;}
 // ---------- level build ----------
-function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;if(SF.terrain)SF.terrain.top=0;LV.HF=B.HF;LV.wl=(B.water||B.lava)?B.wl:-60;NZ2.seed(si*13+5);
+function buildLevel(si,bk){const st=STAGES[si],bkey=bk||st.biome,B=BIOME[bkey];LV.si=si;LV.B=B;LV.bk=bkey;LV.weather=bkey===st.biome?st.weather:(B.weather||'');   // bk: biome override (Test Range keeps the farmland)if(SF.terrain)SF.terrain.top=0;LV.HF=B.HF;LV.wl=(B.water||B.lava)?B.wl:-60;NZ2.seed(si*13+5);
  skyMat.uniforms.top.value.set(B.sky[0]);skyMat.uniforms.hor.value.set(B.sky[1]);skyMat.uniforms.bot.value.set(B.sky[2]);
  const sd=new T3.Vector3(...B.sunDir).normalize();skyMat.uniforms.sunDir.value.copy(sd);skyMat.uniforms.sunCol.value.set(B.sun[0]);
  sun.color.copy(col(B.sun[0]));sun.intensity=B.sun[1];LV.sunDir=sd;hemi.color.copy(col(B.hemi[0]));hemi.groundColor.copy(col(B.hemi[1]));hemi.intensity=B.hemi[2];
@@ -413,9 +413,10 @@ function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;if
  if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;
  TER.water.visible=!!B.water;TER.lava.visible=!!B.lava;if(B.water){TER.water.material.color.copy(col(B.water.c));TER.water.material.opacity=B.water.op;TER.water.position.y=GY+B.wl;}
  if(B.lava)TER.lava.position.y=GY+B.wl;
+ if(SF.ocean){if(B.storm){SF.ocean.enable(B);TER.water.visible=false;}else SF.ocean.disable();}
  // instanced props per tile
  const used={};const probe=(type)=>{used[type]=1;};B.props(srng(1),0,(type)=>probe(type),B.HF);
- if(st.biome==='city'){used.build=1;used.lamp=1;used.round=1;}for(const k of B.uses||[])if(PROPS[k])used[k]=1;for(const k in used)if(!PROPS[k])delete used[k];KKGLOW.value=B.night?.9:0;
+ if(bkey==='city'){used.build=1;used.lamp=1;used.round=1;}for(const k of B.uses||[])if(PROPS[k])used[k]=1;for(const k in used)if(!PROPS[k])delete used[k];KKGLOW.value=B.night?.9:0;
  for(const t of TER.tiles){for(const k in t.inst){TER.g.remove(t.inst[k]);t.inst[k].dispose();}t.inst={};
   for(const k in used){const P=PROPS[k];const im=new T3.InstancedMesh(P.geo,P.mat,P.cap);for(let i=0;i<P.cap;i++)im.setColorAt(i,tmpC.set(0xffffff));im.count=0;im.castShadow=!P.noShadow;if(P.depth)im.customDepthMaterial=P.depth;im.frustumCulled=false;TER.g.add(im);t.inst[k]=im;}}
  gz3=0;TZ0=C3.z+30;updTerrain(true);

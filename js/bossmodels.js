@@ -2,7 +2,7 @@
 // ============ BOSS MODELS ============
 // Builds a boss/mini-boss 3D model from its data: a BODY plus one named NODE per part, placed at the part's
 // logic offset (dx -> world x, dy -> world z). When a part is destroyed its node is hidden and a scorched stump
-// appears, so the player sees the weapon is gone. Bodies: ship, carrier, sub, wing, throne, land, walker,
+// appears, so the player sees the weapon is gone. Bodies: ship, dreadnought, carrier, sub, wing, throne, land, walker,
 // gunship, segment, or 'enemy:<model>' (a scaled copy of an enemy model, used by mini-bosses).
 // Part meshes: turret, twin, launcher, shieldGen, engine, scythe, rotor, dish, hangar, leg, segment, armor, core.
 const BossModels={cache:{}};
@@ -14,6 +14,17 @@ function body(kind,c,o){const g=new T3.Group(),mb=std(c,.55,.38),md=std('#22262c
   g.add(mesh(shapeGeo(P([[-L+10,-Wd*.68],[L*.68,-Wd*.8],[L*.88,-Wd*.25],[L*.94,0],[L*.88,Wd*.25],[L*.68,Wd*.8],[-L+10,Wd*.68]]),.1),std(kind==='carrier'?'#3a3f45':'#8a7a5a',.1,.8),0,.85,0));
   if(kind==='carrier'){for(let i=-6;i<=6;i++)g.add(mesh(new T3.BoxGeometry(.5,.02,.1),std('#e8e2c6',.1,.8),i*2.2,.97,0));g.add(mesh(new T3.BoxGeometry(5,4,3),mw,3,2.8,-4.2));}
   else{g.add(mesh(new T3.BoxGeometry(6,2.2,3.6),mw,-.5,2,0));g.add(mesh(new T3.CylinderGeometry(.08,.08,5,5),md,-1,5,0));}
+  top=1.1;}
+ else if(kind==='dreadnought'){   // v5.14 Tempest Dreadnought: a long storm battleship, bow up the screen
+  const L=170,Wd=46,hp=[[0,-L],[Wd*.45,-L+38],[Wd,-L+95],[Wd,L-60],[Wd*.8,L-12],[Wd*.5,L],[-Wd*.5,L],[-Wd*.8,L-12],[-Wd,L-60],[-Wd,-L+95],[-Wd*.45,-L+38]];
+  g.add(mesh(shapeGeo(P(hp),2.8,.15),mb,0,-1.9,0));g.add(mesh(shapeGeo(P(hp.map(([x,y])=>[x*1.02,y*1.006])),.3),std('#4a1e1a',.1,.8),0,-2,0));
+  g.add(mesh(shapeGeo(P(hp.map(([x,y])=>[x*.92,y*.97])),.1),std('#5e584c',.05,.85),0,.85,0));
+  const tw=new T3.Group();tw.position.z=1.2;g.add(tw);tw.add(mesh(new T3.BoxGeometry(5.4,1.6,7.5),mb,0,1.7,0));tw.add(mesh(new T3.BoxGeometry(4.2,1.4,5),mb,0,3.2,-.6));
+  tw.add(mesh(new T3.BoxGeometry(2.6,1.2,2.8),ml,0,4.5,-1.2));tw.add(mesh(new T3.BoxGeometry(2.7,.3,.1),glassMat,0,4.7,-2.62));
+  const mast=new T3.Group();mast.position.set(0,5.1,-.6);for(const s of[-1,0,1]){const l=mesh(new T3.CylinderGeometry(.09,.12,5,5),mw,s*.55,2.4,s?.45:-.3);l.rotation.z=s*-.1;mast.add(l);}
+  mast.add(mesh(new T3.BoxGeometry(2.8,.12,.14),mw,0,3.9,0));const rd=mesh(new T3.BoxGeometry(1.9,.5,.16),md,0,4.8,0);rd.name='rotor';mast.add(rd);tw.add(mast);
+  for(const[z,r]of[[5.4,.85],[7.6,.78]]){g.add(mesh(new T3.CylinderGeometry(r,r*1.1,3,14),mb,0,2.3,z));g.add(mesh(new T3.CylinderGeometry(r*.95,r*.95,.3,14),std('#121416',.2,.9),0,3.85,z));}
+  for(const s of[-1,1])for(const z of[-3,0,3,6,9])g.add(mesh(new T3.CylinderGeometry(.45,.5,.4,10),md,s*3.9,1.1,z));
   top=1.1;}
  else if(kind==='sub'){const b=mesh(new T3.SphereGeometry(1,24,12),mb);b.scale.set(3.4,2,15);b.rotation.y=Math.PI/2;g.add(b);g.add(mesh(new T3.BoxGeometry(2.4,3,4.5),ml,0,2.2,-1.5));top=1.8;}
  else if(kind==='wing'||kind==='throne'){const s=kind==='throne'?1.15:1;g.add(mesh(shapeGeo(P([[0,62*s],[170*s,-6],[160*s,-30],[95*s,-40],[45*s,-62*s],[0,-50*s],[-45*s,-62*s],[-95*s,-40],[-160*s,-30],[-170*s,-6]]),1.4,.3),mb,0,-.7,0));

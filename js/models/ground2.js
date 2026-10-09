@@ -29,4 +29,5 @@ SF.extraModels=()=>{
  {const g=new T3.Group(),m=std('#7c8288',.6,.4);for(const sx of[-1,1])for(const sz of[-1,1]){const l=mesh(new T3.BoxGeometry(.18,9,.18),m,sx*.9,4.5,sz*.9);l.rotation.set(sz*-.09,0,sx*.09);g.add(l);}
   for(let y=1;y<9;y+=1.6){const w=1.9-y*.1;g.add(mesh(new T3.BoxGeometry(w,.08,.08),m,0,y,.9-y*.05));g.add(mesh(new T3.BoxGeometry(w,.08,.08),m,0,y,-.9+y*.05));g.add(mesh(new T3.BoxGeometry(.08,.08,w),m,.9-y*.05,y,0));g.add(mesh(new T3.BoxGeometry(.08,.08,w),m,-.9+y*.05,y,0));}
   g.add(mesh(new T3.BoxGeometry(5,.2,.2),m,0,8.2,0));for(const s of[-1,1])g.add(mesh(new T3.CylinderGeometry(.12,.12,.5,6),std('#d8dde2',.2,.4),s*2.3,7.9,0));MODELS.pylon=g;}
- for(const k of['stilt','railgun','domegun','popmine','pylon'])MODELS[k].traverse(o=>{if(o.isMesh){o.castShadow=true;}});};
+ for(const k of['stilt','railgun','domegun','popmine','pylon'])MODELS[k].traverse(o=>{if(o.isMesh){o.castShadow=true;}});
+ if(SF.navalModels)SF.navalModels();};

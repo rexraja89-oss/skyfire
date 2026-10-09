@@ -1,8 +1,8 @@
 {
-  "build": 34,
-  "version": "5.13",
+  "build": 35,
+  "version": "5.14",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Realistic Golden Fields"
+    "Storm Fleet: Mission 2 is now a naval battle on a stormy ocean"
   ]
 }

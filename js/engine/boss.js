@@ -148,6 +148,9 @@ Bs.sync=(A,dt)=>{const R=SF.R;for(const B of Bs.list){const x=B.ox+(B.x-B.ox)*A,
  const M=B.mdl;if(!M)continue;const g=M.g;g.visible=B.vis>.02;
  place(g,x,y,!!D.ground,B.sub>0?-Math.min(1,(D.submerge.time-B.sub)*2,B.sub*2)*3.2:0);g.scale.multiplyScalar(B.vis<1?Math.max(.05,B.vis):1);
  g.rotation.set(B.pitch,0,B.tilt*(B.x<W/2?1:-1)+B.lean);if(B.jolt>0){const j=B.jolt*.06;g.rotation.z+=Math.sin(B.t*40)*j;g.position.x+=Math.sin(B.t*53)*j*4;}
+ if(D.naval&&SF.ocean&&SF.ocean.on){g.position.y+=SF.ocean.h(x,y)*.45*g.scale.x;g.rotation.z+=Math.sin(B.t*.7)*.022;g.rotation.x+=Math.sin(B.t*.5)*.01;   // rides the swell
+  const L=D.ry||60;if(B.state!=='dying'&&Math.random()<dt*(save.hq?30:14)){const s=Math.random()<.5?-1:1;SF.fx.add('w',x+s*rnd(4,D.rx*.4),y-L+rnd(0,10),s*rnd(18,36),SCROLL*.4,rnd(1.2,2),'#ffffff',rnd(4,8));
+   SF.fx.add('w',x+rnd(-D.rx*.4,D.rx*.4),y+L*.95+rnd(0,30),rnd(-12,12),SCROLL*.6,rnd(1.8,2.8),'#e8f2f4',rnd(6,12));}}
  if(B.state==='dying'){const u=B.dieT-B.dying;g.position.y-=u*(B.mini?2:1.1);g.rotation.z+=u*.07;g.rotation.x+=u*.04;}
  for(const k in M.stumps){const st=M.stumps[k],m=B.melt[k];if(!st.visible)continue;if(m){st.material.emissive.setHex(0xff4a10);st.material.emissiveIntensity=m/3.5*2.6;}else st.material.emissiveIntensity=0;}
  if(!M.spins){M.spins=[];M.g.traverse(o=>{if(o.name==='spin')M.spins.push(o);});}for(const r of M.spins)r.rotation.z+=dt*(B.state==='fight'?18:3);

@@ -32,7 +32,24 @@ function drawSand(){const g=SAND.g;
   cx.beginPath();cx.ellipse(d.x+Math.sin(a*.7)*f*10,yy,r,r*.35,0,a,a+Math.PI*1.3);cx.stroke();}}
  // flying sand streaks
  for(const q of WX){cx.lineWidth=q.r;cx.strokeStyle=`rgba(250,214,160,${Math.min(1,q.a*(.7+.6*g)).toFixed(2)})`;cx.beginPath();cx.moveTo(q.x,q.y);cx.lineTo(q.x-q.vx*.05*q.r,q.y-q.vy*.05*q.r);cx.stroke();}}
-function stepWeather(dt){const st=STAGES[LV.si];if(!st)return;const w=st.weather;if(w==='sand')return stepSand(dt);if(!HQ())return;
+// storm (Storm Fleet): wind-driven rain in two depths, lightning that lights the whole scene, thunder after a delay that
+// grows with the bolt's distance. 'Reduce flashes' (save.calm) keeps the light change small and never strobes.
+const LT={next:3,f:0,bolt:null,q:[]};
+function stepStorm(dt){const hq=HQ(),cap=hq?150:60;for(let i=0;i<(hq?4:2)&&WX.length<cap;i++){const near=Math.random()<.3;WX.push({x:rnd(0,OW+220),y:-30,vx:near?-260:-170,vy:near?rnd(1150,1350):rnd(800,950),r:near?1.6:1,a:near?.32:.22});}
+ for(const q of WX){q.x+=q.vx*dt;q.y+=q.vy*dt;}prune(WX,q=>q.y<OH+30&&q.x>-40);
+ LT.next-=dt;if(LT.next<=0){LT.next=rnd(5,12);LT.f=1;const x=rnd(.1,.9)*OW,far=Math.random();LT.bolt={x,pts:bolt(x,rnd(.05,.22)*OH),t:.3,far};LT.q.push({t:.35+far*2.4,x:x/OW*W});LT.dbl=!save.calm&&Math.random()<.5?.12:0;}
+ if(LT.dbl>0){LT.dbl-=dt;if(LT.dbl<=0)LT.f=Math.max(LT.f,.8);}
+ LT.f=Math.max(0,LT.f-dt*(save.calm?2.2:3.2));if(LT.bolt){LT.bolt.t-=dt;if(LT.bolt.t<=0)LT.bolt=null;}
+ for(const q of LT.q){q.t-=dt;if(q.t<=0){q.done=1;if(state==='run'){SF.sndX=q.x;sfx('thunder');}}}prune(LT.q,q=>!q.done);
+ hemi.intensity=LV.B.hemi[2]*(1+LT.f*(save.calm?.35:1.6));}
+function bolt(x,yb){const p=[[x,-10]];let y=-10,cx0=x;while(y<yb){y+=rnd(12,28);cx0+=rnd(-22,22);p.push([cx0,y]);}return p;}
+function drawStorm(){cx.lineCap='round';for(const near of[0,1]){cx.strokeStyle=near?'rgba(205,220,232,.34)':'rgba(180,198,214,.22)';cx.lineWidth=near?1.6:1;cx.beginPath();
+  for(const q of WX)if((q.r>1)===!!near){cx.moveTo(q.x,q.y);cx.lineTo(q.x+q.vx*.035,q.y+q.vy*.035);}cx.stroke();}
+ if(LT.f>0){cx.fillStyle=`rgba(225,236,255,${(LT.f*(save.calm?.07:.28)).toFixed(3)})`;cx.fillRect(0,0,OW,OH);}
+ const b=LT.bolt;if(b&&!save.calm){const a=Math.min(1,b.t/.15)*(1-b.far*.6);cx.globalCompositeOperation='lighter';
+  for(const[w,c]of[[7,`rgba(140,170,255,${(a*.25).toFixed(3)})`],[2.2,`rgba(235,242,255,${a.toFixed(3)})`]]){cx.strokeStyle=c;cx.lineWidth=w;cx.beginPath();b.pts.forEach(([x,y],i)=>i?cx.lineTo(x,y):cx.moveTo(x,y));cx.stroke();}
+  cx.globalCompositeOperation='source-over';}}
+function stepWeather(dt){const st=STAGES[LV.si];if(!st)return;const w=LV.weather;if(w==='sand')return stepSand(dt);if(w==='storm')return stepStorm(dt);if(!HQ())return;
  if(w==='snow'&&WX.length<110)WX.push({x:rnd(-20,OW+20),y:-10,vx:rnd(-20,20),vy:rnd(60,130),r:rnd(1,2.6)});
  else if(w==='rain'&&WX.length<80)WX.push({x:rnd(0,OW+60),y:-20,vx:-90,vy:rnd(650,850),r:1});
  else if(w==='embers'&&WX.length<60)WX.push({x:rnd(0,OW),y:OH+10,vx:rnd(-20,20),vy:-rnd(40,110),r:rnd(1,2.5)});
@@ -42,7 +59,7 @@ let PLM=null,DRM=[];
 function showPlayerModel(){for(const k in PLANES){const m=MODELS['pl_'+k];if(!m.parent)scene.add(m);m.visible=false;}PLM=MODELS['pl_'+save.plane];PLM.visible=true;
  for(const m of DRM)scene.remove(m);DRM=[];}
 // world animation shared by the legacy campaign and the new engine
-function syncEnv(dt,tnow){WIND.value=tnow;
+function syncEnv(dt,tnow){WIND.value=tnow;if(SF.ocean)SF.ocean.update(tnow);
  for(const l of FXL){if(l.intensity>0)l.intensity=Math.max(0,l.intensity-dt*l.userData.d*3);}
  // clouds drift with the world
  for(const c of LV.clouds){if(!c.visible)continue;c.position.z+=C3.v*dt*.95;if(c.position.z>C3.z+30)spawnCloud(c,false);}
@@ -50,10 +67,10 @@ function syncEnv(dt,tnow){WIND.value=tnow;
 // top-down gameplay camera (shake in seconds of remaining shake)
 function gameCam(shake,zoom=1){fill.intensity=0;camera.position.set(0,C3.y*zoom,C3.z*zoom);camera.lookAt(0,0,0);
  if(shake>0){camera.position.x+=rnd(-.5,.5)*shake*2.2;camera.position.z+=rnd(-.5,.5)*shake*2.2;}
- {const fd=Math.hypot(C3.y,C3.z)/141.8,sg=STAGES[LV.si]&&STAGES[LV.si].weather==='sand'?SAND.g:0;scene.fog.near=240*fd*(1-.45*sg);scene.fog.far=580*fd*(LV.B.fogN||1)*(1-.3*sg);}
+ {const fd=Math.hypot(C3.y,C3.z)/141.8,sg=LV.weather==='sand'?SAND.g:0;scene.fog.near=240*fd*(1-.45*sg);scene.fog.far=580*fd*(LV.B.fogN||1)*(1-.3*sg);}
  sun.position.copy(LV.sunDir).multiplyScalar(220).add(new T3.Vector3(0,GY,(C3.Zt+C3.Zb)/2*C3.t));sun.target.position.set(0,GY,(C3.Zt+C3.Zb)/2*C3.t);
  if(SF.terrain)SF.terrain.shadows();}
-function drawWeather(){if(LV.si>=0&&STAGES[LV.si].weather==='sand')return drawSand();if(WX.length&&LV.si>=0){const w=STAGES[LV.si].weather;if(w==='snow'){cx.fillStyle='rgba(255,255,255,.85)';for(const q of WX){cx.beginPath();cx.arc(q.x,q.y,q.r,0,TAU);cx.fill();}}
+function drawWeather(){if(LV.si>=0&&LV.weather==='sand')return drawSand();if(LV.si>=0&&LV.weather==='storm')return drawStorm();if(WX.length&&LV.si>=0){const w=LV.weather;if(w==='snow'){cx.fillStyle='rgba(255,255,255,.85)';for(const q of WX){cx.beginPath();cx.arc(q.x,q.y,q.r,0,TAU);cx.fill();}}
   else if(w==='rain'){cx.strokeStyle='rgba(190,210,230,.35)';cx.lineWidth=1;cx.beginPath();for(const q of WX){cx.moveTo(q.x,q.y);cx.lineTo(q.x+q.vx*.03,q.y+q.vy*.03);}cx.stroke();}
   else if(w==='embers'){cx.globalCompositeOperation='lighter';for(const q of WX)dg(q.x,q.y,q.r*3,'#ff7a2e');cx.globalCompositeOperation='source-over';}}}
 // menu screens: low cinematic flyby with the horizon in view

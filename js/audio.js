@@ -12,15 +12,17 @@ function tone(f0,f1,dur,type,vol,at=0,dest=SB){const t=AC.currentTime+at,o=AC.cr
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(dest);o.start(t);o.stop(t+dur+.02);}
 function noise(dur,vol,freq,at=0,type='lowpass',dest=SB,end=60){const t=AC.currentTime+at,n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();n.buffer=NB;f.type=type;f.frequency.setValueAtTime(freq,t);if(type==='lowpass')f.frequency.exponentialRampToValueAtTime(end,t+dur);
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);n.connect(f).connect(g).connect(dest);n.start(t,Math.random()*.5);n.stop(t+dur+.02);}
-const BANKV={shot:.3,hit:.22,gear:.35,pop:.7,boom:1,bomb:1,hurt:.85,part:1,missile:.3,power:.5,shieldHit:.5};
-function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=performance.now();if(n-(lastS[k]||0)<({gear:40,pop:45,shot:95,combo:60,bonus:200,hit:70,flame:110,plasma:150,zap:90,lance:200,blink:150,heal:300,mine:120,deflect:90,shieldHit:120,missile:160,count:55,part:150}[k]||0))return;lastS[k]=n;
- if(k==='boom'||k==='bomb')duck(.4,.3,.8);else if(k==='hurt'||k==='warn')duck(.55,.2,.6);else if(k==='win'||k==='achieve')duck(.5,.6,.8);
+const BANKV={naval:.75,thunder:.9,shot:.3,hit:.22,gear:.35,pop:.7,boom:1,bomb:1,hurt:.85,part:1,missile:.3,power:.5,shieldHit:.5};
+function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=performance.now();if(n-(lastS[k]||0)<({gear:40,pop:45,shot:95,combo:60,bonus:200,hit:70,flame:110,plasma:150,zap:90,lance:200,blink:150,heal:300,mine:120,deflect:90,shieldHit:120,missile:160,count:55,part:150,naval:140}[k]||0))return;lastS[k]=n;
+ if(k==='boom'||k==='bomb'||k==='thunder')duck(.4,.3,.8);else if(k==='hurt'||k==='warn')duck(.55,.2,.6);else if(k==='win'||k==='achieve')duck(.5,.6,.8);
  {const Bk=SF.sfxBank,x=SF.sndX;SF.sndX=undefined;if(Bk&&Bk.ready&&Bk.buf[k]&&Bk.play(k,BANKV[k]||1,x))return;}   // rendered sound bank (sfxbank.js) when ready
  if(k==='shot')tone(1500,600,.04,'square',.016);
  else if(k==='flame')noise(.16,.07,1800,0,'bandpass');
  else if(k==='plasma'){tone(300,900,.12,'sine',.08);tone(600,1500,.1,'triangle',.03);}
  else if(k==='zap')tone(2400,900,.07,'sawtooth',.025);
  else if(k==='hit')tone(900,700,.03,'triangle',.025);
+ else if(k==='naval'){noise(.5,.4,900);tone(120,40,.35,'sine',.08);}
+ else if(k==='thunder')noise(2.2,.35,500);
  else if(k==='pop'){noise(.3,.38,2600);tone(260,50,.2,'square',.05);}
  else if(k==='boom'){noise(1.1,.8,2000);tone(110,28,.9,'sine',.55);}
  else if(k==='gear')tone(900+p*55,1400+p*55,.07,'triangle',.06);

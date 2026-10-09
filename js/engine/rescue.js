@@ -10,7 +10,7 @@ Rc.start=R=>{R.crews=[];R.crewsTotal=0;R.crewsSaved=0;R.crewsLost=0;R.crewNext=0
 function spawn(R){const st=STAGES[R.si],wt=st.water;let x=rnd(60,W-60);if(R.def&&R.def.road!==null&&R.def.road!==undefined){const rx=toLogicX(R.def.road);if(Math.abs(x-rx)<30)x=rx+(x<rx?-40:40);}
  R.crews.push({x:clamp(x,40,W-40),y:-40,t:0,raft:!!(wt&&x>wt[0]&&x<wt[1]),ph:Math.random()*9});R.crewsTotal++;}
 Rc.step=(R,dt)=>{if(R.kind!=='stage'||!R.crews)return;const c=C(),p=R.p;
- if(R.dir&&R.dir.phase==='stage'&&R.crewNext<c.times.length&&R.dir.clock>=c.times[R.crewNext]){R.crewNext++;spawn(R);if(R.crewsTotal===1)say('crew1','Survivors on the ground! Fly over them to pick them up.',2,0);}
+ if(R.dir&&R.dir.phase==='stage'&&R.crewNext<c.times.length&&R.dir.clock>=c.times[R.crewNext]){R.crewNext++;spawn(R);if(R.crewsTotal===1)say('crew1',R.crews[R.crews.length-1].raft?'Survivors in a life raft! Fly over them to pick them up.':'Survivors on the ground! Fly over them to pick them up.',2,0);}
  for(const q of R.crews){q.t+=dt;q.y+=SCROLL*dt;
   if(!q.done&&p.alive&&p.dying<=0&&(p.x-q.x)**2+(p.y-q.y)**2<c.radius*c.radius){q.done=1;R.crewsSaved++;R.score+=c.score;R.gears+=c.gears;
    SF.fx.pop(q.x,q.y-20,'CREW RESCUED +'+fmt(c.score),true);SF.fx.ring(q.x,q.y,34,'#7dff9a',.5);sfx('chip');vib(30);

@@ -88,3 +88,15 @@ Object.assign(BIOME.farm,{pbr:{tex:['grass','soil','rock','wheat','crop'],tint:[
  tint(o,x,z,h){const r=Math.abs(x-4);if(r<2.4){o[0]=.15;o[1]=.15;o[2]=.17;}else if(r<3.4){o[0]=.8;o[1]=.76;o[2]=.68;}else{o[0]=o[1]=o[2]=1;}},
  occ:{canopy2:[.42,.5],canopy3:[.44,.5],barn:[.8,.4],house:[.8,.4]}});
 BIOME.farm.uses=BIOME.farm.uses.concat(['canopy2','canopy3']);BIOME.farm.exp=.9;
+// ============ v5.14: Storm Fleet (stage 2) — open ocean in a storm ============
+// Open ocean: deep sea floor under the storm surface (js/ocean.js), nothing above the waves but the fleet. Ships and weather are in config/ground.js, config/bosses.js and scene.js.
+BIOME.storm={sky:['#26343c','#71818a','#334349'],fog:'#56666e',fogN:1.25,sun:['#c8d6de',1.15],sunDir:[-.35,.75,-.55],hemi:['#9db0bb','#14232a',.85],exp:1.02,
+ water:{c:'#123a40',op:.96},wl:0,clouds:8,storm:{amp:1},pbr:{tex:['rock','gravel','rock','moss','sand'],tint:[[.5,.52,.54],[.45,.46,.47],[.56,.57,.6],[.42,.52,.38],[.58,.58,.56]],strata:.3,sc:[.9,.95,1.02],ns:.9,deep:[.4,.5,.5]},
+ HF(x,z){return -9+fbm(x*.03,z*.03,2)*1.5;},   // open ocean: only deep sea floor under the waves
+
+ P:{low:'#3a4044',mid:'#3a4044',m0:1,m1:4,high:'#4a5054',h0:8,h1:16,rock:'#3a3f44',sand:1,wl:.1,sandc:'#5a5e5c',deep:'#1a2a30'},
+ splat(o,x,z,h,sl,under){const rock=Math.min(1,sst(.25,.5,sl)+sst(2,6,h)*.6),moss=(1-sst(.5,2,Math.abs(h-.4)))*.7,sand=h<-2?1-sst(-4,-2,-h):0,grav=sst(1,3,under)*.4;
+  const t=rock+moss+sand+grav;o[0]=grav;o[1]=rock;o[2]=moss;o[3]=sand;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
+ wet(x,z,h){return 1-sst(1,6,h);},occ:{boulder:[1,.55],boulder2:[1,.55]},uses:['boulder','boulder2'],
+ props(){}};
+SF.ATMOS.storm={grade:['#a8c4cc','#0a1c24',.22,1.1,.82],shadows:{n:4,a:.3,size:220},over:{n:3,a:.3,c:'#5a6870',size:230,flat:.45,speed:2.4}};

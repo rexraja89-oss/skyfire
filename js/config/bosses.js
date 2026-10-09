@@ -36,6 +36,22 @@ SF.BOSSES={
   phases:[{when:'always',attacks:[]},
    {when:'parts<=2',banner:'HARVESTER EXPOSED',attacks:[_A('ring',1.3,{count:16,speed:125,from:'core'})],say:'Its engine core is open. Hit it!'},
    {when:'hp<.4',rage:1.35,attacks:[_A('spiral',.11,{arms:3,speed:130,from:'core'})],say:'It is overheating. Expect spirals!'}]},
+ // v5.14 Storm Fleet flagship (replaces the Harvest Reaper): a storm battleship steaming up the screen.
+ tempestDreadnought:{name:'Tempest Dreadnought',title:'Ashen Fleet flagship',model:{body:'dreadnought',color:'#3a4148'},rx:50,ry:165,ground:true,naval:1,move:{type:'sway',amp:60,freq:.3,y:.3},score:36000,gears:48,
+  parts:[
+   {id:'turA',name:'Fore turret A',mesh:'turret',dx:0,dy:-118,r:20,hp:120,score:2800,gears:5,attacks:[_A('burst',2.4,{count:3,gap:.14,speed:185,bullet:'shell'})]},
+   {id:'turB',name:'Fore turret B',mesh:'turret',dx:0,dy:-80,r:20,hp:120,score:2800,gears:5,attacks:[_A('fan',2.8,{count:5,spread:36,speed:165,bullet:'shell',offset:1.2})]},
+   {id:'turC',name:'Aft turret',mesh:'turret',dx:0,dy:112,r:20,hp:120,score:2800,gears:5,attacks:[_A('burst',2.6,{count:3,gap:.14,speed:185,bullet:'shell',offset:1})]},
+   {id:'gatL',name:'Port gatling',mesh:'gatling',dx:-36,dy:-34,r:16,hp:90,score:2200,gears:4,attacks:[_A('aimed',1.2,{count:3,spread:7,speed:200})]},
+   {id:'gatR',name:'Starboard gatling',mesh:'gatling',dx:36,dy:-34,r:16,hp:90,score:2200,gears:4,attacks:[_A('aimed',1.3,{count:3,spread:7,speed:200,offset:.6})]},
+   {id:'lance',name:'Storm lance',mesh:'beam',dx:0,dy:42,r:17,hp:105,score:2800,gears:5,attacks:[_A('laser',6.5,{charge:1.2,fire:.6,dmg:14,offset:2})]},
+   {id:'mortar',name:'Deck mortar',mesh:'mortar',dx:-28,dy:80,r:16,hp:95,score:2400,gears:4,attacks:[_A('mortar',4.2,{delay:1.4,radius:34,damage:18,offset:1.5})]},
+   {id:'rack',name:'Missile rack',mesh:'launcher',dx:28,dy:80,r:16,hp:100,score:2600,gears:5,attacks:[_A('missiles',3.8,{count:3,speed:115})]},
+   {id:'core',name:'Bridge reactor',dx:0,dy:8,r:24,hp:400,kill:true,vulnerableWhen:'parts<=4'}],
+  phases:[{when:'always',attacks:[_A('rain',.3,{speed:140})]},
+   {when:'parts<=6',banner:'BROADSIDE',attacks:[_A('sweep',1.2,{count:10,speed:160,from:'core'})],say:'It is turning its broadside on us. Weave through the sweep!'},
+   {when:'parts<=4',banner:'BRIDGE EXPOSED',attacks:[_A('ring',1.4,{count:16,speed:125,bullet:'heavy',from:'core'})],say:'Main battery is down. Hit the bridge reactor!'},
+   {when:'hp<.3',rage:1.4,attacks:[_A('spiral',.12,{arms:3,speed:130,from:'core'})],say:'She is taking on water and firing everything. Finish it!'}]},
  duneCrawler:{name:'Dune Crawler',title:'Segmented sand serpent',model:{body:'segment',color:'#8a6a3c'},rx:50,ry:40,ground:true,move:{type:'sway',amp:90,freq:.55,y:.2},score:34000,gears:45,
   parts:[
    {id:'seg1',name:'Segment',mesh:'segment',dx:0,dy:-42,r:20,hp:95,score:2000,gears:4,wave:{amp:26,freq:2.2,lag:.6},attacks:[_A('aimed',2.2,{speed:170})]},
@@ -138,6 +154,11 @@ SF.MINIBOSSES={
   parts:[{id:'gun',name:'Main gun',mesh:'twin',dx:0,dy:10,r:16,hp:60,score:1200,gears:2,attacks:[_A('burst',1.8,{count:3,gap:.12,speed:180,bullet:'shell'})]},{id:'mortar',name:'Mortar',mesh:'launcher',dx:0,dy:-30,r:14,hp:50,score:1200,gears:2,attacks:[_A('mortar',3.4,{delay:1.3,radius:36,damage:18})]},
    {id:'core',name:'Hull',mesh:'none',dx:0,dy:0,r:24,hp:120,kill:true,guard:.6}],
   phases:[{when:'always',attacks:[]},{when:'parts<=0',rage:1.4,attacks:[_A('ring',1.4,{count:12,speed:130,from:'core'})]}]},
+ squallRunner:{name:'Squall Runner',title:'Missile destroyer',model:{body:'enemy:destroyer',scale:1.35,top:1.3},rx:26,ry:88,ground:true,naval:1,move:{type:'sway',amp:80,freq:.45,y:.26},score:8500,gears:12,
+  parts:[{id:'gun',name:'Fore gun',mesh:'twin',dx:0,dy:-52,r:15,hp:60,score:1200,gears:2,attacks:[_A('burst',1.9,{count:3,gap:.13,speed:185,bullet:'shell'})]},
+   {id:'rack',name:'Missile rack',mesh:'launcher',dx:0,dy:44,r:14,hp:55,score:1200,gears:2,attacks:[_A('missiles',3.4,{count:2,speed:120})]},
+   {id:'core',name:'Hull',mesh:'none',dx:0,dy:0,r:24,hp:125,kill:true,guard:.6}],
+  phases:[{when:'always',attacks:[_A('fan',2.6,{count:5,spread:40,speed:160,from:'core'})]},{when:'parts<=0',rage:1.4,attacks:[_A('ring',1.4,{count:12,speed:130,from:'core'})]}]},
  duneSkimmer:{name:'Dune Skimmer',title:'Desert interceptor',model:{body:'enemy:fighter2',scale:2.4,top:.4},rx:40,ry:44,move:{type:'strafe',amp:110,freq:.7,y:.18},score:9000,gears:13,
   parts:[{id:'engL',name:'Left engine',mesh:'engine',dx:-30,dy:20,r:13,hp:50,score:1000,gears:2,attacks:[_A('missiles',3.2,{count:2,speed:120})]},{id:'engR',name:'Right engine',mesh:'engine',dx:30,dy:20,r:13,hp:50,score:1000,gears:2,attacks:[_A('missiles',3.4,{count:2,speed:120})]},
    {id:'core',name:'Cockpit',mesh:'none',dx:0,dy:-6,r:20,hp:130,kill:true,guard:.6}],
@@ -172,7 +193,7 @@ SF.MINIBOSSES={
   phases:[{when:'always',attacks:[_A('fan',2,{count:7,spread:50,speed:165,from:'core'})]},{when:'parts<=0',rage:1.5,attacks:[_A('cross',.1,{speed:140,from:'core'})]}]},
 };
 // which boss each stage uses
-['tidebreaker','harvestReaper','duneCrawler','ridgeGunship','ironLeviathan','reefCarrier','canyonColossus','polarTalon','skylineSentinel','infernoThrone'].forEach((b,i)=>{if(SF.STAGE_DEFS&&SF.STAGE_DEFS[i])SF.STAGE_DEFS[i].boss=b;});
+['tidebreaker','tempestDreadnought','duneCrawler','ridgeGunship','ironLeviathan','reefCarrier','canyonColossus','polarTalon','skylineSentinel','infernoThrone'].forEach((b,i)=>{if(SF.STAGE_DEFS&&SF.STAGE_DEFS[i])SF.STAGE_DEFS[i].boss=b;});
 // ---------- extra weapon modules (v5.3): every main boss carries 6-10 weapons ----------
 // New part meshes: gatling (spinning barrels), beam (charge lance), orb (spiral pod), mortar (lobbed shells).
 // Inserted before the core; every 'parts<=N' condition of that boss is raised by the number of extras, so the
@@ -201,6 +222,7 @@ SF.BOSS_TAUNTS={};
  const T=SF.BOSS_TAUNTS;
  T.tidebreaker=['Admiral Varn here. Your little harbor is mine, pilot.','Varn again. Ignore her, Rex. Sink that ship.'];
  T.harvestReaper=['The fields will feed my Ashen Fleet. Turn back.','Big blades, slow turns. Stay on its flanks.'];
+ T.tempestDreadnought=['Varn on the Tempest. No storm has ever sunk my flagship. Neither will you.','Guns first, Rex. The bridge opens when the main battery falls.'];
  T.duneCrawler=['The desert swallows everything. You are next.','Hit the segments first. The head opens when they fall.'];
  T.ridgeGunship=['From the ridge I see every move you make.','Take out the rotors and it falls.'];
  T.ironLeviathan=['My Leviathan hunts beneath you. You will never see it coming.','Watch the water. Strike when it surfaces.'];

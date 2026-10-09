@@ -22,7 +22,7 @@ function target(w,h){if(RT&&RT.width===w&&RT.height===h)return RT;if(RT)RT.dispo
  RT=renderer.capabilities.isWebGL2&&T3.WebGLMultisampleRenderTarget?new T3.WebGLMultisampleRenderTarget(w,h,o):new T3.WebGLRenderTarget(w,h,o);
  if(RT.samples!==undefined)RT.samples=4;RT.texture.encoding=T3.sRGBEncoding;return RT;}
 // render the 3D scene for a flight: graded in HQ, direct otherwise
-Gd.render=si=>{const st=STAGES[si],A=st&&SF.ATMOS[st.biome],g=A&&A.grade;Gd.on=!!(save.hq&&g);
+Gd.render=si=>{const st=STAGES[si],A=st&&SF.ATMOS[LV.bk||st.biome],g=A&&A.grade;Gd.on=!!(save.hq&&g);
  if(!Gd.on){renderer.render(scene,camera);return;}
  if(!Q)build();renderer.getDrawingBufferSize(sz);const rt=target(sz.x,sz.y),U=Q.material.uniforms;
  U.hi.value.set(g[0]);U.sh.value.set(g[1]);U.amt.value=g[2]*1.6;U.con.value=g[3]||1.06;U.sat.value=g[4]||1.06;

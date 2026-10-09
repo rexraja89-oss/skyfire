@@ -10,7 +10,7 @@ let A=null,S=null;const SPR={};
 function blob(c,soft){const k=c+soft;if(SPR[k])return SPR[k];const N=128,s=document.createElement('canvas');s.width=s.height=N;const g=s.getContext('2d');const R2=srng(c.length*31+soft*7);
  for(let i=0;i<11;i++){const a=i/11*TAU,o=i?R2()*30+8:0,x=N/2+Math.cos(a)*o,y=N/2+Math.sin(a)*o,r=i?R2()*20+24:44,gr=g.createRadialGradient(x,y,0,x,y,r);
   gr.addColorStop(0,c+(soft?'aa':'ff'));gr.addColorStop(.6,c+'44');gr.addColorStop(1,c+'00');g.fillStyle=gr;g.fillRect(0,0,N,N);}return SPR[k]=s;}
-At.start=si=>{const st=STAGES[si];A=st?SF.ATMOS[st.biome]||null:null;S={sh:[],ov:[],gl:[],sl:[],t:0};if(!A)return;
+At.start=si=>{const st=STAGES[si];A=st?SF.ATMOS[LV.bk||st.biome]||null:null;S={sh:[],ov:[],gl:[],sl:[],t:0};if(!A)return;
  if(A.shadows)for(let i=0;i<A.shadows.n;i++)S.sh.push({x:rnd(-40,W+40),y:rnd(-200,H),r:A.shadows.size*rnd(.75,1.3),vx:rnd(-6,6),s:rnd(.6,1)});
  if(A.over)for(let i=0;i<A.over.n;i++)S.ov.push(newOver(true));
  if(A.search)for(let i=0;i<A.search.n;i++)S.sl.push({x:rnd(30,W-30),y:rnd(-100,H),ph:rnd(0,TAU),sp:rnd(.4,.8)*(Math.random()<.5?-1:1)});};

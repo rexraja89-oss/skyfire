@@ -24,15 +24,16 @@ SF.STAGE_DEFS=[
   {at:74,f:'swoop',e:'swift'},{at:78,f:'stagger',e:'dart'},{at:82,f:'pincer',e:'swift',mode:'hard'},{at:84,f:'lineHover',e:'gunboat'},
   {at:90,f:'mixedRaid',mode:'extreme'}],
   obj:_O(['killPct:70','formations:3','combo:20','noHit','bossParts'],['killPct:80','formations:5','combo:30','hull:70','bossParts'],['killPct:90','formations:6','combo:45','noHit','bossTime:75'])},
- // 2 · Golden Fields ─ farmland with a road down the middle
- {len:100,road:4,timeline:[
-  {at:3,f:'vDrop',e:'dart'},{at:8,g:'flakNest',x:.25},{at:10,f:'swoop',e:'swift'},{at:15,g:'convoy',x:'road'},
-  {at:18,f:'lineHover',e:'gunboat'},{at:24,g:'outpost',x:.72},{at:26,f:'snake',e:'dart'},{at:32,w:'brute',n:1},
-  {at:36,f:'pincer',e:'swift',mode:'hard'},{at:38,g:'towerPair',x:.3},{at:44,mini:'harvestHound'},
-  {at:48,zone:'Mill country'},{at:50,f:'stagger',e:'dart'},
-  {at:56,banner:'CONVOY RUN',sub:'SPECIAL EVENT',say:'A supply column is racing for the town. Stop every truck!'},{at:57,g:'armorColumn',x:'road'},{at:62,g:'convoy',x:'road'},
-  {at:60,f:'converge',e:'swift'},{at:66,g:'flakNest',x:.75,mode:'hard'},{at:68,f:'wedgeLeader'},{at:74,g:'outpost',x:.28},
-  {at:78,f:'crossing',e:'dart'},{at:84,f:'boxEscort'},{at:88,g:'convoy',x:'road',mode:'extreme'},{at:90,f:'vDropWide',e:'dart'}],
+ // 2 · Storm Fleet ─ open ocean in a storm front: escorts, destroyer screens, battleships, then the flagship
+ {len:100,road:null,timeline:[
+  {at:3,f:'vDrop',e:'dart'},{at:7,boats:3},{at:10,f:'swoop',e:'swift'},{at:13,g:'escortGroup',x:.32},
+  {at:16,say:'Storm front ahead. Ashen Fleet escorts below, low and fast.'},{at:18,f:'lineHover',e:'gunboat'},{at:22,g:'destroyerPair',x:.6},
+  {at:26,f:'snake',e:'dart'},{at:30,boats:3},{at:32,w:'brute',n:1},{at:36,f:'pincer',e:'swift',mode:'hard'},{at:38,g:'escortGroup',x:.7},
+  {at:44,mini:'squallRunner'},
+  {at:48,zone:'Fleet anchorage'},{at:50,f:'stagger',e:'dart'},
+  {at:54,banner:'BATTLE GROUP',sub:'SPECIAL EVENT',say:'Battleship dead ahead with destroyer escort. Break its turrets before it can bring them to bear!'},{at:55,g:'battleGroup',x:.5},
+  {at:62,f:'converge',e:'swift'},{at:66,boats:4,mode:'hard'},{at:68,f:'wedgeLeader'},{at:72,g:'destroyerPair',x:.4},
+  {at:76,f:'crossing',e:'dart'},{at:80,g:'battleGroup',x:.5,mode:'hard'},{at:84,f:'boxEscort'},{at:88,g:'escortGroup',x:.3,mode:'extreme'},{at:90,f:'vDropWide',e:'dart'}],
   obj:_O(['killPct:70','setups:3','leaders:1','combo:20','bossParts'],['killPct:80','setups:5','combo:35','noHit','bossParts'],['groundPct:95','setups:6','combo:50','noSpecial','bossTime:75'])},
  // 3 · Desert Highway ─ dunes, a highway on the left
  {len:104,road:-6,timeline:[
@@ -106,7 +107,7 @@ SF.STAGE_DEFS=[
 // v5.5: new ground sites (stilt batteries, rail guns, pop-up turrets, minefields, power lines) and the rescue objective
 (()=>{const add=[
  [[57,'stiltBattery',.24]],
- [[21,'pylonLine',.5],[44,'minefield',.5],[70,'railLine',.3]],
+ [[60,'destroyerPair',.3]],   // Storm Fleet: at sea, no land sites
  [[28,'minefield',.5],[52,'stiltBattery',.7],[76,'railLine',.7]],
  [[35,'popField',.5],[66,'stiltBattery',.3]],
  [[25,'railLine',.35],[60,'stiltBattery',.3]],

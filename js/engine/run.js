@@ -8,7 +8,8 @@ const Rn=SF.run={get R(){return R;}};
 Rn.timeScale=()=>R?Math.min(R.slow>0?SF.BAL.player.deathSlowScale:1,SF.feel.scale(R)):1;
 Rn.start=(o={})=>{audioOn();musicLaunch();if(typeof clearRun==='function')clearRun();
  const kind=o.kind||'stage',si=kind==='range'?1:o.si,mode=o.mode||save.mode||'easy';
- if(LV.si!==si){$('loading').hidden=false;show('none');setTimeout(()=>{buildLevel(si);$('loading').hidden=true;Rn.start(o);},40);return;}
+ const bk=kind==='range'?'farm':STAGES[si].biome;   // the Test Range keeps the farmland even though stage 2 is now at sea
+ if(LV.si!==si||LV.bk!==bk){$('loading').hidden=false;show('none');setTimeout(()=>{buildLevel(si,bk);$('loading').hidden=true;Rn.start(o);},40);return;}
  if(kind==='stage'){save.mode=mode;store();}
  SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();SF.boss.reset();
  const MD=SF.DIFFICULTY[mode],row=kind==='range'?{hp:1,spd:1,bullet:1,fire:1,dmg:1,boss:1,extra:0,tele:1}:MD.rows[si];
@@ -21,7 +22,7 @@ Rn.start=(o={})=>{audioOn();musicLaunch();if(typeof clearRun==='function')clearR
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
- gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);SF.atmos.start(si);SF.sfxBank.engineStart();SF.sfxBank.ambStart(STAGES[si].weather||'');
+ gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);SF.atmos.start(si);SF.sfxBank.engineStart();SF.sfxBank.ambStart(LV.weather||'');
  $('bombBtn').classList.add('sp');$('bombL').textContent='SKYBURST';$('pwPips').classList.add('lv');
  state='run';show('play');musicSet('combat',R.st.key);SF.sfxBank.applyMute();
  if(kind==='range')say('range','Test Range. Formations, ground targets and power-ups are all live. Chain your kills to build the combo.',3,0);
