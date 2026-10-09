@@ -127,7 +127,7 @@ function paint(o,x,z,h,sl,P){const n=n2(x*.15,z*.15)*.5+n2(x*.6,z*.6)*.25;
 
 // ---------- biomes ----------
 const BIOME={
- harbor:{sky:['#4f8fd0','#ffcf9e','#c79c7a'],fog:'#f2c9a2',fogN:.9,sun:['#ffd2a0',2.4],sunDir:[-.45,.5,-.75],hemi:['#bcd5ff','#6b5a40',.55],exp:1.05,water:{c:'#1d6e95',op:.9},wl:0,clouds:5,
+ harbor:{sky:['#4f8fd0','#ffcf9e','#c79c7a'],fog:'#f2c9a2',fogN:.9,sun:['#ffd2a0',2.4],sunDir:[-.45,.5,-.75],hemi:['#bcd5ff','#6b5a40',.55],exp:1.05,water:{c:'#1d6e95',op:.8},wl:0,clouds:5,
   HF(x,z){const c=-9+2.5*Math.sin(z*.012)+1.2*Math.sin(z*.041),d=c-x;let h=d>0?.8+Math.min(2.2,d*.22)+fbm(x*.06,z*.06,3)*.7:-.6-Math.min(6,-d*.16);
    if(x<-30)h+=mtn(x,z,30);if(x>48)h=Math.max(h,mtn(x,z,22,48,95)-4);return h;},
   P:{low:'#5f8f48',mid:'#6f9a52',m0:1,m1:4,high:'#6b6b5a',h0:8,h1:16,rock:'#7a6e60',snow:24,sand:1,wl:.6,sandc:'#e0cf9f',deep:'#2a5560'},uses:['canopy','boulder','boulder2','kk_building_A','kk_building_E'],
@@ -179,7 +179,7 @@ const BIOME={
     for(let k=0;k<4;k++)put('acacia',vx+R()*26-13,vz+R()*26-13,1+R()*.4,R()*6,'#4e6a2e');}
    if(R()<.3){const x=(R()<.5?-1:1)*(22+R()*16),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
    for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.35+R()*.5,R()*6,pick(['#9a6a44','#8a5e3c','#a47450']));}}},
- forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.55],exp:.95,water:{c:'#2c5a52',op:.92},wl:-.8,clouds:5,pbr:1,
+ forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.55],exp:.95,water:{c:'#1e4a46',op:.66},wl:-.8,clouds:5,pbr:1,
   // Jungle Ridge (Phase 1 realistic terrain, js/terrain_pbr.js): grassy river valley between rocky uplands that break into
   // terraced ledges and steep, irregular cliff faces; textured soil/grass/rock/moss/gravel chosen by slope, height and noise
   HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037),bank=Math.abs(x-rx);
@@ -229,7 +229,7 @@ const BIOME={
    for(let i=0;i<120;i++){const x=R()*180-90,z=z0-R()*TL,h=HF(x,z);if(h>1.5&&h<12)put('fern',x,z,1.6+R()*1.4,R()*TAU,'#90b078');}
    for(let i=0;i<14;i++){const x=R()*180-90,z=z0-R()*TL,h=HF(x,z);if(h>-.5&&h<1.5)put(R()<.5?'boulder':'boulder2',x,z,1+R()*1.8,R()*TAU,'#ece4d4',.7,-.3);}
    for(let i=0;i<10;i++){const x=R()*120-60,z=z0-R()*TL,h=HF(x,z);if(h>.4&&h<2)put('house',x,z,.8,R()*6,'#c9a46a');}}},
- canyon:{sky:['#4a86d0','#f4d4b0','#b06a48'],fog:'#e8c0a0',fogN:.9,sun:['#ffe0b8',2.8],sunDir:[-.5,.7,-.4],hemi:['#d8e2ff','#8a4a30',.55],exp:1,water:{c:'#3a7f88',op:.9},wl:-.8,clouds:3,uses:['boulder','boulder2','canopy'],
+ canyon:{sky:['#4a86d0','#f4d4b0','#b06a48'],fog:'#e8c0a0',fogN:.9,sun:['#ffe0b8',2.8],sunDir:[-.5,.7,-.4],hemi:['#d8e2ff','#8a4a30',.55],exp:1,water:{c:'#2c6a72',op:.72},wl:-.8,clouds:3,uses:['boulder','boulder2','canopy'],
   HF(x,z){const rv=2+6*Math.sin(z*.009),d=Math.abs(x-rv);let p=sst(10,24,d+fbm(x*.05,z*.05,2)*4)*20+fbm(x*.03,z*.03,3)*2;p=Math.floor(p/3)*3+(p%3)*.3;let h=.6+p+mtn(x,z,14,50,95);h-=2.6*Math.exp(-((d/2.8)**2));return h;},
   P:{low:'#c98a5a',mid:'#b4653f',m0:1,m1:4,high:'#d98d5f',h0:10,h1:16,rock:'#8d4630',sand:1,wl:-.2,sandc:'#a8704a',deep:'#5a3a2a'},
   cf(o,x,z,h,sl){if(h>2){const b=Math.floor(h/3)%4;mixc(o,o,lc(['#a95a3b','#c4714a','#8d4630','#d98d5f'][b]),.7);}},

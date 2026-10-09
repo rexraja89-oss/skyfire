@@ -1,8 +1,8 @@
 {
-  "build": 30,
-  "version": "5.9",
+  "build": 31,
+  "version": "5.10",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Volumetric jungle trees"
+    "River depth and shore foam"
   ]
 }

@@ -16,7 +16,7 @@ const PERIOD=600;                  // texture coordinates wrap every 600 units; 
 // ---------- material ----------
 function tex(f){const t=new T3.TextureLoader().load('art/'+f+'?v='+BUILD);t.wrapS=t.wrapT=T3.RepeatWrapping;t.anisotropy=8;return t;}
 const HEAD=`
-uniform sampler2D tG,tS,tR,tM,tV,nG,nR,tX;uniform vec3 uT0,uT1,uT2,uT3,uT4,uSC;uniform float uStrata,uNS;
+uniform sampler2D tG,tS,tR,tM,tV,nG,nR,tX;uniform vec3 uT0,uT1,uT2,uT3,uT4,uSC,uDeep;uniform float uStrata,uNS,uWL;
 varying vec4 vSplat;varying float vAO;varying vec3 vTP;varying vec3 vTN;
 vec3 L(vec4 c){return pow(c.rgb,vec3(2.2));}
 #define RS (54./600.)
@@ -46,6 +46,10 @@ float b0=max(a0-mx,0.),b1=max(a1-mx,0.),b2=max(a2-mx,0.),b3=max(a3-mx,0.),b4=max
 b0/=bs;b1/=bs;b2/=bs;b3/=bs;b4/=bs;
 vec3 alb=cG*b0+cS*b1+cR*b2+cM*b3+cV*b4;
 alb*=mix(.8,1.14,mac.r);alb=mix(alb,alb*vec3(1.07,1.,.84),mac.b*.45);   // large-scale brightness and dry/damp variation
+// under water: the bed darkens and cools with depth; foam lines the waterline (broken up by noise)
+float dep=uWL-vTP.y;
+if(dep>-.5){alb=mix(alb,alb*uDeep,smoothstep(0.,3.,dep));
+ float fo=(1.-smoothstep(0.,.28,abs(dep-.06)))*smoothstep(.3,.75,brk*.7+mac.g*.5);alb=mix(alb,vec3(.78,.8,.78),fo*.6);}
 diffuseColor.rgb*=alb*1.9;
 float bRock=b2;
 `;
@@ -69,13 +73,13 @@ const AOF=`reflectedLight.indirectDiffuse*=vAO;reflectedLight.indirectSpecular*=
 Tr.hq=()=>!!save.hq&&renderer.capabilities.maxTextures>=12;
 Tr.path=()=>LV.B&&LV.B.pbr?(Tr.hq()?'terrain HQ':'terrain lite')+' · '+renderer.capabilities.maxTextures+' tex units':'';
 const MATS={},TEXC={};
-const DEF_SET={tex:['grass','soil','rock','moss','gravel'],tint:[[1,1,1],[1,1,1],[1,1,1],[1,1,1],[1,1,1]],strata:0,sc:[1,1,1],ns:1};
+const DEF_SET={tex:['grass','soil','rock','moss','gravel'],tint:[[1,1,1],[1,1,1],[1,1,1],[1,1,1],[1,1,1]],strata:0,sc:[1,1,1],ns:1,deep:[.32,.5,.52]};
 const texc=f=>TEXC[f]||(TEXC[f]=tex(f));
-Tr.mat=B=>{const S=Object.assign({},DEF_SET,B&&typeof B.pbr==='object'?B.pbr:{}),key=S.tex.join(',')+'|'+JSON.stringify(S.tint)+S.strata+S.ns;if(MATS[key])return MATS[key];
+Tr.mat=B=>{const S=Object.assign({},DEF_SET,B&&typeof B.pbr==='object'?B.pbr:{});S.wl=B&&B.water?B.wl:-99;const key=S.tex.join(',')+'|'+JSON.stringify(S.tint)+S.strata+S.ns+'|'+S.wl+S.deep;if(MATS[key])return MATS[key];
  const v3=a=>({value:new T3.Vector3(a[0],a[1],a[2])});
  const U={tG:{value:texc('ter_'+S.tex[0]+'.jpg')},tS:{value:texc('ter_'+S.tex[1]+'.jpg')},tR:{value:texc('ter_'+S.tex[2]+'.jpg')},tM:{value:texc('ter_'+S.tex[3]+'.jpg')},tV:{value:texc('ter_'+S.tex[4]+'.jpg')},
   nG:{value:texc('ter_ground_n.jpg')},nR:{value:texc('ter_rock_n.jpg')},tX:{value:texc('ter_macro.png')},
-  uT0:v3(S.tint[0]),uT1:v3(S.tint[1]),uT2:v3(S.tint[2]),uT3:v3(S.tint[3]),uT4:v3(S.tint[4]),uSC:v3(S.sc),uStrata:{value:S.strata},uNS:{value:S.ns}};
+  uT0:v3(S.tint[0]),uT1:v3(S.tint[1]),uT2:v3(S.tint[2]),uT3:v3(S.tint[3]),uT4:v3(S.tint[4]),uSC:v3(S.sc),uStrata:{value:S.strata},uNS:{value:S.ns},uWL:{value:S.wl},uDeep:v3(S.deep)};
  const MAT=MATS[key]=new T3.MeshStandardMaterial({vertexColors:true,roughness:.95,metalness:0});
  MAT.customProgramCacheKey=()=>(Tr.hq()?'terrain-hq':'terrain-lite');
  MAT.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
