@@ -94,10 +94,10 @@ addEventListener('resize',()=>resize());
 // ---------- input ----------
 let drag=null;
 function gp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*OW,y:(e.clientY-r.top)/r.height*OH};}
-cv.addEventListener('pointerdown',e=>{audioOn();if(state!=='run')return;drag=gp(e);try{cv.setPointerCapture(e.pointerId);}catch(_){} });
+cv.addEventListener('pointerdown',e=>{audioOn();if(state!=='run')return;const q=gp(e);if(SF.feel.tap(q))return;drag=q;SF.feel.touchDown();try{cv.setPointerCapture(e.pointerId);}catch(_){} });
 cv.addEventListener('pointermove',e=>{if(!drag)return;if(state==='run'){const q=gp(e),R=SF.R;pj(R.p.x,R.p.y);const f=1/Math.max(.5,PS);SF.run.drag((q.x-drag.x)*f,(q.y-drag.y)*f);drag=q;return;}});
-const endDrag=()=>drag=null;cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
-addEventListener('keydown',e=>{audioOn();keys[e.key]=true;if(e.key===' '){e.preventDefault();if(state==='run')SF.run.special();}if(e.key==='Escape')pause();});
+const endDrag=()=>{if(drag)SF.feel.touchUp();drag=null;};cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+addEventListener('keydown',e=>{audioOn();keys[e.key]=true;if(e.key===' '){e.preventDefault();if(state==='run')SF.run.special();}if(state==='run'&&(e.key==='q'||e.key==='e'))SF.feel.use(SF.R,e.key==='q'?'shield':'overdrive');if(e.key==='Escape')pause();});
 addEventListener('keyup',e=>keys[e.key]=false);
 
 // ---------- app install & updates ----------

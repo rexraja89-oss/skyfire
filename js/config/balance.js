@@ -39,6 +39,7 @@ SF.BAL={
   guaranteeEveryKills:18, // pity: a cell is guaranteed after this many kills without one
   repairChance:.03,repairAmount:.35,chargeChance:.035,chargeAmount:35,
   cellBonusAtMax:1500,magnetRange:75,fall:60,
+  lateMagnet:2.4,lateAfter:1.1,  // gears still on screen after lateAfter s drift to the jet from up to lateMagnet × magnet range
  },
  caps:{pb:[300,200],eb:[340,260],parts:[700,280],enemies:80,pops:30},
  score:{levelUpBonus:500},
@@ -53,6 +54,21 @@ SF.BAL={
   noHitEvery:25,noHitBonus:2000,
  },
  ground:{wreckSmoke:4,smokeBelow:.5},
+ focus:{                 // Focus: time slows while the finger is off the screen
+  scale:.35,              // game speed while focused
+  max:4,                  // seconds of slow time in a full meter (real time)
+  regen:.3,               // meter refill per real second while not focused
+  restart:1.2,            // after running dry, the meter must refill to this before Focus works again
+  ease:9,                 // how fast time slows down / speeds up
+ },
+ abilities:{             // ability ring around the jet (shown while the finger is up); Skyburst uses its own charges
+  shield:{cd:50,first:15},     // cooldown seconds; first = seconds until first use in a flight
+  overdrive:{cd:75,first:30},
+ },
+ streak:{                // kill streaks: kills less than `gap` seconds apart
+  gap:1,tiers:[{n:6,word:'SHARP',bonus:300},{n:12,word:'ACE',bonus:1000},{n:20,word:'LEGEND',bonus:3000}],
+  gearMilestones:[100,250,500,1000],
+ },
 };
 // per-run difficulty multipliers (set from difficulty.js when a stage starts) combined with the balance-panel multipliers
 SF.BAL.run={};

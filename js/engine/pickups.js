@@ -22,7 +22,7 @@ Pk.onKill=(R,e)=>{const d=e.d,b=BP(),mul=SF.BAL.mul.dropRate;
  rollTable(d.dropTable||'standard',e.x,e.y);};
 Pk.step=(R,dt)=>{const p=R.p,b=BP(),pl=p.pl,mag=b.magnetRange*(1+.35*save.parts.magnet)*(pl.mag||1),L=pool.live;
  for(let i=L.length-1;i>=0;i--){const g=L[i];g.ox=g.x;g.oy=g.y;g.t+=dt;const dx=p.x-g.x,dy=p.y-g.y,d=Math.hypot(dx,dy)||1;
-  if(g.k==='gear'){if(p.alive&&d<mag){g.vx=dx/d*480;g.vy=dy/d*480;}else{g.vx*=.96;g.vy=g.vy*.96+320*dt;}}
+  if(g.k==='gear'){if(p.alive&&d<mag){g.vx=dx/d*480;g.vy=dy/d*480;}else if(p.alive&&g.t>b.lateAfter&&d<mag*b.lateMagnet){const s=Math.min(360,140+(g.t-b.lateAfter)*260);g.vx=dx/d*s;g.vy=dy/d*s;}else{g.vx*=.96;g.vy=g.vy*.96+320*dt;}}
   else{if(p.alive&&d<70){g.vx=dx/d*320;g.vy=dy/d*320;}else{g.vx=Math.sin(g.t*2)*30;g.vy=Math.min(b.fall,g.vy+70*dt);}}
   g.x+=g.vx*dt;g.y+=g.vy*dt;
   if(p.alive&&p.dying<=0&&d<SF.BAL.player.pickupR){collect(R,g);pool.kill(g);continue;}

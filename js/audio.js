@@ -37,6 +37,9 @@ function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=perfo
  else if(k==='shieldUp'){tone(400,1600,.3,'sine',.08);tone(800,2400,.25,'triangle',.03,.05);}
  else if(k==='chip'){[1319,1760,2093,2637].forEach((f,i)=>tone(f,f,.18,'sine',.06,i*.08));}
  else if(k==='ui')tone(700,900,.05,'triangle',.05);
+ else if(k==='focusIn'){tone(700,160,.32,'sine',.05);noise(.25,.05,700,0,'lowpass');}
+ else if(k==='focusOut')tone(220,820,.14,'sine',.035);
+ else if(k==='streak'){const f=660*Math.pow(1.19,p);[f,f*1.26,f*1.5,f*2].forEach((x,i)=>tone(x,x,.1,'square',.045,i*.05));}
  else if(k==='deflect'){tone(2600,2200,.05,'square',.02);tone(1300,1250,.08,'triangle',.025);}
  else if(k==='shieldHit'){tone(1800,500,.22,'sine',.09);noise(.15,.12,4000,0,'highpass');}
  else if(k==='missile'){noise(.25,.08,900,0,'bandpass');tone(300,700,.2,'sawtooth',.015);}

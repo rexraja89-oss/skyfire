@@ -5,7 +5,7 @@
 (()=>{
 let R=null;
 const Rn=SF.run={get R(){return R;}};
-Rn.timeScale=()=>R&&R.slow>0?SF.BAL.player.deathSlowScale:1;
+Rn.timeScale=()=>R?Math.min(R.slow>0?SF.BAL.player.deathSlowScale:1,SF.feel.scale(R)):1;
 Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
  const kind=o.kind||'stage',si=kind==='range'?1:o.si,mode=o.mode||save.mode||'easy';
  if(LV.si!==si){$('loading').hidden=false;show('none');setTimeout(()=>{buildLevel(si);$('loading').hidden=true;Rn.start(o);},40);return;}
@@ -17,7 +17,7 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
   t:0,slow:0,score:0,shown:0,gears:0,gp:0,kills:0,spawned:0,groundSpawned:0,groundKills:0,hits:0,specials:0,pickups:0,typeKills:{},formationsCleared:0,setupsCleared:0,
   sinceCell:0,beams:[],marks:[],eff:{},banner:null,toasts:[],zoom:1,camZ:1,bossCard:null,warnT:0,endT:-1,won:false,over:false,boss:null,bossTime:0,bossPartsTotal:0,bossPartsKilled:0,seen:{},
   drone:save.own[save.drone]?save.drone:'',drones:[],p:null,hud:{}};
- SF.enemies.R=R;SF.player.create(R);SF.scoring.reset(R);
+ SF.enemies.R=R;SF.player.create(R);SF.scoring.reset(R);SF.feel.start(R);
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
@@ -52,7 +52,7 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  if(R.kind==='stage'){if(!R.over)SF.director.step(R,dt);}else SF.director.rangeStep(R,dt);
  SF.enemies.step(R,dt);SF.boss.step(R,dt);SF.boss.stepPending(R,dt);
  if(!R.over||R.won)SF.weapons.fire(R,dt);SF.weapons.step(R,dt);SF.pickups.step(R,dt);SF.fx.step(dt);
- R.gp=Math.max(0,R.gp-dt*4);SF.scoring.step(R,dt);if(R.kind==='stage')SF.missions.step(R);
+ R.gp=Math.max(0,R.gp-dt*4);SF.scoring.step(R,dt);SF.feel.step(R,dt);if(R.kind==='stage')SF.missions.step(R);
  if(R.warnT>0){R.warnT-=dt;R.camZ=1.1;}
  if(R.bossCard&&R.bossCard.l>0)R.bossCard.l-=dt;
  if(R.banner){R.banner.l-=dt;if(R.banner.l<=0)R.banner=null;}
@@ -62,7 +62,7 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  stepWeather(dt);stepCopilot(dt);
  R.shown+=Math.max(1,(R.score-R.shown)*Math.min(1,dt*8));if(R.shown>R.score)R.shown=R.score;
  updHud();};
-Rn.realTick=dt=>{if(R&&R.slow>0)R.slow-=dt;};
+Rn.realTick=dt=>{if(!R)return;if(R.slow>0)R.slow-=dt;SF.feel.realTick(R,dt);};
 // ---------- end of a stage: objectives, rewards, progression, results ----------
 Rn.finish=(won,quit)=>{if(!R)return;if(R.kind==='range'){goTitle();return;}
  const si=R.si,mode=R.mode,E=SF.ECON,first=won&&save.prog[mode]<si+2;
@@ -137,7 +137,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
   cx.strokeStyle=near?'rgba(255,90,110,.95)':'rgba(43,209,192,.6)';cx.lineWidth=near?2:1.4;cx.beginPath();cx.arc(PX,PY,hr+(near?3.5:2.5),0,TAU);cx.stroke();}
  if(R.eff.shield&&p.alive){pj(px,py);cx.globalCompositeOperation='lighter';const a=.35+.15*Math.sin(R.t*8);cx.strokeStyle=`rgba(90,210,255,${a})`;cx.lineWidth=3;cx.beginPath();cx.arc(PX,PY,28*PS,0,TAU);cx.stroke();pdg(px,py,30,'#38c8ff');cx.globalCompositeOperation='source-over';}
  if(save.god&&p.alive){pj(px,py);cx.strokeStyle='rgba(43,209,192,.45)';cx.lineWidth=2;cx.beginPath();cx.arc(PX,PY,32*PS,0,TAU);cx.stroke();}
- SF.fx.drawPops();SF.dev.draw(R,A);
+ SF.fx.drawPops();SF.feel.draw(R,px,py);SF.dev.draw(R,A);
  cx.setTransform(oS,0,0,oS,0,0);
  const vg=cx.createRadialGradient(OW/2,OH/2,OH*.35,OW/2,OH/2,OH*.8);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,SF.fx.hurt>0?`rgba(200,0,30,${.25+SF.fx.hurt})`:'rgba(0,0,0,.35)');cx.fillStyle=vg;cx.fillRect(0,0,OW,OH);
  if(R.slow>0){cx.fillStyle='rgba(20,0,10,.18)';cx.fillRect(0,0,OW,OH);}
@@ -148,6 +148,7 @@ Rn.render=(dt,A,tnow)=>{if(!R)return;const p=R.p;syncEnv(dt,tnow);R.zoom+=((R.ca
  if(R.banner){const b=R.banner,a=Math.min(1,b.l*3);cx.globalAlpha=a;cx.textAlign='center';cx.fillStyle='rgba(0,0,0,.45)';cx.fillRect(0,OH*.3-34,OW,b.sub?58:44);
   if(b.sub){cx.fillStyle='#ffb352';cx.font='600 12px "Chakra Petch", sans-serif';cx.fillText(b.sub,OW/2,OH*.3-16);}
   cx.fillStyle='#fff';cx.font='22px Bungee, Impact, sans-serif';cx.fillText(b.t,OW/2,OH*.3+(b.sub?12:-4));cx.globalAlpha=1;}
+ SF.feel.drawWord(R);
  R.toasts.forEach((t,i)=>{const a=Math.min(1,t.l*2,(2.6-t.l)*4);cx.globalAlpha=a;cx.textAlign='center';const y=OH*.2+i*30;cx.fillStyle='rgba(10,40,30,.8)';cx.fillRect(OW*.12,y-17,OW*.76,26);cx.strokeStyle='#3ddc84';cx.lineWidth=1;cx.strokeRect(OW*.12,y-17,OW*.76,26);
   cx.fillStyle='#3ddc84';cx.font='600 12px "Chakra Petch", sans-serif';cx.fillText('✓ OBJECTIVE · '+t.t.toUpperCase(),OW/2,y);cx.globalAlpha=1;});};
 // Test Range compatibility

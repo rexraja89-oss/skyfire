@@ -1,8 +1,8 @@
 {
-  "build": 20,
-  "version": "4.9",
+  "build": 21,
+  "version": "5.0",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Realistic Jungle Ridge terrain"
+    "Focus slow motion and ability ring"
   ]
 }

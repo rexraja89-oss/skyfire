@@ -3,7 +3,7 @@
 // localStorage key stays 'skyfire-rex-v1'. Shape version 3. Older saves are migrated, never wiped.
 // A copy of the last good save is kept under KEY+'-bak' and used automatically if the main save is damaged.
 const KEY='skyfire-rex-v1',BAK=KEY+'-bak';
-function fresh(){return{ver:3,gears:0,god:false,sfx:true,music:true,voice:true,vib:true,hq:true,mode:'easy',
+function fresh(){return{ver:3,gears:0,god:false,sfx:true,music:true,voice:true,vib:true,hq:true,focus:true,mode:'easy',
  prog:{easy:1,hard:0,extreme:0},medals:{easy:{},hard:{},extreme:{}},best:{easy:{},hard:{},extreme:{}},
  own:{falcon:1,vulcan:1},plane:'falcon',weapon:'vulcan',drone:'',
  wl:{vulcan:0,spread:0,flamer:0,laser:0,plasma:0},dl:{gundrone:0,laserdrone:0,shielddrone:0},
