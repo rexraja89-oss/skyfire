@@ -70,7 +70,10 @@ Wp.step=(R,dt)=>{const grid=SF.enemies.grid,L=pool.live;
 // ---- drawing ----
 Wp.draw=(R,A)=>{const p=R.p;cx.globalCompositeOperation='lighter';
  for(const b of pool.live){const x=b.ox+(b.x-b.ox)*A,y=b.oy+(b.y-b.oy)*A,T=SF.TIERS[b.tier]||SF.TIERS[1],s=b.size;
-  if(b.k==='v'){pdg(x,y,7*s+b.tier*1.5,T.glow);pspr(SP.pv,x,y,Math.atan2(b.vx,-b.vy),s);}
+  if(b.k==='v'){if(save.hq){pj(x,y);const hx=PX,hy=PY,k=.036;pj(x-b.vx*k,y-b.vy*k);const tx=PX,ty=PY;   // tracer streak: glow, then hot core
+    cx.lineCap='round';cx.strokeStyle=T.glow;cx.globalAlpha=.42;cx.lineWidth=(5.5+b.tier)*s*PS;cx.beginPath();cx.moveTo(tx,ty);cx.lineTo(hx,hy);cx.stroke();
+    cx.globalAlpha=.95;cx.strokeStyle=T.core;cx.lineWidth=1.7*s*PS;cx.beginPath();cx.moveTo((tx+hx)/2,(ty+hy)/2);cx.lineTo(hx,hy);cx.stroke();cx.globalAlpha=1;cx.lineCap='butt';pdg(x,y,4*s+b.tier,T.glow);}
+   else{pdg(x,y,7*s+b.tier*1.5,T.glow);pspr(SP.pv,x,y,Math.atan2(b.vx,-b.vy),s);}}
   else if(b.k==='s'){pdg(x,y,8*s+b.tier*1.5,T.glow);pspr(SP.ps,x,y,0,s);}
   else if(b.k==='p'){pdg(x,y,16*s,b.tier>=3?'#7fe0ff':'#3c8cff');pspr(SP.pp,x,y,0,s*(1+Math.random()*.15));}
   else if(b.k==='w'){pdg(x,y,14*s,'#3dff8a');pdg(x,y,6*s,'#eafff0');pj(x,y);const x0=PX,y0=PY;pj(b.ox,b.oy+10);cx.strokeStyle='rgba(120,255,170,.75)';cx.lineWidth=3.4;cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(PX,PY);cx.stroke();}

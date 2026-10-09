@@ -1,8 +1,8 @@
 {
-  "build": 32,
-  "version": "5.11",
+  "build": 33,
+  "version": "5.12",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Cinematic menu soundtrack and recorded explosions"
+    "Glowing tracer fire"
   ]
 }
