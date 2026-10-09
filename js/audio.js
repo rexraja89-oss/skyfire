@@ -6,7 +6,7 @@ let AC=null,NB=null,OUT=null,MG=null,SB=null;const lastS={};const MUSV=.55;
 function audioOn(){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();OUT=AC.createDynamicsCompressor();OUT.connect(AC.destination);MG=AC.createGain();MG.gain.value=MUSV;MG.connect(OUT);SB=AC.createGain();SB.gain.value=1;SB.connect(OUT);
   NB=AC.createBuffer(1,AC.sampleRate*1.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
   if(SF.sfxBank){SF.sfxBank.mix();SF.sfxBank.build();}}
- if(AC.state==='suspended')AC.resume();if(!MUS.iv)musicStart(state==='run'&&SF.R?STAGES[SF.R.si].key:45,state==='run'?'combat':'calm');}catch(e){}}
+ if(AC.state==='suspended')AC.resume();if(!MUS.iv&&!PG.src&&!MUS.launch)musicStart(state==='run'&&SF.R?STAGES[SF.R.si].key:45,menuMode());}catch(e){}}
 function duck(depth=.45,hold=.25,rel=.7){if(!AC||!MG)return;const t=AC.currentTime,g=MG.gain;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(MUSV*depth,t+.03);g.setValueAtTime(MUSV*depth,t+.03+hold);g.linearRampToValueAtTime(MUSV,t+.03+hold+rel);}
 function tone(f0,f1,dur,type,vol,at=0,dest=SB){const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(dest);o.start(t);o.stop(t+dur+.02);}
@@ -52,11 +52,23 @@ function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=perfo
  else if(k==='count')tone(1200+p*30,1200+p*30,.025,'square',.02);
  else if(k==='respawn'){tone(300,1200,.5,'sine',.07);tone(600,2400,.4,'triangle',.03,.1);}}
 const MUS={iv:null,next:0,step:0,root:45,prog:[0,8,3,10],len:.115,mode:'calm'};
-const MUS_MODES={calm:{len:.14},combat:{len:.115},boss:{len:.1},win:{len:.13}};
+const MUS_MODES={calm:{len:.14},combat:{len:.115},boss:{len:.1},win:{len:.13},pregame:{len:.14}};
 const hz=m=>440*Math.pow(2,(m-69)/12);
-function musicStart(root,mode){MUS.root=root;MUS.mode=mode||(state==='run'?'combat':'calm');MUS.len=MUS_MODES[MUS.mode].len;
+// music for the current screen: menus get the pregame soundtrack, results the calm synth score, flights the combat score
+function menuMode(){return state==='run'||state==='pause'?'combat':state==='result'?'calm':'pregame';}
+// ---- pregame soundtrack: art/snd/pregame.ogg (original, tools/pregame_music.py), one looping instance on the music bus
+// through the menus, fresh when returning to the main menu, faded out as a flight loads. Music setting = its mute.
+const PG={buf:null,src:null,g:null,loading:false,starts:0},PGV=.95;
+function pgLoad(){if(PG.buf||PG.loading||!AC)return;PG.loading=true;fetch('art/snd/pregame.ogg?v='+BUILD).then(r=>r.arrayBuffer()).then(b=>AC.decodeAudioData(b))
+ .then(b=>{PG.buf=b;PG.loading=false;if(MUS.mode==='pregame'&&save.music&&!PG.src&&!MUS.launch)pgPlay();}).catch(()=>{PG.loading=false;PG.failed=true;});}
+function pgPlay(){if(!AC||!save.music||PG.src||MUS.launch)return;if(!PG.buf){pgLoad();return;}const s=AC.createBufferSource(),g=AC.createGain(),t=AC.currentTime;
+ s.buffer=PG.buf;s.loop=true;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(PGV,t+.8);s.connect(g).connect(MG);s.start();PG.src=s;PG.g=g;PG.starts++;}
+function pgStop(fade=.45){if(!PG.src)return;const s=PG.src,g=PG.g,t=AC.currentTime;PG.src=null;g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+fade);try{s.stop(t+fade+.02);}catch(e){}}
+// a flight is starting: fade the pregame track out over the loading screen and keep it from restarting
+function musicLaunch(){MUS.launch=true;MUS.mode='combat';pgStop(.5);}
+function musicStart(root,mode){MUS.root=root;MUS.mode=mode||menuMode();MUS.len=MUS_MODES[MUS.mode].len;if(MUS.mode==='pregame'){if(AC&&save.music)pgPlay();return;}
  MUS.prog=MUS.mode==='boss'?[[0,1,5,3],[0,6,5,1],[0,3,1,6],[0,1,3,5]][root%4]:MUS.mode==='win'?[0,5,7,12]:[[0,8,3,10],[0,5,8,7],[0,3,10,8],[0,8,5,7]][root%4];if(!AC||!save.music||MUS.iv)return;MUS.next=AC.currentTime+.06;MUS.step=0;MUS.iv=setInterval(musTick,30);}
-function musicStop(){clearInterval(MUS.iv);MUS.iv=null;}
+function musicStop(){clearInterval(MUS.iv);MUS.iv=null;pgStop();}
 function musTick(){if(!AC||AC.state!=='running')return;if(MUS.next<AC.currentTime-.1)MUS.next=AC.currentTime+.03;
  while(MUS.next<AC.currentTime+.15){mStep(MUS.step,MUS.next-AC.currentTime);MUS.next+=MUS.len;MUS.step=(MUS.step+1)%64;}}
 function mnote(f,at,dur,type,vol,cut){const t=AC.currentTime+at,o=AC.createOscillator(),fl=AC.createBiquadFilter(),g=AC.createGain();o.type=type;o.frequency.value=f;fl.type='lowpass';fl.frequency.value=cut;
@@ -68,7 +80,7 @@ function mStep(s,at){const bar=Math.floor(s/16),i=s%16,r=MUS.root+MUS.prog[bar],
  if(!calm){if(i%4===0||(boss&&i%8===6)){tone(140,40,.14,'sine',.35,at,MG);}if(i===4||i===12)noise(.12,.18,1800,at,'bandpass',MG);if(i%2===1||boss)noise(.04,boss?.05:.06,7000,at,'highpass',MG);}
  if(boss){if(i===0||i===10)mnote(hz(r),at,MUS.len*3,'sawtooth',.05,1600);if(i%16===14)mnote(hz(r+13),at,MUS.len*2,'square',.025,2200);}
  if(M==='win'&&bar===3&&i===15)musicSet('calm');}
-function musicSet(mode,root){if(MUS.mode===mode&&root===undefined&&MUS.iv)return;const r=root===undefined?MUS.root:root;musicStop();musicStart(r,mode);}
+function musicSet(mode,root){if(mode!=='pregame')MUS.launch=false;if(MUS.mode===mode&&root===undefined&&(MUS.iv||PG.src||(mode==='pregame'&&PG.loading)))return;const r=root===undefined?MUS.root:root;musicStop();musicStart(r,mode);}
 // music state from game events (the engine doesn't need to know about audio)
 SF.on('achievement',()=>sfx('achieve'));
 SF.on('bossPart',()=>sfx('part'));

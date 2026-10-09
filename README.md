@@ -30,5 +30,7 @@ Most graphics, the music and all sound effects are generated in code by this pro
 
 Third-party assets:
 - **KayKit City Builder Bits 1.0** by Kay Lousberg (www.kaylousberg.com), licensed **CC0 1.0 Universal** (public domain, no attribution required; credited anyway). Source: https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0 . Used: buildings A, C, E, G, three cars and the water tower, converted to compact vertex-coloured meshes in `js/assets/kaykit.js` by `tools/kaykit_convert.py`.
+- **Kenney sound effects** (explosion1, explosion2, rockHit2) by Kenney (www.kenney.nl), licensed **CC0 1.0 Universal**; taken from the CC0 Kenney subset shipped in the Python Arcade package (PyPI `arcade` 2.6.17, `arcade/resources/sounds`, licence file copied to `art/snd/LICENSE-Kenney-CC0.txt`). Converted to Ogg in `art/snd/` and layered with Skyfire's own generated sound in `js/sfxbank.js`.
+- **Menu soundtrack** (`art/snd/pregame.ogg`): an original Skyfire composition rendered by `tools/pregame_music.py` (no samples). It follows the trailer-sound style of a reference Rex supplied; none of that reference audio is used.
 - Fonts: Bungee and Chakra Petch from Google Fonts (SIL Open Font License).
 - three.js r128 (MIT) for 3D rendering; Capacitor (MIT) for the Android wrapper.

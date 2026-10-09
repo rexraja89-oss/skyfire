@@ -6,7 +6,7 @@
 let R=null;
 const Rn=SF.run={get R(){return R;}};
 Rn.timeScale=()=>R?Math.min(R.slow>0?SF.BAL.player.deathSlowScale:1,SF.feel.scale(R)):1;
-Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
+Rn.start=(o={})=>{audioOn();musicLaunch();if(typeof clearRun==='function')clearRun();
  const kind=o.kind||'stage',si=kind==='range'?1:o.si,mode=o.mode||save.mode||'easy';
  if(LV.si!==si){$('loading').hidden=false;show('none');setTimeout(()=>{buildLevel(si);$('loading').hidden=true;Rn.start(o);},40);return;}
  if(kind==='stage'){save.mode=mode;store();}

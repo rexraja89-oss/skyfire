@@ -1,8 +1,8 @@
 {
-  "build": 31,
-  "version": "5.10",
+  "build": 32,
+  "version": "5.11",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "River depth and shore foam"
+    "Cinematic menu soundtrack and recorded explosions"
   ]
 }
