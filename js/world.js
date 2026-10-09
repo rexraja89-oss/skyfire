@@ -179,29 +179,34 @@ const BIOME={
     for(let k=0;k<4;k++)put('acacia',vx+R()*26-13,vz+R()*26-13,1+R()*.4,R()*6,'#4e6a2e');}
    if(R()<.3){const x=(R()<.5?-1:1)*(22+R()*16),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
    for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.35+R()*.5,R()*6,pick(['#9a6a44','#8a5e3c','#a47450']));}}},
- forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#c6d8d4',fogN:.8,sun:['#fff0d2',2.6],sunDir:[-.45,.7,-.5],hemi:['#d6e8ff','#2e4a22',.55],exp:1,water:{c:'#2f6a5e',op:.9},wl:-.8,clouds:5,ground:'grass',
-  // lush mountain jungle: grassy valley with a winding river, mossy rock outcrops and cliff bands, palms, broadleaf canopy and ferns
-  HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037);let h=1.2+fbm(x*.03,z*.03,4)*2.4+mtn(x,z,38,30,85);h-=3.4*Math.exp(-(((x-rx)/3.2)**2));
-   const band=Math.sin(z*.045+fbm(x*.02,z*.02,2)*2);if(band>.82)h+=(band-.82)*14*sst(4,12,Math.abs(x-rx));return h;},
+ forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.42],exp:.95,water:{c:'#2c5a52',op:.92},wl:-.8,clouds:5,pbr:1,
+  // Jungle Ridge (Phase 1 realistic terrain, js/terrain_pbr.js): grassy river valley between rocky uplands that break into
+  // terraced ledges and steep, irregular cliff faces; textured soil/grass/rock/moss/gravel chosen by slope, height and noise
+  HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037),bank=Math.abs(x-rx);
+   let h=1.2+fbm(x*.03,z*.03,4)*2.4+mtn(x,z,38,30,85);
+   const m=sst(.02,.3,fbm(x*.016+11,z*.016-3,3)+.12)*sst(7,15,bank);            // where the rocky uplands rise
+   if(m>0){const up=m*(5+8*ridge(x*.021+3,z*.021,3)),tw=up+fbm(x*.045+5,z*.045,2)*1.7,st=2.5,k=Math.floor(tw/st),f=tw/st-k;
+    h+=(k+sst(.55,.95,f))*st*.9+up*.1+(ridge(x*.05,z*.05,2)-.55)*.9*m;}         // flat ledges, steep risers, broken edges (detail kept above the 2-unit mesh spacing)
+   h-=3.4*Math.exp(-(((x-rx)/3.2)**2));return h;},
   P:{low:'#2f5a2b',mid:'#3d6b33',m0:2,m1:6,high:'#5a6a50',h0:12,h1:20,rock:'#6e6a64',snow:99,sand:1,wl:-.3,sandc:'#8a7a5a',deep:'#2a4a40'},
-  cf(o,x,z,h,sl,gx,gz){   // tint over the HD grass: sunlit/shaded slopes, rocky steep ground, muddy river banks
-   const nl=Math.hypot(gx,1,gz),lit=clamp(((-gx)*-.45+.7+(-gz)*-.5)/nl/.95,0,1.2),v=.62+.42*Math.min(1,lit);
-   o[0]=v*.98;o[1]=v;o[2]=v*.92;
-   const rock=sst(.55,1.1,sl)+sst(12,20,h);if(rock>0)mixc(o,o,[v*1.25,v*1.18,v*1.12],Math.min(.85,rock));
-   const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037),bank=Math.abs(x-rx);if(bank<5.2)mixc(o,o,[.55,.48,.38],(1-sst(3.2,5.2,bank))*.8);},
+  // material layers per vertex: o = [soil, rock, moss, gravel]; grass fills the rest
+  splat(o,x,z,h,sl,under){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037),bank=Math.abs(x-rx),nz=fbm(x*.09+2,z*.09,2);
+   let rock=sst(.32,.62,sl),soil=(1-sst(3,6,bank))*.85+sst(.15,.5,nz)*.35*(1-rock),moss=sst(.14,.32,sl)*(1-rock)*.8+sst(1.5,4,under)*.3,grav=sst(1.2,3.5,under)*sst(.05,.3,sl)*.7;
+   if(bank<3.6){grav=Math.max(grav,(1-sst(2.2,3.6,bank))*.7);soil*=.6;}
+   const tot=rock+soil+moss+grav;if(tot>1){rock/=tot;soil/=tot;moss/=tot;grav/=tot;}o[0]=soil;o[1]=rock;o[2]=moss;o[3]=grav;},
+  wet(x,z,h){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037);return 1-sst(2.5,6,Math.abs(x-rx));},
+  occ:{canopy:[.42,.5],palmS:[.28,.35],boulder:[1,.55],boulder2:[1,.55],stone:[.6,.45]},   // contact shadow radius factor, strength
   uses:['boulder','boulder2','stone','palmS','canopy','fern'],
-  props(R,z0,put,HF){const RX=z=>7+7*Math.sin(z*.011)+2*Math.sin(z*.037);
-   // broadleaf canopy, dense on the hills
-   for(let i=0;i<150;i++){const x=R()*170-85,z=z0-R()*TL,h=HF(x,z);if(h<.6||Math.abs(x-RX(z))<5.5||h>20)continue;put('canopy',x,z,6.5+R()*4.5,R()*TAU,pick(['#8aa070','#7a9464','#98ac78','#6e8a5c']));}
-   // palms along the river and in clearings
-   for(let i=0;i<70;i++){const z=z0-R()*TL,sd=R()<.5?-1:1,x=RX(z)+sd*(4.5+R()*14),h=HF(x,z);if(h<.2||h>12)continue;put('palmS',x,z,6+R()*3,R()*TAU,pick(['#a0b880','#90ac74','#acc28a']));}
-   // understory ferns
-   for(let i=0;i<260;i++){const x=R()*150-75,z=z0-R()*TL,h=HF(x,z);if(h<.1||Math.abs(x-RX(z))<4)continue;put('fern',x,z,1.6+R()*1.6,R()*TAU,pick(['#90b078','#80a06c','#9cb884']));}
-   // mossy boulders on the river banks
-   for(let i=0;i<40;i++){const z=z0-R()*TL,sd=R()<.5?-1:1,x=RX(z)+sd*(3.2+R()*3);put(R()<.5?'boulder':'boulder2',x,z,.8+R()*1.6,R()*TAU,pick(['#ffffff','#e6e2da','#d6d2c8']),.8+R()*.4,-.2);}
-   // rock outcrops and cliff bands crossing the valley
-   for(let k=0;k<3;k++){const cx0=R()*120-60,cz=z0-8-R()*(TL-16),n=4+Math.floor(R()*6);for(let i=0;i<n;i++){const a=R()*TAU,d=R()*6;put(R()<.5?'boulder':'boulder2',cx0+Math.cos(a)*d,cz+Math.sin(a)*d,2+R()*3.5,R()*TAU,pick(['#ffffff','#ece8de','#dcd6cc']),.7+R()*.5,-.4);}}
-   for(let zz=z0;zz>z0-TL;zz-=3){const band=Math.sin(zz*.045+fbm(0,zz*.02,2)*2);if(band<.82)continue;for(let x=-60;x<60;x+=3.4+R()*2.5){if(Math.abs(x-RX(zz))<4.5)continue;put(R()<.5?'boulder':'boulder2',x,zz+R()*1.5,1.8+R()*2.2,R()*TAU,pick(['#ffffff','#ece8de','#dcd6cc']),.9+R()*.5,-.3);}}
+  props(R,z0,put,HF){const RX=z=>7+7*Math.sin(z*.011)+2*Math.sin(z*.037),SL=(x,z)=>Math.hypot(HF(x+1,z)-HF(x-1,z),HF(x,z+1)-HF(x,z-1))/2;
+   // broadleaf canopy, dense on gentle ground, never on cliff faces
+   for(let i=0;i<170;i++){const x=R()*170-85,z=z0-R()*TL,h=HF(x,z);if(h<.6||Math.abs(x-RX(z))<5.5||SL(x,z)>.45)continue;put('canopy',x,z,6+R()*4.5,R()*TAU,pick(['#7e9468','#73885e','#8a9a70','#68805a']));}
+   for(let i=0;i<70;i++){const z=z0-R()*TL,sd=R()<.5?-1:1,x=RX(z)+sd*(4.5+R()*14),h=HF(x,z);if(h<.2||SL(x,z)>.4)continue;put('palmS',x,z,6+R()*3,R()*TAU,pick(['#94a87a','#88a070','#9eb084']));}
+   for(let i=0;i<240;i++){const x=R()*150-75,z=z0-R()*TL,h=HF(x,z);if(h<.1||Math.abs(x-RX(z))<4||SL(x,z)>.5)continue;put('fern',x,z,1.6+R()*1.6,R()*TAU,pick(['#86a070','#7a9466','#90a87a']));}
+   // river-bank stones
+   for(let i=0;i<36;i++){const z=z0-R()*TL,sd=R()<.5?-1:1,x=RX(z)+sd*(3+R()*3);put(R()<.5?'boulder':'boulder2',x,z,.6+R()*1.3,R()*TAU,pick(['#e6e0d4','#d6d0c4','#c8c2b6']),.75+R()*.4,-.2);}
+   // talus: fallen blocks at the foot of cliffs
+   for(let i=0;i<150;i++){const x=R()*150-75,z=z0-R()*TL,s=SL(x,z);if(s<.12||s>.42)continue;const up=Math.max(HF(x+3,z),HF(x-3,z),HF(x,z+3),HF(x,z-3))-HF(x,z);if(up<2.2)continue;
+    put(R()<.5?'boulder':'boulder2',x,z,.7+R()*1.8,R()*TAU,pick(['#e8e2d6','#dcd6ca','#cfc8ba']),.7+R()*.5,-.25);}
    // overgrown ruins: broken mossy stone walls
    if(R()<.45){const wx=RX(z0-TL/2)+(R()<.5?-1:1)*(14+R()*14),wz=z0-15-R()*(TL-30),ry=R()*Math.PI;
     for(let i=0;i<9;i++){if(R()<.25)continue;const d=(i-4)*2.1;put('stone',wx+Math.cos(ry)*d,wz+Math.sin(ry)*d,1,ry+R()*.15,pick(['#e8e4da','#d8d4c8']),1,-.3,[2,.8+R()*1.6,1.1]);}
@@ -371,7 +376,7 @@ function initTerrain(){DETAIL=detailTex();RIPPLE=rippleTex();if(!GTX.L)loadGroun
  for(let i=0;i<24;i++){const d=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:SCORCH,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));d.rotation.x=-Math.PI/2;d.visible=false;TER.g.add(d);LV.decals.push(d);}
  for(let i=0;i<9;i++){const s=new T3.Sprite(new T3.SpriteMaterial({map:CLOUDT,transparent:true,opacity:.5,depthWrite:false,fog:false}));s.visible=false;scene.add(s);LV.clouds.push(s);}}
 const tmpO=new T3.Object3D(),tmpC=new T3.Color();
-function fillTile(t,n){t.n=n;const B=LV.B,HF=B.HF,z0=TZ0-n*TL,pos=t.geo.attributes.position.array,cl=t.geo.attributes.color.array,hs=t.hs,dx=TW/NX,dz=TL/NZT,o=[0,0,0];
+function fillTile(t,n){t.n=n;if(LV.B.pbr&&SF.terrain)return SF.terrain.fill(t,n);const B=LV.B,HF=B.HF,z0=TZ0-n*TL,pos=t.geo.attributes.position.array,cl=t.geo.attributes.color.array,hs=t.hs,dx=TW/NX,dz=TL/NZT,o=[0,0,0];
  for(let j=0;j<=NZT;j++)for(let i=0;i<=NX;i++){const k=j*(NX+1)+i,x=-TW/2+i*dx,z=z0-j*dz,h=HF(x,z);hs[k]=h;pos[k*3]=x;pos[k*3+1]=GY+h;pos[k*3+2]=z;}
  for(let j=0;j<=NZT;j++)for(let i=0;i<=NX;i++){const k=j*(NX+1)+i,x=-TW/2+i*dx,z=z0-j*dz,h=hs[k];
   const hx=hs[j*(NX+1)+Math.min(NX,i+1)]-hs[j*(NX+1)+Math.max(0,i-1)],hz=hs[Math.min(NZT,j+1)*(NX+1)+i]-hs[Math.max(0,j-1)*(NX+1)+i],sl=Math.hypot(hx/(2*dx),hz/(2*dz));
@@ -397,6 +402,7 @@ function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;LV
  sun.color.copy(col(B.sun[0]));sun.intensity=B.sun[1];LV.sunDir=sd;hemi.color.copy(col(B.hemi[0]));hemi.groundColor.copy(col(B.hemi[1]));hemi.intensity=B.hemi[2];
  renderer.toneMappingExposure=B.exp;scene.fog.color.copy(col(B.fog));
  const GS=B.ground&&GTX[B.ground],tm=GS?GS.map:DETAIL,tn=GS?GS.n:null;
+ for(const t of TER.tiles)t.m.material=B.pbr&&SF.terrain?SF.terrain.mat():TER.mat;
  if(TER.mat.map!==tm||TER.mat.normalMap!==tn){TER.mat.map=tm;TER.mat.normalMap=tn;if(GS)TER.mat.normalScale.set(GS.ns,GS.ns);TER.mat.roughness=GS?GS.rough:.92;TER.mat.needsUpdate=true;}
  // environment reflections from this sky
  if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;

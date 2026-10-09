@@ -51,12 +51,13 @@ function syncEnv(dt,tnow){
 function gameCam(shake,zoom=1){fill.intensity=0;camera.position.set(0,C3.y*zoom,C3.z*zoom);camera.lookAt(0,0,0);
  if(shake>0){camera.position.x+=rnd(-.5,.5)*shake*2.2;camera.position.z+=rnd(-.5,.5)*shake*2.2;}
  {const fd=Math.hypot(C3.y,C3.z)/141.8,sg=STAGES[LV.si]&&STAGES[LV.si].weather==='sand'?SAND.g:0;scene.fog.near=240*fd*(1-.45*sg);scene.fog.far=580*fd*(LV.B.fogN||1)*(1-.3*sg);}
- sun.position.copy(LV.sunDir).multiplyScalar(220).add(new T3.Vector3(0,GY,(C3.Zt+C3.Zb)/2*C3.t));sun.target.position.set(0,GY,(C3.Zt+C3.Zb)/2*C3.t);}
+ sun.position.copy(LV.sunDir).multiplyScalar(220).add(new T3.Vector3(0,GY,(C3.Zt+C3.Zb)/2*C3.t));sun.target.position.set(0,GY,(C3.Zt+C3.Zb)/2*C3.t);
+ if(SF.terrain)SF.terrain.shadows();}
 function drawWeather(){if(LV.si>=0&&STAGES[LV.si].weather==='sand')return drawSand();if(WX.length&&LV.si>=0){const w=STAGES[LV.si].weather;if(w==='snow'){cx.fillStyle='rgba(255,255,255,.85)';for(const q of WX){cx.beginPath();cx.arc(q.x,q.y,q.r,0,TAU);cx.fill();}}
   else if(w==='rain'){cx.strokeStyle='rgba(190,210,230,.35)';cx.lineWidth=1;cx.beginPath();for(const q of WX){cx.moveTo(q.x,q.y);cx.lineTo(q.x+q.vx*.03,q.y+q.vy*.03);}cx.stroke();}
   else if(w==='embers'){cx.globalCompositeOperation='lighter';for(const q of WX)dg(q.x,q.y,q.r*3,'#ff7a2e');cx.globalCompositeOperation='source-over';}}}
 // menu screens: low cinematic flyby with the horizon in view
-function sync3D(dt,tnow){syncEnv(dt,tnow);
+function sync3D(dt,tnow){syncEnv(dt,tnow);if(SF.terrain)SF.terrain.shadowDefault();
  {
   // menu flyby: low cinematic camera with the horizon in view
   camera.position.set(Math.sin(tnow*.15)*5,GY+21,C3.z-6);camera.lookAt(Math.sin(tnow*.15)*2.5,GY+5,C3.z-100);
