@@ -21,13 +21,13 @@ Rn.start=(o={})=>{audioOn();if(typeof clearRun==='function')clearRun();
  if(kind==='stage'){SF.director.start(R);SF.missions.start(R);}else SF.director.rangeStart(R);
  if(R.drone)for(const s of[-1,1])R.drones.push({x:W/2+s*30,y:R.p.y+20,s,a:s<0?0:Math.PI,fc:rnd(0,.2),zap:0,zx:0,zy:0});
  showPlayerModel();for(const m of DRM)scene.remove(m);DRM.length=0;if(R.drone)for(let i=0;i<2;i++){const m=MODELS['dr_'+R.drone].clone();scene.add(m);DRM.push(m);}
- gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);SF.atmos.start(si);
+ gz3=0;updTerrain(true);resetCopilot();WX.length=0;SF.loadout.start(R);SF.atmos.start(si);SF.sfxBank.engineStart();SF.sfxBank.ambStart(STAGES[si].weather||'');
  $('bombBtn').classList.add('sp');$('bombL').textContent='SKYBURST';$('pwPips').classList.add('lv');
  state='run';show('play');musicSet('combat',R.st.key);
  if(kind==='range')say('range','Test Range. Formations, ground targets and power-ups are all live. Chain your kills to build the combo.',3,0);
  else{say('brief',`${R.st.name}. ${R.st.brief}`,3,0);if(mode!=='easy')say('mode',`${MD===SF.DIFFICULTY.hard?'Hard':'Extreme'} mode. They have more of everything. Stay sharp.`,1,0);}
  updHud(true);};
-Rn.stop=()=>{SF.loadout.stop();SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();SF.boss.reset();$('combo').hidden=true;$('effRow').innerHTML='';for(const m of DRM)scene.remove(m);DRM.length=0;
+Rn.stop=()=>{SF.loadout.stop();SF.sfxBank.engineStop();SF.sfxBank.ambStop();SF.enemies.reset();SF.weapons.reset();SF.pickups.reset();SF.fx.reset();SF.formations.reset();SF.boss.reset();$('combo').hidden=true;$('effRow').innerHTML='';for(const m of DRM)scene.remove(m);DRM.length=0;
  if(R&&R.kind==='range'&&R.score>(save.range.best||0)){save.range.best=Math.floor(R.score);store();}R=SF.R=null;SF.enemies.R=null;SF.BAL.run={};
  $('bombBtn').classList.remove('sp','ready');$('bombL').textContent='BOMB';$('pwPips').classList.remove('lv');};
 Rn.drag=(dx,dy)=>{if(R)SF.player.drag(R,dx,dy);};
@@ -59,7 +59,7 @@ Rn.step=dt=>{if(!R)return;R.t+=dt;gz3+=C3.v*dt;
  for(const t of R.toasts)t.l-=dt;prune(R.toasts,t=>t.l>0);
  if(R.over&&R.won)for(const g of SF.pickups.pool.live)if(g.k==='gear'){const dx=R.p.x-g.x,dy=R.p.y-g.y,d=Math.hypot(dx,dy)||1;g.vx=dx/d*520;g.vy=dy/d*520;}
  if(R.endT>=0){R.endT-=dt;if(R.endT<0){Rn.finish(R.won);return;}}
- stepWeather(dt);stepCopilot(dt);SF.atmos.step(dt);
+ stepWeather(dt);stepCopilot(dt);SF.atmos.step(dt);SF.sfxBank.engineSet(R.p.alive?clamp(-R.p.vy/700,0,1):0,R.eff.overdrive?1:0);
  R.shown+=Math.max(1,(R.score-R.shown)*Math.min(1,dt*8));if(R.shown>R.score)R.shown=R.score;
  updHud();};
 Rn.realTick=dt=>{if(!R)return;if(R.slow>0)R.slow-=dt;SF.feel.realTick(R,dt);};

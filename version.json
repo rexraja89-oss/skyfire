@@ -1,8 +1,8 @@
 {
-  "build": 26,
-  "version": "5.5",
+  "build": 27,
+  "version": "5.6",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "New ground enemies and crew rescues"
+    "Cinematic sound"
   ]
 }

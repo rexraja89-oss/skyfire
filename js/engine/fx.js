@@ -11,7 +11,8 @@ function add(k,x,y,vx,vy,l,c,r,extra){if(parts.live.length>=cap())return null;co
  q.k=k;q.x=x;q.y=y;q.vx=vx;q.vy=vy;q.l=l;q.m=l;q.c=c;q.r=r;q.a=0;q.va=0;q.drag=.94;q.scroll=0;if(extra)Object.assign(q,extra);return q;}
 fx.add=add;
 fx.reset=()=>{parts.clear();wrecks.length=0;pops.clear();fx.shake=0;fx.flash=0;fx.hurt=0;};
-fx.explode=(x,y,size=1,ground)=>{const hq=save.hq,q=Math.sqrt(size),sc=ground?1:.35,E=SF.BAL.fx;
+fx.explode=(x,y,size=1,ground)=>{SF.sndX=x;   // the next sound plays from this side
+ const hq=save.hq,q=Math.sqrt(size),sc=ground?1:.35,E=SF.BAL.fx;
  // 1 flash
  add('g',x,y,0,0,.1,'#ffffff',30*size);add('g',x,y,0,0,.22,'#fff3c4',24*size);
  // 2 fireballs: rolling balls of flame that swell and cool

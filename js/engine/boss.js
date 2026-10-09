@@ -39,7 +39,7 @@ Bs.spawn=(R,D,opts={})=>{const id=opts.key||'b',hpMul=(opts.hpMul||1)*SF.dm('ene
  if(D.legacy){B.legacy=LV.boss;B.legacy.g.visible=true;for(const t of B.legacy.turs){t.visible=true;const g=t.getObjectByName('gun');if(g)g.visible=true;}}
  else{B.mdl=BossModels.build(id,D);BossModels.reset(B.mdl);B.mdl.g.visible=true;}
  if(!opts.mini){R.boss=B;R.bossStart=R.t;R.bossCard={name:D.name,title:D.title||'',l:3};R.camZ=1.12;
-  const T=SF.BOSS_TAUNTS&&SF.BOSS_TAUNTS[id];if(T)R.taunt={text:T[0],reply:T[1],l:4.6,rt:3.4,key:id};}
+  const T=SF.BOSS_TAUNTS&&SF.BOSS_TAUNTS[id];if(T){R.taunt={text:T[0],reply:T[1],l:4.6,rt:3.4,key:id};speakVillain(T[0]);}}
  else R.bossCard={name:D.name,title:'MINI-BOSS · '+(D.title||''),l:2.2,mini:1};
  Bs.list.push(B);return B;};
 Bs.reset=()=>{for(const B of Bs.list){if(B.mdl)B.mdl.g.visible=false;if(B.legacy)B.legacy.g.visible=false;}Bs.list.length=0;pend.length=0;};

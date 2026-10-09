@@ -4,15 +4,18 @@
 // Music states: calm (menus), combat (missions), boss, victory. SF events drive the state changes.
 let AC=null,NB=null,OUT=null,MG=null,SB=null;const lastS={};const MUSV=.55;
 function audioOn(){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();OUT=AC.createDynamicsCompressor();OUT.connect(AC.destination);MG=AC.createGain();MG.gain.value=MUSV;MG.connect(OUT);SB=AC.createGain();SB.gain.value=1;SB.connect(OUT);
-  NB=AC.createBuffer(1,AC.sampleRate*1.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}
+  NB=AC.createBuffer(1,AC.sampleRate*1.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  if(SF.sfxBank){SF.sfxBank.mix();SF.sfxBank.build();}}
  if(AC.state==='suspended')AC.resume();if(!MUS.iv)musicStart(state==='run'&&SF.R?STAGES[SF.R.si].key:45,state==='run'?'combat':'calm');}catch(e){}}
 function duck(depth=.45,hold=.25,rel=.7){if(!AC||!MG)return;const t=AC.currentTime,g=MG.gain;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(MUSV*depth,t+.03);g.setValueAtTime(MUSV*depth,t+.03+hold);g.linearRampToValueAtTime(MUSV,t+.03+hold+rel);}
 function tone(f0,f1,dur,type,vol,at=0,dest=SB){const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(dest);o.start(t);o.stop(t+dur+.02);}
 function noise(dur,vol,freq,at=0,type='lowpass',dest=SB,end=60){const t=AC.currentTime+at,n=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();n.buffer=NB;f.type=type;f.frequency.setValueAtTime(freq,t);if(type==='lowpass')f.frequency.exponentialRampToValueAtTime(end,t+dur);
  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);n.connect(f).connect(g).connect(dest);n.start(t,Math.random()*.5);n.stop(t+dur+.02);}
+const BANKV={shot:.3,hit:.22,gear:.35,pop:.7,boom:1,bomb:1,hurt:.85,part:1,missile:.3,power:.5,shieldHit:.5};
 function sfx(k,p=0){if(!save.sfx||!AC||AC.state!=='running')return;const n=performance.now();if(n-(lastS[k]||0)<({gear:40,pop:45,shot:95,combo:60,bonus:200,hit:70,flame:110,plasma:150,zap:90,lance:200,blink:150,heal:300,mine:120,deflect:90,shieldHit:120,missile:160,count:55,part:150}[k]||0))return;lastS[k]=n;
  if(k==='boom'||k==='bomb')duck(.4,.3,.8);else if(k==='hurt'||k==='warn')duck(.55,.2,.6);else if(k==='win'||k==='achieve')duck(.5,.6,.8);
+ {const Bk=SF.sfxBank,x=SF.sndX;SF.sndX=undefined;if(Bk&&Bk.ready&&Bk.buf[k]&&Bk.play(k,BANKV[k]||1,x))return;}   // rendered sound bank (sfxbank.js) when ready
  if(k==='shot')tone(1500,600,.04,'square',.016);
  else if(k==='flame')noise(.16,.07,1800,0,'bandpass');
  else if(k==='plasma'){tone(300,900,.12,'sine',.08);tone(600,1500,.1,'triangle',.03);}
