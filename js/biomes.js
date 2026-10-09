@@ -77,3 +77,14 @@ SF.setPieces=({plain,metal,B,Cy,Co})=>{
  add('city',['neonM','neonC','neonY'],(R,z0,put,HF)=>{for(let i=0;i<10;i++){const x=-30+16*Math.floor(R()*6)+1.2,z=Math.ceil((z0+9000)/18)*18-9000-18*Math.floor(R()*6)-1.2;if(z>z0||z<z0-TL)continue;put(pick(['neonM','neonC','neonY']),x,z,1,Math.floor(R()*4)*Math.PI/2,null);}});
  add('volcano',['beacon'],(R,z0,put,HF)=>{for(let i=0;i<6;i++){const x=(R()<.5?-1:1)*(10+R()*30),z=z0-R()*TL;put('beacon',x,z,1,0,null);}});
 })();
+// ============ v5.13: Golden Fields on the realistic path ============
+// Patchwork fields (same 7×9-unit grid as before): ripe wheat, young crop rows, ploughed soil and pasture, with grass
+// hedge lines between them; rock on steep hills; the road is a dark asphalt tint with pale verges.
+Object.assign(BIOME.farm,{pbr:{tex:['grass','soil','rock','wheat','crop'],tint:[[.95,1,.8],[.86,.8,.74],[1,.97,.9],[.86,.78,.56],[.95,1.05,.92]],ns:.8},
+ splat(o,x,z,h,sl,under){const fx=Math.floor((x+600)/7),fz=Math.floor((z+9000)/9),u=hash2(fx,fz),ex=((x+600)/7)%1,ez=((z+9000)/9)%1;
+  let soil=0,wheat=0,crop=0;const field=h<4.5&&Math.abs(x)<60&&ex>.08&&ez>.07;
+  if(field){if(u<.32)wheat=1;else if(u<.55)crop=1;else if(u<.7)soil=1;}
+  const rock=sst(.4,.7,sl);o[0]=soil*(1-rock);o[1]=rock;o[2]=wheat*(1-rock);o[3]=crop*(1-rock);},
+ tint(o,x,z,h){const r=Math.abs(x-4);if(r<2.4){o[0]=.15;o[1]=.15;o[2]=.17;}else if(r<3.4){o[0]=.8;o[1]=.76;o[2]=.68;}else{o[0]=o[1]=o[2]=1;}},
+ occ:{canopy2:[.42,.5],canopy3:[.44,.5],barn:[.8,.4],house:[.8,.4]}});
+BIOME.farm.uses=BIOME.farm.uses.concat(['canopy2','canopy3']);BIOME.farm.exp=.9;

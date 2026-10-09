@@ -57,3 +57,24 @@ glass = noise(N, 180, 256, 85) > 2.2
 ash[glass] = ash[glass]*.4 + np.array([170, 160, 150])*.6
 save(ash, 'art/ter_ash.jpg')
 print('ok')
+
+# ---------- v5.13: farmland layers ----------
+#   art/ter_wheat.jpg  ripe wheat in drill rows, stalk streaks, wind-flattened patches
+#   art/ter_crop.jpg   young green crop rows over dark soil
+rows = 24                                                        # rows per tile (tileable)
+rowp = (np.sin(xx/N*2*np.pi*rows) * .5 + .5)
+st = noise(N, 120, 256, 91)                                      # fine stalk detail
+streak = np.asarray(Image.fromarray(((st*.5+.5)*255).clip(0, 255).astype(np.uint8)).resize((N, N//6)).resize((N, N), Image.BICUBIC)).astype(float)/255  # vertical streaks
+wind = noise(N, 2, 7, 92)
+t = .52 + (rowp - .5)*.16 + (streak - .5)*.35 + wind*.06
+wheat = palette(t, [(0, (92, 70, 32)), (.35, (168, 132, 64)), (.7, (212, 178, 98)), (1, (238, 214, 140))])
+flat = noise(N, 3, 10, 93) > 1.4
+wheat[flat] = wheat[flat]*.88 + np.array([200, 176, 110])*.12
+save(wheat, 'art/ter_wheat.jpg')
+leaf = noise(N, 60, 220, 94); clump = noise(N, 8, 40, 95)
+row2 = np.clip((np.sin(xx/N*2*np.pi*rows*1.5)*.5 + .5)**1.5 + clump*.15 + leaf*.12, 0, 1)
+soilc = palette(.45 + noise(N, 20, 120, 96)*.12, [(0, (46, 36, 26)), (1, (98, 80, 60))])
+green = palette(.5 + leaf*.2 + clump*.1, [(0, (38, 70, 24)), (.5, (72, 118, 40)), (1, (128, 160, 70))])
+m = np.clip((row2 - .45)*3, 0, 1)[..., None]
+save(soilc*(1 - m) + green*m, 'art/ter_crop.jpg')
+print('farm ok')

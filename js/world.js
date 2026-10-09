@@ -142,9 +142,9 @@ const BIOME={
   cf(o,x,z,h,sl){const fx=Math.floor((x+600)/7),fzz=Math.floor((z+9000)/9),u=hash2(fx,fzz),crops=['#c9b458','#9bb55a','#6f9a45','#d8c27a','#8a6e45','#5f8a3a','#b9a24c','#a5c06a'];
    if(h<4.5&&Math.abs(x)<60){mixc(o,lc(crops[Math.floor(u*crops.length)]),lc(crops[Math.floor(u*crops.length)]),0);const ex=((x+600)/7)%1,ez=((z+9000)/9)%1;if(ex<.07||ez<.06)mixc(o,o,lc('#3e6a30'),.7);}
    const r=Math.abs(x-4);if(r<2.2)mixc(o,o,lc('#45433f'),1);else if(r<3.2)mixc(o,o,lc('#8a8270'),.7);},
-  props(R,z0,put,HF){for(let i=0;i<180;i++){const fx=Math.floor((R()*120-60+600)/7),zz=z0-R()*TL;const x=fx*7-600+(R()<.5?0:R()*7);if(Math.abs(x-4)<3)continue;put('round',x,zz,.6+R()*.5,R()*6,pick(['#3e7a34','#4d8a3c','#56913f']));}
+  props(R,z0,put,HF){for(let i=0;i<180;i++){const fx=Math.floor((R()*120-60+600)/7),zz=z0-R()*TL;const x=fx*7-600+(R()<.5?0:R()*7);if(Math.abs(x-4)<3)continue;put('canopy2',x,zz,3.2+R()*1.8,R()*TAU,pick(['#e8eedc','#dfe8d2','#f0f0e0']));}
    for(let k=0;k<3;k++){const z=z0-8-R()*(TL-16),sd=R()<.5?-1:1,x=4+sd*(7+R()*6);put('house',x,z,1.2,0,'#efe6d6');put('barn',x+sd*3.5,z-3,1.3,Math.PI/2,null);put('silo',x-sd*3,z+2,1,0,null);if(R()<.5)put('kk_watertower',x+sd*1,z+6,2.6,R()*6,null);for(let j=0;j<5;j++)put('round',x+rnd(-7,7),z+rnd(-7,7),.7,R()*6,'#3e7a34');}
-   for(let i=0;i<120;i++){const x=(R()<.5?-1:1)*(35+R()*55),z=z0-R()*TL,h=HF(x,z);if(h>4&&h<16)put('pine',x,z,.9+R()*.5,R()*6,'#2f5a2b');}
+   for(let i=0;i<120;i++){const x=(R()<.5?-1:1)*(35+R()*55),z=z0-R()*TL,h=HF(x,z);if(h>4&&h<16)put('canopy3',x,z,4+R()*2.5,R()*TAU,pick(['#e0e8d8','#d4dece']));}
    for(let i=0;i<3;i++){const d=R()<.5?1:-1;put(pick(['kk_car_sedan','kk_car_hatchback']),4+d*1,z0-R()*TL,1.5,d>0?0:Math.PI,null);}}},
  desert:{sky:['#5a8fd0','#f3cf9a','#e0a868'],fog:'#e9b77c',fogN:1.15,sun:['#ffe2b0',2.5],sunDir:[-.62,.42,-.42],hemi:['#cfdcf0','#9a5a24',.42],exp:.86,wl:-60,clouds:1,ground:'sand',
   // Sahara-style sea of dunes: long crescent ridges with a gentle windward rise and a steep slip face, smaller dunes on top
