@@ -1,8 +1,8 @@
 {
-  "build": 19,
-  "version": "4.8",
+  "build": 20,
+  "version": "4.9",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "HD jungle with rock cliffs"
+    "Realistic Jungle Ridge terrain"
   ]
 }

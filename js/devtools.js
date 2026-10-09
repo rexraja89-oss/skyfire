@@ -23,7 +23,7 @@ Dv.draw=(R,A)=>{const d=D();if(!d.stats&&!d.hit)return;
   const p=R.p;if(p.alive){pj(p.x,p.y);cx.strokeStyle='rgba(80,255,140,.95)';cx.beginPath();cx.arc(PX,PY,SF.BAL.player.hitR*PS,0,TAU);cx.stroke();
    cx.strokeStyle='rgba(80,255,140,.35)';cx.beginPath();cx.arc(PX,PY,SF.BAL.player.pickupR*PS,0,TAU);cx.stroke();}}
  if(d.stats){const lines=[`${Dv.fps} fps · sim ${Dv.sim.toFixed(2)} ms`,`enemies ${SF.enemies.list().length} · bullets ${SF.enemies.ebPool.live.length}/${SF.weapons.pool.live.length}`,
-   `particles ${SF.fx.parts.live.length} · t ${R.t.toFixed(0)} s`+(R.dir?` · ${R.dir.phase} ${R.dir.clock.toFixed(0)}/${R.def?R.def.len:0}`:'')];
+   `particles ${SF.fx.parts.live.length} · t ${R.t.toFixed(0)} s`+(R.dir?` · ${R.dir.phase} ${R.dir.clock.toFixed(0)}/${R.def?R.def.len:0}`:'')];if(SF.terrain&&SF.terrain.path())lines.push(SF.terrain.path());
   cx.font='11px monospace';cx.textAlign='left';cx.textBaseline='top';const y0=OH-150;cx.fillStyle='rgba(0,0,0,.55)';cx.fillRect(6,y0-4,230,lines.length*14+8);
   cx.fillStyle='#9ff7c8';lines.forEach((l,i)=>cx.fillText(l,10,y0+i*14));}};
 // ---- Workshop panel ----

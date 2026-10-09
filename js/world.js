@@ -179,7 +179,7 @@ const BIOME={
     for(let k=0;k<4;k++)put('acacia',vx+R()*26-13,vz+R()*26-13,1+R()*.4,R()*6,'#4e6a2e');}
    if(R()<.3){const x=(R()<.5?-1:1)*(22+R()*16),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
    for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.35+R()*.5,R()*6,pick(['#9a6a44','#8a5e3c','#a47450']));}}},
- forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.42],exp:.95,water:{c:'#2c5a52',op:.92},wl:-.8,clouds:5,pbr:1,
+ forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.55],exp:.95,water:{c:'#2c5a52',op:.92},wl:-.8,clouds:5,pbr:1,
   // Jungle Ridge (Phase 1 realistic terrain, js/terrain_pbr.js): grassy river valley between rocky uplands that break into
   // terraced ledges and steep, irregular cliff faces; textured soil/grass/rock/moss/gravel chosen by slope, height and noise
   HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037),bank=Math.abs(x-rx);
@@ -396,7 +396,7 @@ function updTerrain(force){const n0=Math.floor(gz3/TL);TER.g.position.z=gz3;
  const B=LV.B;if(TER.water.visible){WNORM.offset.y+=0;}
  TER.water.position.z=C3.z-380;TER.lava.position.z=C3.z-380;}
 // ---------- level build ----------
-function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;LV.HF=B.HF;LV.wl=(B.water||B.lava)?B.wl:-60;NZ2.seed(si*13+5);
+function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;if(SF.terrain)SF.terrain.top=0;LV.HF=B.HF;LV.wl=(B.water||B.lava)?B.wl:-60;NZ2.seed(si*13+5);
  skyMat.uniforms.top.value.set(B.sky[0]);skyMat.uniforms.hor.value.set(B.sky[1]);skyMat.uniforms.bot.value.set(B.sky[2]);
  const sd=new T3.Vector3(...B.sunDir).normalize();skyMat.uniforms.sunDir.value.copy(sd);skyMat.uniforms.sunCol.value.set(B.sun[0]);
  sun.color.copy(col(B.sun[0]));sun.intensity=B.sun[1];LV.sunDir=sd;hemi.color.copy(col(B.hemi[0]));hemi.groundColor.copy(col(B.hemi[1]));hemi.intensity=B.hemi[2];

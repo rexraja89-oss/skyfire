@@ -19,22 +19,23 @@ const HEAD=`
 uniform sampler2D tG,tS,tR,tM,tV,nG,nR,tX;
 varying vec4 vSplat;varying float vAO;varying vec3 vTP;varying vec3 vTN;
 vec3 L(vec4 c){return pow(c.rgb,vec3(2.2));}
+#define RS (54./600.)
 `;
 const MAPF=`
 vec3 n0=normalize(vTN);vec2 P=vTP.xz;
-vec3 mac=texture2D(tX,P*.005).rgb;float brk=texture2D(tX,P*.036667+.5).g;
+vec3 mac=texture2D(tX,P*(3./600.)).rgb;float brk=texture2D(tX,P*(22./600.)+.5).g;
 vec3 tw=pow(abs(n0),vec3(8.));tw/=tw.x+tw.y+tw.z;
-vec3 cG=mix(L(texture2D(tG,P*.17)),L(texture2D(tG,P*.046667+vec2(.31,.17))),.2+.6*mac.g);
-vec3 cS=L(texture2D(tS,P*.21)),cM=L(texture2D(tM,P*.19)),cV=L(texture2D(tV,P*.26));
+vec3 cG=mix(L(texture2D(tG,P*(102./600.))),L(texture2D(tG,P*(28./600.)+vec2(.31,.17))),.2+.6*mac.g);
+vec3 cS=L(texture2D(tS,P*(126./600.))),cM=L(texture2D(tM,P*(114./600.))),cV=L(texture2D(tV,P*(156./600.)));
 #ifdef SF_LITE
-vec3 cR=L(texture2D(tR,P*.09));
+vec3 cR=L(texture2D(tR,P*RS));
 #else
-vec3 cR=tw.y*L(texture2D(tR,P*.09))+tw.x*L(texture2D(tR,vTP.zy*.09))+tw.z*L(texture2D(tR,vTP.xy*.09));
-cR*=.7+.5*L(texture2D(tR,P*.023333+vec2(.4,.7))).r*1.6;   // second, larger rock scale: weathering and big fractures
-cR*=.82;           // horizontal strata on cliff faces
+vec3 cR=tw.y*L(texture2D(tR,P*RS));
+if(tw.x+tw.z>.02)cR+=tw.x*L(texture2D(tR,vTP.zy*RS))+tw.z*L(texture2D(tR,vTP.xy*RS));   // side projections only on steep pixels
 #endif
 // weights: per-vertex splat, rock forced on steep pixels, noise breaks up the vertex grid
-vec4 w=vSplat;w.y=max(w.y,smoothstep(.36,.62,1.-n0.y));w.x*=.55+.9*brk;w.z*=.55+.9*(1.-brk);
+vec4 w=vSplat;w.y=max(w.y,smoothstep(.36,.62,1.-n0.y));cR*=.86+.3*mix(mac.r,brk,.5);   // large-scale weathering from the macro map (no extra fetch)
+w.x*=.55+.9*brk;w.z*=.55+.9*(1.-brk);
 float wg=max(0.,1.-w.x-w.y-w.z-w.w);
 // height-based blending: each layer's brightness acts as its height, so pebbles and rock poke through grass
 float a0=wg+dot(cG,vec3(.9))*.35-step(wg,.01),a1=w.x+dot(cS,vec3(.9))*.35-step(w.x,.01),a2=w.y+dot(cR,vec3(.9))*.3-step(w.y,.01),
@@ -50,25 +51,31 @@ float bRock=b2;
 const ROUGHF=`float roughnessFactor=mix(.97,.8,bRock);`;
 const NORMF=`
 #ifndef SF_LITE
-vec3 ng=texture2D(nG,P*.17).xyz*2.-1.;
-vec3 nr=texture2D(nR,P*.09).xyz*2.-1.,nrx=texture2D(nR,vTP.zy*.09).xyz*2.-1.,nrz=texture2D(nR,vTP.xy*.09).xyz*2.-1.;
-vec3 pr=tw.y*vec3(nr.x,0.,-nr.y)+tw.x*vec3(0.,nrx.y,nrx.x)+tw.z*vec3(nrz.x,nrz.y,0.);
-vec3 nW=normalize(n0+mix(vec3(ng.x,0.,-ng.y)*1.2,pr*1.25,bRock));
+// normal maps store green = +V; on the horizontal projection (P = xz) +V is world +Z
+vec3 ng=texture2D(nG,P*(102./600.)).xyz*2.-1.;
+vec3 nr=texture2D(nR,P*RS).xyz*2.-1.;
+vec3 pr=tw.y*vec3(nr.x,0.,nr.y);
+if(tw.x+tw.z>.02){vec3 nrx=texture2D(nR,vTP.zy*RS).xyz*2.-1.,nrz=texture2D(nR,vTP.xy*RS).xyz*2.-1.;pr+=tw.x*vec3(0.,nrx.y,nrx.x)+tw.z*vec3(nrz.x,nrz.y,0.);}
+float fade=1.-.45*smoothstep(110.,190.,length(vViewPosition));   // calmer fine detail further away (less shimmer)
+vec3 nW=normalize(n0+mix(vec3(ng.x,0.,ng.y)*1.1,pr*1.,bRock)*fade);
 #else
 vec3 nW=n0;
 #endif
 normal=normalize((viewMatrix*vec4(nW,0.)).xyz);
 `;
 const AOF=`reflectedLight.indirectDiffuse*=vAO;reflectedLight.indirectSpecular*=vAO;reflectedLight.directDiffuse*=mix(1.,vAO,.55);`;
+// HQ needs 8 terrain samplers + environment + shadow map; GPUs with fewer than 12 texture units use the lite shader
+Tr.hq=()=>!!save.hq&&renderer.capabilities.maxTextures>=12;
+Tr.path=()=>LV.B&&LV.B.pbr?(Tr.hq()?'terrain HQ':'terrain lite')+' · '+renderer.capabilities.maxTextures+' tex units':'';
 Tr.mat=()=>{if(MAT)return MAT;
  const U={tG:{value:tex('ter_grass.jpg')},tS:{value:tex('ter_soil.jpg')},tR:{value:tex('ter_rock.jpg')},tM:{value:tex('ter_moss.jpg')},tV:{value:tex('ter_gravel.jpg')},
   nG:{value:tex('ter_ground_n.jpg')},nR:{value:tex('ter_rock_n.jpg')},tX:{value:tex('ter_macro.png')}};
  MAT=new T3.MeshStandardMaterial({vertexColors:true,roughness:.95,metalness:0});
- MAT.customProgramCacheKey=()=>save.hq?'terrain-hq':'terrain-lite';
+ MAT.customProgramCacheKey=()=>Tr.hq()?'terrain-hq':'terrain-lite';
  MAT.onBeforeCompile=sh=>{Object.assign(sh.uniforms,U);
   sh.vertexShader='attribute vec4 splat;attribute float aoA;attribute vec3 tp;\nvarying vec4 vSplat;varying float vAO;varying vec3 vTP;varying vec3 vTN;\n'+
    sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSplat=splat;vAO=aoA;vTP=tp;vTN=normal;');
-  sh.fragmentShader=(save.hq?'':'#define SF_LITE\n')+HEAD+sh.fragmentShader.replace('#include <map_fragment>',MAPF).replace('#include <roughnessmap_fragment>',ROUGHF)
+  sh.fragmentShader=(Tr.hq()?'':'#define SF_LITE\n')+HEAD+sh.fragmentShader.replace('#include <map_fragment>',MAPF).replace('#include <roughnessmap_fragment>',ROUGHF)
    .replace('#include <normal_fragment_maps>',NORMF).replace('#include <aomap_fragment>',AOF);};
  return MAT;};
 // ---------- tile fill ----------
@@ -77,12 +84,12 @@ function ensure(g){const n=g.attributes.position.count;
  if(!g.attributes.aoA)g.setAttribute('aoA',new T3.BufferAttribute(new Float32Array(n),1));
  if(!g.attributes.tp)g.setAttribute('tp',new T3.BufferAttribute(new Float32Array(n*3),3));
  if(!g.attributes.normal)g.setAttribute('normal',new T3.BufferAttribute(new Float32Array(n*3),3));}
-let EXT=null;
+let EXT=null;Tr.top=0;   // highest terrain filled so far (the shadow band reaches above it)
 const DIRS=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
 Tr.fill=(t,n)=>{const B=LV.B,HF=B.HF,z0=TZ0-n*TL,g=t.geo;ensure(g);
  const dx=TW/NX,dz=TL/NZT,W1=NX+1+2*E,H1=NZT+1+2*E;if(!EXT||EXT.length!==W1*H1)EXT=new Float32Array(W1*H1);
  const X=i=>-TW/2+i*dx,Z=j=>z0-j*dz;
- for(let j=-E;j<=NZT+E;j++)for(let i=-E;i<=NX+E;i++)EXT[(j+E)*W1+i+E]=HF(X(i),Z(j));
+ for(let j=-E;j<=NZT+E;j++)for(let i=-E;i<=NX+E;i++){const v=EXT[(j+E)*W1+i+E]=HF(X(i),Z(j));if(v>Tr.top)Tr.top=v;}
  const H=(i,j)=>EXT[(j+E)*W1+i+E];
  const pos=g.attributes.position.array,nor=g.attributes.normal.array,cl=g.attributes.color.array,sp=g.attributes.splat.array,ao=g.attributes.aoA.array,tp=g.attributes.tp.array,hs=t.hs;
  const off=Math.round(z0/PERIOD)*PERIOD,o=[0,0,0,0];
@@ -93,7 +100,7 @@ Tr.fill=(t,n)=>{const B=LV.B,HF=B.HF,z0=TZ0-n*TL,g=t.geo;ensure(g);
   // horizon-based ambient occlusion: how much of the sky the surrounding terrain hides
   let occ=0,under=0;for(const[a,b]of DIRS){const dl=Math.hypot(a*dx,b*dz);let mt=0;
    for(let s=1;s<=E;s++){const d=H(i+a*s,j+b*s)-h,tn=d/(dl*s);if(tn>mt)mt=tn;if(d>under)under=d;}occ+=mt/Math.sqrt(1+mt*mt);}
-  ao[k]=clamp(1-occ/8*1.35,.28,1);
+  ao[k]=clamp(1-occ/8*1.35,.45,1);
   B.splat(o,x,z,h,sl,under);sp[k*4]=o[0];sp[k*4+1]=o[1];sp[k*4+2]=o[2];sp[k*4+3]=o[3];
   const wet=B.wet?B.wet(x,z,h):0;cl[k*3]=1-.3*wet;cl[k*3+1]=1-.26*wet;cl[k*3+2]=1-.2*wet;}
  // contact occlusion under props (faded out near the tile's top/bottom rows so shared edges stay identical)
@@ -120,11 +127,11 @@ let fitted=false;const _v=new T3.Vector3(),_c=new T3.Vector3(),_m=new T3.Matrix4
 function setSize(s){if(sun.shadow.mapSize.x===s)return;sun.shadow.mapSize.set(s,s);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}}
 Tr.shadowDefault=()=>{if(!fitted)return;fitted=false;const sc=sun.shadow.camera;sc.left=DEF.l;sc.right=DEF.r;sc.top=DEF.t;sc.bottom=DEF.b;sc.near=DEF.n;sc.far=DEF.f;sc.updateProjectionMatrix();
  sun.shadow.bias=DEF.bias;sun.shadow.normalBias=DEF.nb;setSize(DEF.size);};
-Tr.shadows=()=>{if(!(LV.B&&LV.B.pbr&&save.hq)){Tr.shadowDefault();return;}
+Tr.shadows=()=>{if(!(LV.B&&LV.B.pbr&&Tr.hq())){Tr.shadowDefault();return;}
  fitted=true;setSize(2048);camera.updateMatrixWorld();pts.length=0;
  // screen corners → rays → ground band (lowest valley to the tops of trees and cliffs)
  for(const nx of[-1.04,1.04])for(const ny of[-1.04,1.04]){_ray.set(nx,ny,.5).unproject(camera).sub(camera.position).normalize();
-  for(const y of[GY-6,GY+26]){const t=(y-camera.position.y)/_ray.y;pts.push(camera.position.clone().addScaledVector(_ray,t));}}
+  for(const y of[GY-6,GY+Math.max(26,Tr.top+12)]){const t=(y-camera.position.y)/_ray.y;pts.push(camera.position.clone().addScaledVector(_ray,t));}}
  _c.set(0,0,0);for(const p of pts)_c.add(p);_c.multiplyScalar(1/pts.length);
  sun.position.copy(_c).addScaledVector(LV.sunDir,200);sun.target.position.copy(_c);sun.target.updateMatrixWorld();
  _m.lookAt(sun.position,_c,_up);_q.setFromRotationMatrix(_m);_inv.compose(sun.position,_q,_v.set(1,1,1)).invert();
