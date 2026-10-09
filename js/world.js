@@ -146,13 +146,39 @@ const BIOME={
    for(let k=0;k<3;k++){const z=z0-8-R()*(TL-16),sd=R()<.5?-1:1,x=4+sd*(7+R()*6);put('house',x,z,1.2,0,'#efe6d6');put('barn',x+sd*3.5,z-3,1.3,Math.PI/2,null);put('silo',x-sd*3,z+2,1,0,null);if(R()<.5)put('kk_watertower',x+sd*1,z+6,2.6,R()*6,null);for(let j=0;j<5;j++)put('round',x+rnd(-7,7),z+rnd(-7,7),.7,R()*6,'#3e7a34');}
    for(let i=0;i<120;i++){const x=(R()<.5?-1:1)*(35+R()*55),z=z0-R()*TL,h=HF(x,z);if(h>4&&h<16)put('pine',x,z,.9+R()*.5,R()*6,'#2f5a2b');}
    for(let i=0;i<3;i++){const d=R()<.5?1:-1;put(pick(['kk_car_sedan','kk_car_hatchback']),4+d*1,z0-R()*TL,1.5,d>0?0:Math.PI,null);}}},
- desert:{sky:['#3f86d6','#f7dcb0','#d9b27a'],fog:'#e8c898',fogN:1.1,sun:['#fff0c8',2.3],sunDir:[-.55,.55,-.45],hemi:['#c6d6f0','#7a5028',.35],exp:.8,wl:-60,clouds:2,
-  HF(x,z){let h=.4+(2.6*Math.abs(Math.sin(x*.09+z*.025+fbm(x*.03,z*.03,2)*2.5))+fbm(x*.06,z*.06,3)*1.2)*sst(4,12,Math.abs(x+6));let m=mtn(x,z,24,30,80);m=Math.floor(m/3.5)*3.5+(m%3.5)*.25;h+=m;if(Math.abs(x+6)<3.5)h=Math.min(h,.4);return h;},
-  P:{low:'#b8854a',mid:'#d29e5e',m0:.8,m1:2.6,high:'#b85a30',h0:3.5,h1:6,rock:'#a8553a'},
-  cf(o,x,z,h,sl){if(h>3){const b=Math.floor(h/3.5)%3;mixc(o,o,lc(['#b45a36','#d88a52','#9a4a30'][b]),.85);}const r=Math.abs(x+6);if(r<3.4)mixc(o,o,lc('#3a3b3e'),1);else if(r<4.6)mixc(o,o,lc('#b89a6a'),.6);},
-  props(R,z0,put,HF){for(let i=0;i<140;i++){const x=R()*140-70,z=z0-R()*TL;if(Math.abs(x+6)<4.5)continue;put(R()<.5?'cactus':'rock',x,z,.6+R()*.7,R()*6,R()<.5?'#5f7d3a':'#b08a5a');}
-   for(let i=0;i<2;i++){const x=(R()<.5?-1:1)*(12+R()*14),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
-   if(R()<.6){const z=z0-R()*TL;put('ware',2,z,1,0,'#d9d2c0',1,0,[5,2.2,3.5]);}}},
+ desert:{sky:['#5a8fd0','#f3cf9a','#e0a868'],fog:'#e9b77c',fogN:1.15,sun:['#ffe2b0',2.5],sunDir:[-.62,.42,-.42],hemi:['#cfdcf0','#9a5a24',.42],exp:.86,wl:-60,clouds:1,ripples:1,
+  // Sahara-style sea of dunes: long crescent ridges with a gentle windward rise and a steep slip face, smaller dunes on top
+  HF(x,z){const w=fbm(x*.018,z*.018,2);
+   const u=(x*.55+z*.84)/44+w*1.3,f=u-Math.floor(u),p1=f<.66?sst(0,1,f/.66):1-sst(0,1,(f-.66)/.34);
+   let h=p1*(6+3.5*fbm(x*.011+5,z*.011,2));
+   const u2=(x*.92-z*.38)/21+fbm(x*.03,z*.03,2)*1.1;h+=(Math.sin(u2*TAU)*.5+.5)*.9;
+   h+=fbm(x*.06,z*.06,2)*.3+mtn(x,z,20,46,95)*.55;
+   const r=Math.abs(x+6);if(r<6)h=lerp(.35,h,sst(3.4,6,r));return h;},
+  P:{low:'#cf8a46',mid:'#e2a35a',m0:.6,m1:3,high:'#e9ad66',h0:5,h1:9,rock:'#b8703a'},
+  cf(o,x,z,h,sl,gx,gz){   // gx,gz: height slope along x and z (from the tile grid)
+   const nl=Math.hypot(gx,1,gz),lit=clamp(((-gx)*-.62+.42+(-gz)*-.42)/nl/.8,0,1.3);   // sun-facing sand is bright, slip faces fall into shadow
+   mixc(o,lc('#a85a26'),lc('#f6c27a'),Math.min(1,lit));if(lit>1)mixc(o,o,lc('#ffe0a8'),(lit-1)*2);
+   const r=Math.abs(x+6);if(r<3.2)mixc(o,o,lc('#5a5048'),.85*(.75+.25*fbm(x*.4,z*.4,2)));else if(r<4.4)mixc(o,o,lc('#d9a868'),.5);   // sand-dusted highway
+   if(r<3.2&&fbm(x*.15+3,z*.06,2)>.4)mixc(o,o,lc('#e0a560'),.55);},
+  uses:['palm','shrub','acacia','tent','whouse','wall','shrine','derrick','tankf','rock'],
+  props(R,z0,put,HF){const off=(x,w=6)=>Math.abs(x+6)<w;
+   for(let i=0;i<150;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,5))continue;put('shrub',x,z,.5+R()*.6,R()*6,pick(['#6f7a3e','#7d8a46','#8a8a52','#5f6a34']));}
+   for(let i=0;i<8;i++){const x=R()*140-70,z=z0-R()*TL;if(off(x,7))continue;put('acacia',x,z,1+R()*.5,R()*6,'#4e6a2e');}
+   // oasis camp: palm grove, bushes and dark woven tents
+   if(R()<.55){const sd=R()<.5?-1:1,ox=-6+sd*(16+R()*22),oz=z0-14-R()*(TL-28);
+    for(let k=0;k<9;k++){const a=R()*TAU,d=2+R()*8;put('palm',ox+Math.cos(a)*d,oz+Math.sin(a)*d,.9+R()*.5,R()*6,pick(['#3f7a32','#4a8a3a','#376a2c']));}
+    for(let k=0;k<8;k++){const a=R()*TAU,d=3+R()*9;put('shrub',ox+Math.cos(a)*d,oz+Math.sin(a)*d,.8+R()*.6,R()*6,'#4f6e30');}
+    const tx=ox+sd*7,tz=oz+6;for(let k=0;k<4+Math.floor(R()*3);k++)put('tent',tx+(k%3)*3.2*sd,tz+Math.floor(k/3)*3.4,1+R()*.2,R()*.3,pick(['#3a2a22','#4a3428','#2e2420']));
+    put('wall',tx+sd*3,tz+5,1,0,'#c9a27a',1,0,[8,.5,.2]);}
+   // half-buried abandoned village: white flat-roof houses and walls swallowed by dunes
+   if(R()<.45){const sd=R()<.5?-1:1,vx=-6+sd*(14+R()*20),vz=z0-12-R()*(TL-30);
+    for(let k=0;k<7+Math.floor(R()*5);k++){const x=vx+R()*22-11,z=vz+R()*22-11;if(off(x,5))continue;const ry=Math.floor(R()*4)*Math.PI/2+R()*.2;
+     put('whouse',x,z,1,ry,pick(['#f2ede4','#ebe4d8','#f6f2ea','#e2d9ca']),1,-.3-R()*.9,[2.6+R()*1.6,1.6,2.2+R()*1.4]);
+     if(R()<.5)put('wall',x+R()*4-2,z+2.5,1,ry,'#efe8dc',1,-.2-R()*.4,[4+R()*3,.55,.18]);}
+    if(R()<.5)put('shrine',vx+R()*8-4,vz+R()*8-4,1.1,R()*6,'#f4efe6',1,-.3);
+    for(let k=0;k<4;k++)put('acacia',vx+R()*26-13,vz+R()*26-13,1+R()*.4,R()*6,'#4e6a2e');}
+   if(R()<.3){const x=(R()<.5?-1:1)*(22+R()*16),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
+   for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.5+R()*.8,R()*6,'#a8683a');}}},
  forest:{sky:['#4f86c6','#dce8f0','#7d8f7a'],fog:'#c9d8de',fogN:.75,sun:['#fff4dc',2.3],sunDir:[-.4,.75,-.5],hemi:['#cfe0ff','#3a4a2a',.6],exp:1.05,water:{c:'#2a6b76',op:.92},wl:-.8,clouds:7,
   HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037);let h=1.2+fbm(x*.03,z*.03,4)*2.4+mtn(x,z,38,30,85);h-=3.4*Math.exp(-(((x-rx)/3.2)**2));return h;},
   P:{low:'#2f5a2b',mid:'#3d6b33',m0:2,m1:6,high:'#5a6a50',h0:12,h1:20,rock:'#6e6a64',snow:22,sand:1,wl:-.3,sandc:'#8a7a5a',deep:'#2a4a40'},
@@ -235,6 +261,14 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  PROPS.hut={geo:merge([[B(2.4,1.3,3.4),'#6a747c',MT(0,.65,0)],[B(2.6,.25,3.6),'#f4f8fb',MT(0,1.4,0)]]),mat:plain,cap:20};
  PROPS.pier={geo:merge([[B(1,.25,1),'#ffffff',MT(.5,.35,0)],[Cy(.08,.08,1.4,5),'#4a3a28',MT(.5,-.3,.45)],[Cy(.08,.08,1.4,5),'#4a3a28',MT(.5,-.3,-.45)]]),mat:plain,cap:10};
  PROPS.ruin={geo:merge([[B(1,1,1),'#ffffff',MT(0,.5,0)]]),mat:plain,cap:10};
+ // desert props
+ PROPS.shrub={geo:merge([[new T3.IcosahedronGeometry(.6,0),'#ffffff',MT(0,.25,0,0,0,0,1,.55,1)],[new T3.IcosahedronGeometry(.4,0),'#ffffff',MT(.45,.2,.2,0,0,0,1,.5,1)]]),mat:veg,cap:220};
+ PROPS.acacia={geo:merge([[Cy(.08,.13,2.2,5),'#5a3e26',MT(0,1.1,0,0,0,.1)],[Cy(.05,.07,1,4),'#5a3e26',MT(.35,1.9,0,0,0,-.6)],[Cy(1.7,1.3,.35,9),'#ffffff',MT(.15,2.4,0)],[Cy(1.1,.9,.28,8),'#ffffff',MT(.4,2.62,.2)]]),mat:veg,cap:60};
+ const tr=new T3.CylinderGeometry(1,1,1,3);tr.rotateZ(Math.PI/2);
+ PROPS.tent={geo:merge([[B(2.6,.7,2),'#ffffff',MT(0,.35,0)],[tr,'#ffffff',MT(0,.85,0,0,0,0,1.35,.42,1.05)]]),mat:plain,cap:30};
+ PROPS.whouse={geo:merge([[B(1,1,1),'#ffffff',MT(0,.5,0)],[B(1.04,.08,1.04),'#d8d0c2',MT(0,1.02,0)],[B(.22,.42,.04),'#3a3532',MT(.2,.35,.51)],[B(.18,.18,.04),'#3a3532',MT(-.25,.6,.51)]]),mat:plain,cap:90};
+ PROPS.wall={geo:merge([[B(1,1,1),'#ffffff',MT(0,.5,0)]]),mat:plain,cap:80};
+ PROPS.shrine={geo:merge([[B(2.6,1.6,2.2),'#ffffff',MT(0,.8,0)],[new T3.SphereGeometry(.8,12,8,0,TAU,0,Math.PI/2),'#ffffff',MT(0,1.6,0)],[Cy(.17,.2,3,8),'#ffffff',MT(1.6,1.5,-.8)],[Co(.24,.5,8),'#d8d0c2',MT(1.6,3.25,-.8)]]),mat:plain,cap:6};
  PROPS.lamp={geo:new T3.SphereGeometry(.22,6,4),mat:new T3.MeshBasicMaterial({color:col('#ffcf7a')}),cap:260,noShadow:1};
  // city towers: window texture on walls, dark roof (top/bottom faces mapped to a dark texel)
  const wc=document.createElement('canvas');wc.width=64;wc.height=128;const g=wc.getContext('2d');g.fillStyle='#000';g.fillRect(0,0,64,128);
@@ -257,7 +291,7 @@ function kkGeo(name){const D=SF.KK[name],b=s=>Uint8Array.from(atob(s),c=>c.charC
  for(let i=0;i<n;i++){for(let a=0;a<3;a++){const t=(q[i*3+a]+32768)/65535;pos[i*3+a]=(a===1?t*D.sz[1]:(t-.5)*D.sz[a])*f;cl[i*3+a]=Math.pow(c8[i*3+a]/255,2.2);}}
  const g=new T3.BufferGeometry();g.setAttribute('position',new T3.BufferAttribute(pos,3));g.setAttribute('color',new T3.BufferAttribute(cl,3));g.setIndex(new T3.BufferAttribute(ix,1));g.computeVertexNormals();return g;}
 // ---------- terrain tiles ----------
-const TW=240,TL=110,NX=80,NZT=36,NT=5;let TZ0=80;
+const TW=240,TL=110,NX=120,NZT=54,NT=5;let TZ0=80;
 const TER={g:new T3.Group(),tiles:[],mat:null,water:null,lava:null};
 const LV={si:-1,HF:null,wl:0,B:null,boss:null,decals:[],clouds:[]};
 function gridGeo(){const g=new T3.BufferGeometry(),n=(NX+1)*(NZT+1);g.setAttribute('position',new T3.BufferAttribute(new Float32Array(n*3),3));g.setAttribute('color',new T3.BufferAttribute(new Float32Array(n*3),3));
@@ -276,8 +310,13 @@ function lavaTex(){const N=128,c=document.createElement('canvas');c.width=c.heig
 function scorchTex(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(10,6,4,.85)');gr.addColorStop(.6,'rgba(20,12,8,.5)');gr.addColorStop(1,'rgba(20,12,8,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return new T3.CanvasTexture(c);}
 function cloudTex(){const c=document.createElement('canvas');c.width=256;c.height=128;const g=c.getContext('2d'),R=srng(91);
  for(let k=0;k<14;k++){const x=50+R()*156,y=40+R()*50,r=22+R()*36,gr=g.createRadialGradient(x,y-r*.2,0,x,y,r);gr.addColorStop(0,'rgba(255,255,255,.9)');gr.addColorStop(.6,'rgba(240,244,250,.5)');gr.addColorStop(1,'rgba(230,236,245,0)');g.fillStyle=gr;g.fillRect(0,0,256,128);}return new T3.CanvasTexture(c);}
-let DETAIL,WNORM,LAVA,SCORCH,CLOUDT;
-function initTerrain(){DETAIL=detailTex();WNORM=waterNormal();LAVA=lavaTex();SCORCH=scorchTex();CLOUDT=cloudTex();
+// wind-rippled sand: wavy parallel ridges with grain (multiplies the vertex colours)
+function rippleTex(){const N=256,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d'),im=g.createImageData(N,N),R=srng(23);
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){const k=(y*N+x)*4,w=Math.sin((x+y*.35)/N*TAU*9+Math.sin(y/N*TAU*2)*2.2+Math.sin((x-y)/N*TAU*3)*.8);
+  const v=196+Math.pow(w*.5+.5,1.6)*46+R()*18;im.data[k]=im.data[k+1]=im.data[k+2]=Math.min(255,v);im.data[k+3]=255;}
+ g.putImageData(im,0,0);const t=new T3.CanvasTexture(c);t.wrapS=t.wrapT=T3.RepeatWrapping;t.anisotropy=4;return t;}
+let DETAIL,WNORM,LAVA,SCORCH,CLOUDT,RIPPLE;
+function initTerrain(){DETAIL=detailTex();RIPPLE=rippleTex();WNORM=waterNormal();LAVA=lavaTex();SCORCH=scorchTex();CLOUDT=cloudTex();
  TER.mat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.92,metalness:0,map:DETAIL});
  for(let i=0;i<NT;i++){const geo=gridGeo(),m=new T3.Mesh(geo,TER.mat);m.receiveShadow=true;m.frustumCulled=false;TER.g.add(m);TER.tiles.push({geo,m,n:-1,inst:{},hs:new Float32Array((NX+1)*(NZT+1))});}
  const wg=new T3.PlaneGeometry(700,900);wg.rotateX(-Math.PI/2);
@@ -291,7 +330,7 @@ function fillTile(t,n){t.n=n;const B=LV.B,HF=B.HF,z0=TZ0-n*TL,pos=t.geo.attribut
  for(let j=0;j<=NZT;j++)for(let i=0;i<=NX;i++){const k=j*(NX+1)+i,x=-TW/2+i*dx,z=z0-j*dz,h=HF(x,z);hs[k]=h;pos[k*3]=x;pos[k*3+1]=GY+h;pos[k*3+2]=z;}
  for(let j=0;j<=NZT;j++)for(let i=0;i<=NX;i++){const k=j*(NX+1)+i,x=-TW/2+i*dx,z=z0-j*dz,h=hs[k];
   const hx=hs[j*(NX+1)+Math.min(NX,i+1)]-hs[j*(NX+1)+Math.max(0,i-1)],hz=hs[Math.min(NZT,j+1)*(NX+1)+i]-hs[Math.max(0,j-1)*(NX+1)+i],sl=Math.hypot(hx/(2*dx),hz/(2*dz));
-  paint(o,x,z,h,sl,B.P);if(B.cf)B.cf(o,x,z,h,sl);cl[k*3]=o[0];cl[k*3+1]=o[1];cl[k*3+2]=o[2];}
+  paint(o,x,z,h,sl,B.P);if(B.cf)B.cf(o,x,z,h,sl,hx/(2*dx),-hz/(2*dz));cl[k*3]=o[0];cl[k*3+1]=o[1];cl[k*3+2]=o[2];}
  t.geo.attributes.position.needsUpdate=true;t.geo.attributes.color.needsUpdate=true;t.geo.computeVertexNormals();
  for(const k in t.inst)t.inst[k].count=0;
  const R=srng(LV.si*7919+n*104729+3);
@@ -312,6 +351,7 @@ function buildLevel(si){const st=STAGES[si],B=BIOME[st.biome];LV.si=si;LV.B=B;LV
  const sd=new T3.Vector3(...B.sunDir).normalize();skyMat.uniforms.sunDir.value.copy(sd);skyMat.uniforms.sunCol.value.set(B.sun[0]);
  sun.color.copy(col(B.sun[0]));sun.intensity=B.sun[1];LV.sunDir=sd;hemi.color.copy(col(B.hemi[0]));hemi.groundColor.copy(col(B.hemi[1]));hemi.intensity=B.hemi[2];
  renderer.toneMappingExposure=B.exp;scene.fog.color.copy(col(B.fog));
+ const tm=B.ripples?RIPPLE:DETAIL;if(TER.mat.map!==tm){TER.mat.map=tm;TER.mat.needsUpdate=true;}
  // environment reflections from this sky
  if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;
  TER.water.visible=!!B.water;TER.lava.visible=!!B.lava;if(B.water){TER.water.material.color.copy(col(B.water.c));TER.water.material.opacity=B.water.op;TER.water.position.y=GY+B.wl;}

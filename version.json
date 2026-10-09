@@ -1,8 +1,8 @@
 {
-  "build": 16,
-  "version": "4.5",
+  "build": 17,
+  "version": "4.6",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Rex's Phantom with purple afterburners"
+    "New desert with a live sandstorm"
   ]
 }
