@@ -1,8 +1,8 @@
 {
-  "build": 29,
-  "version": "5.8",
+  "build": 30,
+  "version": "5.9",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Animated fire and billowing smoke"
+    "Volumetric jungle trees"
   ]
 }

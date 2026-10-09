@@ -42,7 +42,7 @@ let PLM=null,DRM=[];
 function showPlayerModel(){for(const k in PLANES){const m=MODELS['pl_'+k];if(!m.parent)scene.add(m);m.visible=false;}PLM=MODELS['pl_'+save.plane];PLM.visible=true;
  for(const m of DRM)scene.remove(m);DRM=[];}
 // world animation shared by the legacy campaign and the new engine
-function syncEnv(dt,tnow){
+function syncEnv(dt,tnow){WIND.value=tnow;
  for(const l of FXL){if(l.intensity>0)l.intensity=Math.max(0,l.intensity-dt*l.userData.d*3);}
  // clouds drift with the world
  for(const c of LV.clouds){if(!c.visible)continue;c.position.z+=C3.v*dt*.95;if(c.position.z>C3.z+30)spawnCloud(c,false);}
