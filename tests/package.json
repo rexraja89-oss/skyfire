@@ -1,0 +1,2 @@
+{"name":"skyfire-tests","private":true,"description":"Headless regression tests for Skyfire (not shipped)","scripts":{"test":"node regress.js"},
+ "devDependencies":{"playwright":"1.56.1","three":"0.128.0"}}

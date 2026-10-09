@@ -6,7 +6,7 @@
 // happen. Adds a jet-engine loop, a per-stage ambience bed, a reverb send and a louder mastered mix (limiter).
 // Anything not in the bank still uses the synth voices in audio.js. All sound is generated here, nothing recorded.
 (()=>{
-const Bk=SF.sfxBank={buf:{},ready:false};let RV=null,ENG=null,AMB=null;
+const Bk=SF.sfxBank={buf:{},ready:false};let RV=null,ENG=null,AMB=null,LB=null;   // LB: loop bus (engine + ambience) inside the sfx bus
 const SR=()=>Math.min(44100,AC.sampleRate);
 // ---------- offline renderers ----------
 function ir(ctx,sec,decay){const n=Math.floor(ctx.sampleRate*sec),b=ctx.createBuffer(2,n,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,decay);}return b;}
@@ -56,19 +56,23 @@ Bk.play=(k,vol=1,x)=>{const b=Bk.buf[k];if(!b||!AC)return false;const s=AC.creat
  if(x!==undefined&&AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.value=clamp((x/W)*2-1,-1,1)*.65;node=node.connect(p);}
  node.connect(SB);if(RV&&b.numberOfChannels===1){const sd=AC.createGain();sd.gain.value=.12;node.connect(sd).connect(RV);}s.start();return true;};
 // ---------- mix: reverb send + mastering limiter ----------
-Bk.mix=()=>{if(!AC||RV)return;try{RV=AC.createConvolver();RV.buffer=ir(AC,1.4,3);const w=AC.createGain();w.gain.value=.5;RV.connect(w).connect(OUT);
+// Sound-effects setting and pause: SFX off silences the whole effects bus (one-shots and loops); pause silences the
+// loops only. Loops keep running silently, so turning SFX back on mid-flight brings them straight back.
+Bk.applyMute=()=>{if(!AC||!SB)return;const t=AC.currentTime;SB.gain.cancelScheduledValues(t);SB.gain.setTargetAtTime(save.sfx?1:0,t,.03);
+ if(LB){const on=save.sfx&&state==='run';LB.gain.cancelScheduledValues(t);LB.gain.setTargetAtTime(on?1:0,t,.05);}};
+Bk.mix=()=>{if(!AC||RV)return;if(!LB){LB=AC.createGain();LB.connect(SB);}Bk.applyMute();try{RV=AC.createConvolver();RV.buffer=ir(AC,1.4,3);const w=AC.createGain();w.gain.value=.5;RV.connect(w).connect(OUT);
  OUT.threshold.value=-16;OUT.knee.value=8;OUT.ratio.value=5;OUT.attack.value=.003;OUT.release.value=.18;
  const mk=AC.createGain();mk.gain.value=1.35;OUT.disconnect();OUT.connect(mk).connect(AC.destination);}catch(e){}};
 // ---------- loops: jet engine and ambience ----------
 function loopNoise(sec){const n=Math.floor(AC.sampleRate*sec),b=AC.createBuffer(2,n,AC.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);let br=0;for(let i=0;i<n;i++){const w=Math.random()*2-1;br=(br+.02*w)/1.02;d[i]=br*3;}
   const f=Math.floor(AC.sampleRate*.05);for(let i=0;i<f;i++){const a=i/f;d[i]=d[i]*a+d[n-f+i]*(1-a);}}return b;}   // crossfaded so the loop is seamless
-Bk.engineStart=()=>{if(!AC||!save.sfx||ENG)return;try{const s=AC.createBufferSource();s.buffer=loopNoise(2);s.loop=true;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=420;f.Q.value=1.5;
+Bk.engineStart=()=>{if(!AC||ENG)return;if(!LB){LB=AC.createGain();LB.connect(SB);}try{const s=AC.createBufferSource();s.buffer=loopNoise(2);s.loop=true;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=420;f.Q.value=1.5;
  const g=AC.createGain();g.gain.value=0;const o=AC.createOscillator();o.type='sawtooth';o.frequency.value=58;const og=AC.createGain();og.gain.value=.015;const of=AC.createBiquadFilter();of.type='lowpass';of.frequency.value=300;
- s.connect(f).connect(g);o.connect(of).connect(og).connect(g);g.connect(SB);s.start();o.start();ENG={s,o,f,g};g.gain.linearRampToValueAtTime(.16,AC.currentTime+1);}catch(e){}};
+ s.connect(f).connect(g);o.connect(of).connect(og).connect(g);g.connect(LB);s.start();o.start();ENG={s,o,f,g};g.gain.linearRampToValueAtTime(.16,AC.currentTime+1);}catch(e){}};
 Bk.engineSet=(climb,od)=>{if(!ENG)return;const t=AC.currentTime;ENG.f.frequency.setTargetAtTime(420+climb*900+od*400,t,.15);ENG.o.frequency.setTargetAtTime(58+climb*30+od*20,t,.2);ENG.g.gain.setTargetAtTime(.14+climb*.08,t,.2);};
 Bk.engineStop=()=>{if(!ENG)return;const e=ENG;ENG=null;try{e.g.gain.setTargetAtTime(0,AC.currentTime,.2);setTimeout(()=>{try{e.s.stop();e.o.stop();}catch(_){}},900);}catch(_){}};
 const AMBS={rain:{f:2600,type:'highpass',v:.07},snow:{f:700,type:'lowpass',v:.06},sand:{f:900,type:'bandpass',v:.08},embers:{f:180,type:'lowpass',v:.12},mist:{f:500,type:'lowpass',v:.04},'':{f:400,type:'lowpass',v:.035}};
-Bk.ambStart=w=>{if(!AC||!save.sfx||AMB)return;try{const A=AMBS[w]||AMBS[''],s=AC.createBufferSource();s.buffer=loopNoise(3);s.loop=true;const f=AC.createBiquadFilter();f.type=A.type;f.frequency.value=A.f;const g=AC.createGain();g.gain.value=0;
- s.connect(f).connect(g).connect(SB);s.start();g.gain.linearRampToValueAtTime(A.v,AC.currentTime+2);AMB={s,g};}catch(e){}};
+Bk.ambStart=w=>{if(!AC||AMB)return;if(!LB){LB=AC.createGain();LB.connect(SB);}try{const A=AMBS[w]||AMBS[''],s=AC.createBufferSource();s.buffer=loopNoise(3);s.loop=true;const f=AC.createBiquadFilter();f.type=A.type;f.frequency.value=A.f;const g=AC.createGain();g.gain.value=0;
+ s.connect(f).connect(g).connect(LB);s.start();g.gain.linearRampToValueAtTime(A.v,AC.currentTime+2);AMB={s,g};Bk.applyMute();}catch(e){}};
 Bk.ambStop=()=>{if(!AMB)return;const a=AMB;AMB=null;try{a.g.gain.setTargetAtTime(0,AC.currentTime,.3);setTimeout(()=>{try{a.s.stop();}catch(_){}},1500);}catch(_){}};
 })();

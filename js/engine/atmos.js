@@ -1,7 +1,8 @@
 'use strict';
 // ============ ATMOSPHERE LAYERS ============
 // Per-biome mood on the 2D overlay (data: SF.ATMOS in config/atmos.js): drifting cloud shadows under the action,
-// clouds and mist passing over it, sun shafts, searchlights, aurora, water glints and a colour grade.
+// clouds and mist passing over it, sun shafts, searchlights, aurora and water glints. The colour grade of the 3D
+// frame itself is a render pass in engine/grade.js.
 // Cheap by design: a handful of cached sprites per frame. Smooth mode keeps shadows and over-clouds, drops the rest.
 (()=>{
 const At=SF.atmos={};
@@ -37,7 +38,4 @@ At.drawOver=()=>{if(!A||!S)return;const hq=save.hq;
  if(hq&&A.aurora){cx.save();cx.globalCompositeOperation='lighter';for(let k=0;k<3;k++){const c=['#40ffb0','#60ffd0','#b070ff'][k];cx.globalAlpha=A.aurora.a*(.6+.4*Math.sin(S.t*.5+k));
    const g=cx.createLinearGradient(0,0,0,OH*.32);g.addColorStop(0,c+'00');g.addColorStop(.5,c+'88');g.addColorStop(1,c+'00');cx.fillStyle=g;cx.beginPath();cx.moveTo(0,OH*.05);
    for(let x=0;x<=OW;x+=20)cx.lineTo(x,OH*(.06+.05*k)+Math.sin(x*.018+S.t*.6+k*2)*22+Math.sin(x*.05-S.t*.9)*8);for(let x=OW;x>=0;x-=20)cx.lineTo(x,OH*(.16+.05*k)+Math.sin(x*.015+S.t*.5+k)*26);cx.closePath();cx.fill();}cx.restore();}};
-// colour grade (after the vignette)
-At.drawGrade=()=>{if(!A||!A.grade||!save.hq)return;const[t,b,s]=A.grade,g=cx.createLinearGradient(0,0,0,OH);g.addColorStop(0,t);g.addColorStop(1,b);
- cx.save();cx.globalCompositeOperation='soft-light';cx.globalAlpha=s*2.2;cx.fillStyle=g;cx.fillRect(0,0,OW,OH);cx.restore();};
 })();

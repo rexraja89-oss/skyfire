@@ -1,7 +1,8 @@
 'use strict';
 // ============ ATMOSPHERE (per biome) ============
 // Drawn on the 2D overlay by js/engine/atmos.js. All optional; leave a layer out to switch it off.
-//  grade:  [top colour, bottom colour, strength]  soft-light colour grade over the whole frame (the stage's mood)
+//  grade:  [highlight colour, shadow colour, strength, contrast?, saturation?]  split-tone grade of the rendered 3D frame
+//          (engine/grade.js, HQ only): highlights lean to the first colour, shadows to the second
 //  shadows:{n, a, size}       drifting cloud shadows on the ground (n blobs, darkness a, radius in logic px)
 //  over:   {n, a, c, size, flat, speed}  clouds/mist passing OVER the action (screen space, faster than the ground)
 //  rays:   {n, c, a}          slow sun shafts from the upper left

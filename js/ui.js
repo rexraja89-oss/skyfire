@@ -51,7 +51,7 @@ function renderSettings(){document.querySelectorAll('.tog[data-k]').forEach(b=>{
  $('sensBtn').textContent='×'+(save.sens||1).toFixed(1);$('wGod').textContent='Invincible: '+(save.god?'on':'off');$('wGod').classList.toggle('on',save.god);$('verTxt').textContent='v'+VERSION+' (build '+BUILD+')';$('notes').innerHTML=NOTES.map(n=>'• '+n).join('<br>');if(SF.dev)SF.dev.renderLab();}
 document.querySelectorAll('.tog[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;save[k]=!save[k];store();sfx('ui');renderSettings();
  if(k==='music'){if(save.music){audioOn();musicStart(SF.R?STAGES[SF.R.si].key:45,state==='run'?'combat':'calm');}else musicStop();}
- if(k==='hq'){applyQuality();resize();}if(k==='voice'&&!save.voice)try{speechSynthesis.cancel();}catch(e){}});
+ if(k==='hq'){applyQuality();resize();}if(k==='sfx'&&SF.sfxBank)SF.sfxBank.applyMute();if(k==='voice'&&!save.voice)try{speechSynthesis.cancel();}catch(e){}});
 function goTitle(){if(SF.R)SF.run.stop();state='title';clearRun();showPlayerModel();$('bankT').textContent=fmt(SF.wallet.balance('gears'));$('coreT').textContent=fmt(SF.wallet.balance('cores'));show('title');resetCopilot();musicSet('calm',45);WX.length=0;}
 function go(name){sfx('ui');if(name==='title')return goTitle();state=name;if(name==='select')renderSelect();if(name==='hangar')renderHangar();if(name==='settings')renderSettings();if(name==='records')renderRecords();show(name);}
 document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
@@ -75,9 +75,9 @@ $('saveIn').onclick=()=>{let t=null;try{t=window.prompt('Paste your save code:')
  catch(e){flashBtn('saveIn','Invalid code','Restore');}};
 let resetArm=0;$('wReset').onclick=()=>{if(!resetArm){resetArm=1;$('wReset').textContent='Tap again to wipe everything';setTimeout(()=>{resetArm=0;$('wReset').textContent='Reset all progress';},3000);return;}
  save=fresh();store();resetArm=0;$('wReset').textContent='Reset all progress';renderSettings();};
-function pause(){if(state!=='run')return;pausedFrom=state;state='pause';renderPauseObj();$('quit').textContent=SF.R&&SF.R.kind==='range'?'Leave Test Range':'Leave mission (keep gears)';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}
+function pause(){if(state!=='run')return;pausedFrom=state;state='pause';if(SF.sfxBank)SF.sfxBank.applyMute();renderPauseObj();$('quit').textContent=SF.R&&SF.R.kind==='range'?'Leave Test Range':'Leave mission (keep gears)';renderSettings();show('pause');try{speechSynthesis.cancel();}catch(e){}}
 $('pauseBtn').onclick=pause;
-$('resume').onclick=()=>{state=pausedFrom||'run';pausedFrom='';show('play');last=performance.now();};
+$('resume').onclick=()=>{state=pausedFrom||'run';pausedFrom='';show('play');last=performance.now();if(SF.sfxBank)SF.sfxBank.applyMute();};
 $('quit').onclick=()=>{pausedFrom='';if(SF.R&&SF.R.kind==='range'){goTitle();return;}state='run';SF.run.finish(false,true);};
 $('bombBtn').addEventListener('pointerdown',e=>{e.stopPropagation();if(state==='run')SF.run.special();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();if(AC)AC.suspend();}else if(AC)AC.resume();});
