@@ -22,8 +22,9 @@ Object.assign(BIOME.canyon,{pbr:{tex:['sand','sand','rock','moss','gravel'],tint
   if(d<4)soil*=.3;const t=soil+rock+scrub+grav;o[0]=soil;o[1]=rock;o[2]=scrub;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  wet(x,z){const rv=2+6*Math.sin(z*.009);return 1-sst(2.5,5,Math.abs(x-rv));},occ:{boulder:[1,.55],boulder2:[1,.55],canopy:[.42,.45]}});
 // Frozen Outpost: wind-packed snow, blue sea ice on the shelf, cold grey rock on steep ground, drift snow in hollows
-Object.assign(BIOME.arctic,{pbr:{tex:['snow','snow','rock','snow','gravel'],tint:[W1,[.78,.9,1.1],[.72,.8,.92],[.9,.95,1.04],[.8,.84,.9]],ns:.55},
- splat(o,x,z,h,sl,under){const ic=14+3*Math.sin(z*.013);let ice=x>ic-2?1-sst(.3,.8,h):0,rock=sst(.32,.55,sl),drift=sst(1.2,3,under)*.5,grav=0;
+Object.assign(BIOME.arctic,{pbr:{tex:['snow','snow','rock','snow','gravel'],tint:[[.66,.68,.71],[.46,.55,.7],[.62,.68,.78],[.78,.8,.83],[.66,.69,.74]],ns:.8},
+ splat(o,x,z,h,sl,under){const ic=14+3*Math.sin(z*.013),wnd=fbm(x*.035+z*.008,z*.16,3),wn2=fbm(x*.11,z*.5,2);   // streaks stretched across the wind (x)
+  let ice=x>ic-2?1-sst(.3,.8,h):sst(.08,.32,wnd)*.62+sst(.2,.45,wn2)*.22,rock=sst(.32,.55,sl),drift=Math.max(sst(1.2,3,under)*.6,sst(-.05,-.3,wnd)*.55),grav=0;   // blue wind-scoured crust in streaks, fresh bright drift in the lee
   if(Math.abs(x+3)<7&&Math.abs(((z%180)+180)%180-90)<14)grav=.5;   // trodden ground round the base camp
   const t=ice+rock+drift+grav;o[0]=ice;o[1]=rock;o[2]=drift;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  occ:{rock:[1,.5]}});

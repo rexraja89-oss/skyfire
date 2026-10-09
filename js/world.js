@@ -405,13 +405,27 @@ function boulderGeo(seed){const g=new T3.IcosahedronGeometry(1,3),p=g.attributes
 // HD ground sets (tools/sand_tex.py, tools/forest_tex.py): colour + normal map, tileable. Biomes pick one with ground:'sand'|'grass'.
 const GTX={};
 function loadGround(){const L=new T3.TextureLoader(),mk=(f,srgb,r)=>{const t=L.load('art/'+f+'?v='+BUILD);t.wrapS=t.wrapT=T3.RepeatWrapping;t.repeat.set(r,r);t.anisotropy=8;if(srgb)t.encoding=T3.sRGBEncoding;return t;};
- GTX.sand={map:mk('tex_sand.jpg',1,.22),n:mk('tex_sand_n.jpg',0,.22),ns:.7,rough:.97};
+ GTX.sand={map:mk('tex_sand.jpg',1,.22),n:mk('tex_sand_n.jpg',0,.22),ns:.45,rough:.97};
  GTX.grass={map:mk('tex_grass.jpg',1,.4),n:mk('tex_grass_n.jpg',0,.4),ns:.8,rough:.95};
  GTX.rock={map:mk('tex_rock.jpg',1,1),n:mk('tex_rock_n.jpg',0,1)};
  GTX.concrete={map:mk('tex_concrete.jpg',1,.16),n:mk('tex_concrete_n.jpg',0,.16),ns:.6,rough:.9};   // Steel Docks apron (tools/port_tex.py)
  GTX.L=L;}
 function initTerrain(){DETAIL=detailTex();RIPPLE=rippleTex();if(!GTX.L)loadGround();WNORM=waterNormal();LAVA=lavaTex();SCORCH=scorchTex();CLOUDT=cloudTex();
  TER.mat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.92,metalness:0,map:DETAIL});
+ // anti-tiling for the HD sand/grass sets (uVar=1): a second sample, rotated and rescaled, blended in through a large
+ // noise mask, and the normal-map ripples fade in and out in broad patches, so the texture never reads as a grid
+ {const U=TER.mat.userData.U={uVar:{value:0}};const R2='mat2(.8,-.6,.6,.8)',N='float tvn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);float a=fract(sin(dot(i,vec2(127.1,311.7)))*43758.5),b=fract(sin(dot(i+vec2(1,0),vec2(127.1,311.7)))*43758.5),c=fract(sin(dot(i+vec2(0,1),vec2(127.1,311.7)))*43758.5),d=fract(sin(dot(i+vec2(1,1),vec2(127.1,311.7)))*43758.5);return mix(mix(a,b,f.x),mix(c,d,f.x),f.y);}\n';
+  TER.mat.onBeforeCompile=sh=>{sh.uniforms.uVar=U.uVar;sh.fragmentShader='uniform float uVar;\n'+N+sh.fragmentShader
+   .replace('#include <map_fragment>',`#ifdef USE_MAP
+    vec4 texelColor=texture2D(map,vUv);float tvm=0.;
+    if(uVar>.5){vec2 tq=mod(vUv,64.);tvm=smoothstep(.3,.7,tvn(tq*.45)*.7+tvn(tq*1.3)*.3);texelColor=mix(texelColor,texture2D(map,${R2}*vUv*.63+vec2(.37,.11)),tvm);}
+    texelColor=mapTexelToLinear(texelColor);diffuseColor*=texelColor;
+   #endif`)
+   .replace('#include <normal_fragment_maps>',T3.ShaderChunk.normal_fragment_maps.replace('vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;',
+    `vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+    if(uVar>.5){vec3 m2=texture2D(normalMap,${R2}*vUv*.63+vec2(.37,.11)).xyz*2.-1.;m2.xy=vec2(.8*m2.x+.6*m2.y,-.6*m2.x+.8*m2.y);vec2 tq=mod(vUv,64.);
+     mapN=normalize(mix(mapN,m2,tvm));mapN.xy*=.25+.95*smoothstep(.25,.75,tvn(tq*.22+3.1));}`));};
+  TER.mat.customProgramCacheKey=()=>'terrain-av';}
  for(let i=0;i<NT;i++){const geo=gridGeo(),m=new T3.Mesh(geo,TER.mat);m.receiveShadow=true;m.frustumCulled=false;TER.g.add(m);TER.tiles.push({geo,m,n:-1,inst:{},hs:new Float32Array((NX+1)*(NZT+1))});}
  const wg=new T3.PlaneGeometry(700,900);wg.rotateX(-Math.PI/2);
  TER.water=new T3.Mesh(wg,new T3.MeshStandardMaterial({color:0x1d6e95,roughness:.1,metalness:.15,normalMap:WNORM,normalScale:new T3.Vector2(.55,.55),transparent:true,opacity:.9}));TER.water.receiveShadow=true;scene.add(TER.water);
@@ -447,7 +461,7 @@ function buildLevel(si,bk){const st=STAGES[si],bkey=bk||st.biome,B=BIOME[bkey];L
  renderer.toneMappingExposure=B.exp;scene.fog.color.copy(col(B.fog));
  const GS=B.ground&&GTX[B.ground],tm=GS?GS.map:DETAIL,tn=GS?GS.n:null;
  for(const t of TER.tiles)t.m.material=B.pbr&&SF.terrain?SF.terrain.mat(B):TER.mat;
- if(TER.mat.map!==tm||TER.mat.normalMap!==tn){TER.mat.map=tm;TER.mat.normalMap=tn;if(GS)TER.mat.normalScale.set(GS.ns,GS.ns);TER.mat.roughness=GS?GS.rough:.92;TER.mat.needsUpdate=true;}
+ TER.mat.userData.U.uVar.value=GS&&(B.ground==='sand'||B.ground==='grass')?1:0;if(TER.mat.map!==tm||TER.mat.normalMap!==tn){TER.mat.map=tm;TER.mat.normalMap=tn;if(GS)TER.mat.normalScale.set(GS.ns,GS.ns);TER.mat.roughness=GS?GS.rough:.92;TER.mat.needsUpdate=true;}
  // environment reflections from this sky
  if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;
  TER.water.visible=!!B.water;TER.lava.visible=!!B.lava;if(B.water){TER.water.material.color.copy(col(B.water.c));TER.water.material.opacity=B.water.op;TER.water.position.y=GY+B.wl;}

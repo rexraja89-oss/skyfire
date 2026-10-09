@@ -1,8 +1,8 @@
 {
-  "build": 37,
-  "version": "5.16",
+  "build": 38,
+  "version": "5.17",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Fix: flickering stripes in High graphics"
+    "Less repetitive desert sand and more detailed snow"
   ]
 }
