@@ -12,8 +12,9 @@ Object.assign(BIOME.harbor,{pbr:{tex:['grass','soil','rock','moss','sand'],tint:
   rock=Math.min(1,rock);if(h<-.2){sand=1;rock*=.3;}const t=soil+rock+moss+sand;o[0]=soil;o[1]=rock;o[2]=moss;o[3]=sand;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  wet(x,z,h){return 1-sst(.3,1.3,h);},occ:{canopy:[.42,.5],boulder:[1,.55],boulder2:[1,.55]}});
 // Coral Isles: bright tropical grass, white beach sand ringing every island and under the shallows, dark volcanic rock, jungle moss
-Object.assign(BIOME.islands,{pbr:{tex:['grass','sand','rock','moss','gravel'],tint:[[.96,1.1,.84],[1.12,1.08,1],[.78,.72,.64],[.95,1.08,.9],[1.1,1.06,.98]]},
+Object.assign(BIOME.islands,{pbr:{tex:['grass','sand','rock','moss','gravel'],tint:[[.96,1.1,.84],[1.12,1.08,1],[.78,.72,.64],[.95,1.08,.9],[1.1,1.06,.98]],deep:[.16,.36,.5]},
  splat(o,x,z,h,sl,under){let sand=1-sst(.9,2,h),rock=sst(.6,.95,sl)*.45,moss=sst(2,5,h)*.85*(1-rock),grav=h<.5&&h>-1.5?.25:0;if(h<0)sand=1;
+  if(h<-.4){const rf=fbm(x*.09+11,z*.09,3);moss=sst(.05,.3,rf)*.9*sst(-.4,-1.5,h);rock=Math.max(rock,sst(.3,.5,rf)*.5);}   // coral reef: dark living patches and rubble on the sandy shelf
   const t=sand+rock+moss+grav;o[0]=sand;o[1]=rock;o[2]=moss;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  wet(x,z,h){return 1-sst(.2,1,h);},occ:{palmS:[.28,.35],boulder:[1,.55],boulder2:[1,.55]}});
 // Red Canyon: red sand floors, iron-red soil on the mesas, banded sandstone walls, dry scrub, red gravel at the cliff feet

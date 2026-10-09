@@ -1,8 +1,8 @@
 {
-  "build": 40,
-  "version": "5.19",
+  "build": 41,
+  "version": "5.20",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Smoother canyon river, harbour village"
+    "Coral reefs and basalt columns"
   ]
 }

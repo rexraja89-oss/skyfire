@@ -226,7 +226,7 @@ const BIOME={
    for(let i=0;i<20;i++){const x=-40-R()*40,z=z0-R()*TL,h=HF(x,z);if(h>2)put('pine',x,z,1,R()*6,'#3a5a3a');}
    for(let z=z0-3;z>z0-TL;z-=7+R()*5)put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),-29+R()*2,z,4.6+R()*1.2,Math.floor(R()*4)*Math.PI/2,null);
    for(let i=0;i<4;i++){const z=z0-R()*TL,q=10+.8*Math.sin(z*.02);put(pick(['kk_car_sedan','kk_car_taxi','kk_car_hatchback']),q-3.5,z,1.5,R()<.5?0:Math.PI,null);}}},
- islands:{sky:['#2f8ee0','#d8f0ff','#6fc0d0'],fog:'#cdeefa',fogN:1,sun:['#fff6e0',2.8],sunDir:[-.3,.85,-.3],hemi:['#d0ecff','#3a8a90',.65],exp:1,water:{c:'#11849e',op:.78},wl:0,clouds:6,uses:['palmS','fern','boulder','boulder2'],
+ islands:{sky:['#2f8ee0','#d8f0ff','#6fc0d0'],fog:'#cdeefa',fogN:1,sun:['#fff6e0',2.8],sunDir:[-.3,.85,-.3],hemi:['#d0ecff','#3a8a90',.65],exp:1,water:{c:'#0f6f8c',op:.6},wl:0,clouds:6,uses:['palmS','fern','boulder','boulder2'],
   HF(x,z){const n=fbm(x*.022+3,z*.022,4);let h=(n-.16)*22+sst(35,95,Math.abs(x))*16*(.4+n);return Math.max(-7,Math.min(h,26));},
   P:{low:'#e8d9a6',mid:'#4f9a4a',m0:.8,m1:2,high:'#2e6a30',h0:4,h1:9,rock:'#7a7060',sand:1,wl:.2,sandc:'#f0e2b0',deep:'#d8cfa0'},
   props(R,z0,put,HF){for(let i=0;i<200;i++){const x=R()*180-90,z=z0-R()*TL,h=HF(x,z);if(h>.5&&h<9)put('palmS',x,z,5.5+R()*3,R()*TAU,pick(['#a0b880','#90ac74','#acc28a']));}
@@ -254,11 +254,11 @@ const BIOME={
     for(let ix=0;ix<2;ix++)for(let iz=0;iz<2;iz++){const w=5+R()*.8,d=6+R()*.8,x=x0+ix*6.2+w/2,z=z1-iz*7-d/2;if(z>z0||z<z0-TL)continue;const hh=(2+R()*R()*16)*(Math.abs(x)<26?1:1.3);if(hh<7&&Math.abs(x)<42&&R()<(save.hq?.45:.2)){put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),x,z,Math.min(w,d),Math.floor(R()*4)*Math.PI/2,null);continue;}put('build',x,z,1,0,pick(['#8a93a8','#a8a29a','#7d8696','#b8b4ac','#6e7a8e']),1,0,[w,hh,d]);put('roofkit',x,z,1,Math.floor(R()*4)*Math.PI/2,null,1,hh,[w,Math.min(w,d),d]);if(hh>11)put('beacon',x-w*.35,z+d*.33,1,0,null,1,hh+Math.min(w,d)*.6);}}
    for(let i=0;i<10;i++){const car=pick(['kk_car_sedan','kk_car_taxi','kk_car_hatchback']),d=R()<.5?1:-1;if(R()<.5){const x=-30+16*Math.floor(R()*6)+1.6+d*.8;put(car,x,z0-R()*TL,1.4,d>0?0:Math.PI,null);}else{const z=Math.ceil((z0+9000)/18)*18-9000-18*Math.floor(R()*6)+1.6+d*.8;if(z<=z0&&z>z0-TL)put(car,R()*90-45,z,1.4,d*Math.PI/2,null);}}
    for(let z=Math.ceil((z0+9000)/9)*9-9000;z>z0-TL;z-=9)for(const x of[-28,-12,4,20,36]){put('lamp',x+1.4,z,1,0,null,1,1.2);}}},
- volcano:{sky:['#2a0a08','#a0401a','#3a1a10'],fog:'#4a1c10',fogN:.75,sun:['#ff9a5a',1.8],sunDir:[-.4,.5,-.75],hemi:['#a05040','#200808',.6],exp:1.15,lava:1,wl:-.6,clouds:4,
+ volcano:{sky:['#2a0a08','#a0401a','#3a1a10'],fog:'#4a1c10',fogN:.75,sun:['#ff9a5a',1.8],sunDir:[-.4,.5,-.75],hemi:['#a05040','#200808',.6],exp:1.15,lava:1,wl:-.6,clouds:4,uses:['boulder','boulder2','basalt'],
   HF(x,z){const lr=-5+9*Math.sin(z*.01)+3*Math.sin(z*.033);let h=1+fbm(x*.04,z*.04,4)*2+mtn(x,z,40,30,85);h-=2.8*Math.exp(-(((x-lr)/2.8)**2));return h;},
   P:{low:'#2a2422',mid:'#352c29',m0:1,m1:4,high:'#4a3e3a',h0:8,h1:16,rock:'#1f1a19'},
   cf(o,x,z,h,sl){const lr=-5+9*Math.sin(z*.01)+3*Math.sin(z*.033),d=Math.abs(x-lr);if(d<5)mixc(o,o,lc('#c2400c'),(1-d/5)*.8*(1-sst(1,3,h)));},
-  props(R,z0,put,HF){for(let i=0;i<120;i++){const x=R()*150-75,z=z0-R()*TL,h=HF(x,z);if(h<.3)continue;put(R()<.6?'rock':'spike',x,z,.7+R()*1.4,R()*6,R()<.5?'#2a2226':'#3a2e30');}
+  props(R,z0,put,HF){for(let i=0;i<120;i++){const x=R()*150-75,z=z0-R()*TL,h=HF(x,z);if(h<.3)continue;if(R()<.7)put(R()<.5?'boulder':'boulder2',x,z,.8+R()*1.8,R()*TAU,pick(['#4a4246','#3e3638','#55494a']),.6+R()*.5,-.25);else put('basalt',x,z,.8+R()*.9,R()*TAU,pick(['#d0c8c8','#bcb4b4']),.7+R()*.8);}   // lava boulders and basalt column clusters
    if(R()<.8){const z=z0-R()*TL,x=(R()<.5?-1:1)*(14+R()*8);put('ruin',x,z,1,R(),'#3a302c',1,0,[6,3,1]);put('ruin',x+3,z-3,1,R(),'#3a302c',1,0,[1,4,6]);}}},
 };
 // biome-specific weather textures etc
@@ -370,6 +370,9 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  // sea-ice floe: flat slab with an irregular rounded outline, a pale rim and a sunken blue-green underside
  {const R=srng(31),pts=[];for(let i=0;i<18;i++){const a=i/18*TAU,r=1+.22*Math.sin(a*3+1)+.12*Math.sin(a*5+R()*6)+(R()-.5)*.12;pts.push([Math.cos(a)*r,Math.sin(a)*r]);}
   PROPS.floe={geo:merge([[shapeGeo(pts,.22,.05),'#ffffff',MT(0,-.12,0)],[shapeGeo(pts.map(([x,y])=>[x*1.12,y*1.12]),.05),'#7fb0bc',MT(0,-.2,0)]]),mat:plain,cap:120};}
+ // basalt columns: a tight cluster of hexagonal prisms of different heights (cooled lava), lighter weathered tops
+ {const R=srng(53),c=[];for(let i=0;i<9;i++){const a=R()*TAU,d=Math.sqrt(R())*.9,hh=.6+R()*2.2,r=.22+R()*.08;c.push([new T3.CylinderGeometry(r,r*1.04,hh,6),'#2e2a2a',MT(Math.cos(a)*d,hh/2,Math.sin(a)*d,0,R(),0)],[new T3.CylinderGeometry(r*.98,r*.98,.04,6),'#5a5250',MT(Math.cos(a)*d,hh+.01,Math.sin(a)*d,0,R(),0)]);}
+  PROPS.basalt={geo:merge(c),mat:plain,cap:80};}
  PROPS.beacon={geo:new T3.SphereGeometry(.12,6,4),mat:new T3.MeshBasicMaterial({color:col('#ff3030')}),cap:200,noShadow:1};
  // CC0 KayKit City Builder Bits models (js/assets/kaykit.js): low-rise buildings, cars, street lights, water tower
  if(typeof SF!=='undefined'&&SF.KK){kkMat=new T3.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.7,metalness:.05});
