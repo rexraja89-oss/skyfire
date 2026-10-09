@@ -213,12 +213,13 @@ const BIOME={
     for(let i=0;i<6;i++){const d=(i-2.5)*2.1;put('stone',wx+Math.cos(ry+1.57)*d-Math.sin(ry)*5,wz+Math.sin(ry+1.57)*d+Math.cos(ry)*5,1,ry+1.57,'#dcd8cc',1,-.3,[2,.6+R()*1.2,1.1]);}}}},
  port:{sky:['#6b7f96','#c3ccd4','#5a6068'],fog:'#aab4bd',fogN:.7,sun:['#e9eef5',1.7],sunDir:[-.35,.8,-.45],hemi:['#c8d2dc','#3a3f45',.75],exp:1.05,water:{c:'#2a4a5a',op:.93},wl:0,clouds:8,
   HF(x,z){const q=10+.8*Math.sin(z*.02);let h=x<q?.8:-5;if(x<-30)h+=mtn(x,z,24);if(x>55)h=Math.max(h,mtn(x,z,18,55,95)-4);return h;},
-  P:{low:'#7d8287',mid:'#7d8287',m0:3,m1:6,high:'#6a6e66',h0:6,h1:12,rock:'#6c6a66',sand:1,wl:.4,sandc:'#7d8287',deep:'#203038'},
+  ground:'concrete',P:{low:'#b8bcbf',mid:'#b8bcbf',m0:3,m1:6,high:'#8a8e86',h0:6,h1:12,rock:'#8c8a86',sand:1,wl:.4,sandc:'#a8acaf',deep:'#203038'},
   uses:['kk_building_A','kk_building_C','kk_building_E','kk_building_G','kk_car_sedan','kk_car_taxi','kk_car_hatchback'],
-  cf(o,x,z,h,sl){if(h<1.2&&h>.5){const q=10+.8*Math.sin(z*.02);if(Math.abs(x-q)<1.6)mixc(o,o,lc('#c8b040'),.8);}},
-  props(R,z0,put,HF){const cs=['#c0392b','#2e86c1','#27ae60','#f39c12','#8e44ad','#d35400','#16a085','#7f8c8d','#e6e6e6'];
-   for(let z=z0-1.5;z>z0-TL;z-=3.4){if(R()<.12){put('ware',-12,z-3,1,0,'#9aa3aa',1,0,[22,3.5,6]);z-=6;continue;}for(let x=-23;x<6;x+=2.8){if(R()<.15)continue;const n=1+Math.floor(R()*3);for(let k=0;k<n;k++)put('cont',x,z,1,Math.PI/2,pick(cs),1,k*1.05);}}
-   for(let z=z0-6;z>z0-TL;z-=14+R()*6){const q=10+.8*Math.sin(z*.02);put('crane',q-2,z,1,0,null);}
+  cf(o,x,z,h,sl){if(h<1.2&&h>.5){const q=10+.8*Math.sin(z*.02);if(Math.abs(x-q)<.9)mixc(o,o,lc('#e8c040'),.85);else if(Math.abs(x-q)<1.8)mixc(o,o,lc('#6a6c6e'),.6);}},   // yellow quay edge, dark fender strip
+  props(R,z0,put,HF){const cs=['#8c3226','#2a4f6e','#3d6b4a','#b5762a','#5a4a6a','#9a4e2a','#2f6a6a','#6e7378','#c9c6bd','#7a2a2a','#1f3a52','#a89a6a'];   // weathered liner colours
+   for(let z=z0-1.5;z>z0-TL;z-=3.4){if(R()<.12){put('ware',-12,z-3,1,0,'#a7aeb3',1,0,[22,3.5,6]);z-=6;continue;}const bh=1+Math.floor(R()*4);   // one stack height per block, a few gaps
+    for(let x=-23;x<6;x+=2.8){if(R()<.1||Math.abs(x+9)<.5&&R()<.7)continue;const n=Math.max(1,bh-(R()<.3?1:0));for(let k=0;k<n;k++){const c=col(pick(cs)).multiplyScalar(.85+R()*.3);put('cont',x,z,1,Math.PI/2+(R()<.5?Math.PI:0),'#'+c.getHexString(),1,k*1.05);}}}
+   for(let z=z0-6;z>z0-TL;z-=14+R()*6){const q=10+.8*Math.sin(z*.02);put('crane',q-2,z,1,0,R()<.5?'#b03a2e':'#2f5d8a');}
    for(let i=0;i<20;i++){const x=-40-R()*40,z=z0-R()*TL,h=HF(x,z);if(h>2)put('pine',x,z,1,R()*6,'#3a5a3a');}
    for(let z=z0-3;z>z0-TL;z-=7+R()*5)put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),-29+R()*2,z,4.6+R()*1.2,Math.floor(R()*4)*Math.PI/2,null);
    for(let i=0;i<4;i++){const z=z0-R()*TL,q=10+.8*Math.sin(z*.02);put(pick(['kk_car_sedan','kk_car_taxi','kk_car_hatchback']),q-3.5,z,1.5,R()<.5?0:Math.PI,null);}}},
@@ -243,10 +244,10 @@ const BIOME={
  city:{sky:['#05070f','#1a2440','#0a0c14'],fog:'#121a2c',fogN:.8,sun:['#9fb4ff',.7],sunDir:[-.3,.8,-.5],hemi:['#3a4a7a','#151020',.55],exp:1.25,wl:-60,clouds:3,night:1,
   HF(x,z){let h=.3;if(Math.abs(x)>45)h+=mtn(x,z,18,45,90)*.7;return h;},
   P:{low:'#25262b',mid:'#2a2b30',m0:2,m1:5,high:'#1a1c22',h0:6,h1:12,rock:'#2a2a2e'},
-  uses:['kk_building_A','kk_building_C','kk_building_E','kk_building_G','kk_car_sedan','kk_car_taxi','kk_car_hatchback'],
+  uses:['kk_building_A','kk_building_C','kk_building_E','kk_building_G','kk_car_sedan','kk_car_taxi','kk_car_hatchback','roofkit','beacon'],
   cf(o,x,z,h,sl){const rx=((x+30)%16+16)%16,rz=((z+9000)%18+18)%18;if(rx<3.2||rz<3.2)mixc(o,o,lc('#4a4232'),1);},
   props(R,z0,put,HF){const bz=Math.ceil((z0+9000)/18)*18-9000;for(let bzz=bz;bzz>z0-TL-18;bzz-=18)for(let bx=-46;bx<46;bx+=16){const x0=bx+3.4,z1=bzz-.3;if(R()<.1){for(let k=0;k<5;k++)put('round',x0+R()*11,z1-R()*12,.7,R()*6,'#2c5a33');continue;}
-    for(let ix=0;ix<2;ix++)for(let iz=0;iz<2;iz++){const w=5+R()*.8,d=6+R()*.8,x=x0+ix*6.2+w/2,z=z1-iz*7-d/2;if(z>z0||z<z0-TL)continue;const hh=(2+R()*R()*16)*(Math.abs(x)<26?1:1.3);if(hh<7&&Math.abs(x)<42&&R()<(save.hq?.45:.2)){put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),x,z,Math.min(w,d),Math.floor(R()*4)*Math.PI/2,null);continue;}put('build',x,z,1,0,pick(['#8a93a8','#a8a29a','#7d8696','#b8b4ac','#6e7a8e']),1,0,[w,hh,d]);}}
+    for(let ix=0;ix<2;ix++)for(let iz=0;iz<2;iz++){const w=5+R()*.8,d=6+R()*.8,x=x0+ix*6.2+w/2,z=z1-iz*7-d/2;if(z>z0||z<z0-TL)continue;const hh=(2+R()*R()*16)*(Math.abs(x)<26?1:1.3);if(hh<7&&Math.abs(x)<42&&R()<(save.hq?.45:.2)){put(pick(['kk_building_A','kk_building_C','kk_building_E','kk_building_G']),x,z,Math.min(w,d),Math.floor(R()*4)*Math.PI/2,null);continue;}put('build',x,z,1,0,pick(['#8a93a8','#a8a29a','#7d8696','#b8b4ac','#6e7a8e']),1,0,[w,hh,d]);put('roofkit',x,z,1,Math.floor(R()*4)*Math.PI/2,null,1,hh,[w,Math.min(w,d),d]);if(hh>11)put('beacon',x-w*.35,z+d*.33,1,0,null,1,hh+Math.min(w,d)*.6);}}
    for(let i=0;i<10;i++){const car=pick(['kk_car_sedan','kk_car_taxi','kk_car_hatchback']),d=R()<.5?1:-1;if(R()<.5){const x=-30+16*Math.floor(R()*6)+1.6+d*.8;put(car,x,z0-R()*TL,1.4,d>0?0:Math.PI,null);}else{const z=Math.ceil((z0+9000)/18)*18-9000-18*Math.floor(R()*6)+1.6+d*.8;if(z<=z0&&z>z0-TL)put(car,R()*90-45,z,1.4,d*Math.PI/2,null);}}
    for(let z=Math.ceil((z0+9000)/9)*9-9000;z>z0-TL;z-=9)for(const x of[-28,-12,4,20,36]){put('lamp',x+1.4,z,1,0,null,1,1.2);}}},
  volcano:{sky:['#2a0a08','#a0401a','#3a1a10'],fog:'#4a1c10',fogN:.75,sun:['#ff9a5a',1.8],sunDir:[-.4,.5,-.75],hemi:['#a05040','#200808',.6],exp:1.15,lava:1,wl:-.6,clouds:4,
@@ -265,6 +266,17 @@ function merge(parts){let n=0;const gs=parts.map(([g,c,m])=>{let q=nonIdx(g.clon
  const g=new T3.BufferGeometry();g.setAttribute('position',new T3.BufferAttribute(pos,3));g.setAttribute('normal',new T3.BufferAttribute(nor,3));g.setAttribute('color',new T3.BufferAttribute(cl,3));return g;}
 const MT=(x,y,z,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1)=>new T3.Matrix4().compose(new T3.Vector3(x,y,z),new T3.Quaternion().setFromEuler(new T3.Euler(rx,ry,rz)),new T3.Vector3(sx,sy,sz));
 let cityMat;
+// container skin: corrugated ribs, top rail, corner posts, door end bars, grime and rust at the bottom; near-white so the
+// instance colour sets the liner colour. b=1 returns the matching bump map.
+const _ct=[];function contTex(b=0){if(_ct[b])return _ct[b];const c=document.createElement('canvas');c.width=256;c.height=128;const g=c.getContext('2d'),R=srng(77);
+ g.fillStyle=b?'#808080':'#dedede';g.fillRect(0,0,256,128);
+ for(let i=0;i<40;i++){const x=6+i*6.1;const gr=g.createLinearGradient(x,0,x+6,0);gr.addColorStop(0,b?'#5a5a5a':'#c4c4c4');gr.addColorStop(.5,b?'#b0b0b0':'#f2f2f2');gr.addColorStop(1,b?'#5a5a5a':'#bcbcbc');g.fillStyle=gr;g.fillRect(x,8,6,112);}
+ g.fillStyle=b?'#c8c8c8':'#a8a8a8';g.fillRect(0,0,256,8);g.fillRect(0,120,256,8);g.fillRect(0,0,6,128);g.fillRect(250,0,6,128);
+ if(!b){g.fillStyle='rgba(255,255,255,.55)';g.fillRect(150,20,70,22);g.fillStyle='rgba(60,60,60,.5)';for(let i=0;i<5;i++)g.fillRect(156+i*12,26,8,10);   // ID panel (original glyph blocks)
+  for(let i=0;i<260;i++){const x=R()*256,y=R()*128,r=R()*6+1;g.fillStyle=`rgba(${R()<.4?'110,70,40':'40,40,40'},${(R()*.12).toFixed(3)})`;g.beginPath();g.arc(x,y,r,0,TAU);g.fill();}
+  const gr=g.createLinearGradient(0,90,0,128);gr.addColorStop(0,'rgba(90,60,40,0)');gr.addColorStop(1,'rgba(90,60,40,.45)');g.fillStyle=gr;g.fillRect(0,90,256,38);
+  for(let i=0;i<30;i++){const x=R()*256;g.fillStyle='rgba(100,62,36,.18)';g.fillRect(x,8+R()*40,1.5,30+R()*60);}}
+ const t=new T3.CanvasTexture(c);if(!b)t.encoding=T3.sRGBEncoding;t.anisotropy=4;return _ct[b]=t;}
 function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.9,metalness:0}),plain=new T3.MeshStandardMaterial({vertexColors:true,roughness:.75,metalness:.05}),metal=new T3.MeshStandardMaterial({vertexColors:true,roughness:.45,metalness:.45});
  const B=(w,h,d)=>new T3.BoxGeometry(w,h,d),Cy=(a,b,h,s=8)=>new T3.CylinderGeometry(a,b,h,s),Co=(r,h,s=7)=>new T3.ConeGeometry(r,h,s);
  PROPS.pine={geo:merge([[Cy(.15,.2,.9,5),'#5a3a22',MT(0,.45,0)],[Co(1.15,2,7),'#ffffff',MT(0,1.6,0)],[Co(.85,1.6,7),'#ffffff',MT(0,2.6,0)]]),mat:veg,cap:900};
@@ -278,10 +290,23 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  PROPS.house={geo:merge([[B(1.6,1.1,1.3),'#ffffff',MT(0,.55,0)],[roofG,'#b5533c',MT(0,1.32,0,0,0,0,1,.55,.75)]]),mat:plain,cap:120};
  PROPS.barn={geo:merge([[B(2.4,1.6,3.6),'#a33a2a',MT(0,.8,0)],[roofG,'#5a4a40',MT(0,1.9,0,0,Math.PI/2,0,2.1,.8,1.4)]]),mat:plain,cap:10};
  PROPS.silo={geo:merge([[Cy(.6,.6,2.8,10),'#d8dadc',MT(0,1.4,0)],[new T3.SphereGeometry(.6,10,6,0,TAU,0,Math.PI/2),'#a8aaac',MT(0,2.8,0)]]),mat:metal,cap:10};
- PROPS.ware={geo:merge([[B(1,1,1),'#ffffff',MT(0,.5,0)],[B(1.02,.04,1.02),'#888888',MT(0,1,0)]]),mat:plain,cap:40};
- PROPS.cont={geo:merge([[B(2.5,1,1),'#ffffff',MT(0,.5,0)]]),mat:metal,cap:500};
- const cr=[];for(const[a,b]of[[-1.3,-1.3],[1.3,-1.3],[-1.3,1.3],[1.3,1.3]])cr.push([B(.3,7,.3),'#e08a2a',MT(a,3.5,b)]);cr.push([B(16,.6,.7),'#e08a2a',MT(4,7.2,0)],[B(2,1.4,1.6),'#d0d4d8',MT(1,6.3,0)],[B(.1,4,.1),'#333333',MT(9,5,0)]);
- PROPS.crane={geo:merge(cr),mat:metal,cap:12};
+ // warehouse (unit box, stretched by the props): walls, shallow gabled roof, skylight strips, ridge vents, dock doors
+ {const w=[[B(1,.82,1),'#ffffff',MT(0,.41,0)]];for(const s of[-1,1]){w.push([B(1.02,.035,.54),'#d6dadc',MT(0,.9,s*.25,s*.32)]);for(let i=0;i<6;i++)w.push([B(.06,.01,.3),'#9fb0ba',MT(-.42+i*.168,.93,s*.26,s*.32)]);}
+  for(let i=0;i<9;i++)w.push([B(.022,.06,.07),'#7a8084',MT(-.4+i*.1,1.0,0)]);for(let i=0;i<7;i++)w.push([B(.07,.42,.012),'#4a5054',MT(-.39+i*.13,.21,.501)]);w.push([B(1.01,.04,1.01),'#6a7074',MT(0,.02,0)]);
+  PROPS.ware={geo:merge(w),mat:plain,cap:40};}
+ // shipping container: textured box (ribbed sides, door end, grime), tinted per instance
+ {const g=B(2.5,1,1);g.translate(0,.5,0);PROPS.cont={geo:g,mat:new T3.MeshStandardMaterial({map:contTex(),bumpMap:contTex(1),bumpScale:.035,roughness:.55,metalness:.18}),cap:700};}
+ // ship-to-shore gantry crane: two portal frames on the quay rails, braced; boom out over the water with a trolley and
+ // spreader, back-reach with machinery house, A-frame apex with forestays; tinted per instance (crane colour)
+ {const cr=[],L=(x0,y0,x1,y1,z,t=.14,c='#ffffff')=>{const dx=x1-x0,dy=y1-y0,l=Math.hypot(dx,dy);cr.push([B(l,t,t),c,MT((x0+x1)/2,(y0+y1)/2,z,0,0,Math.atan2(dy,dx))]);};
+  for(const z of[-1.6,1.6]){for(const x of[-1.6,1.6]){cr.push([B(.34,6.4,.34),'#ffffff',MT(x,3.2,z)]);cr.push([B(.6,.3,.7),'#3a3c3e',MT(x,.15,z)]);}L(-1.6,2.2,1.6,2.2,z,.26);L(-1.6,5.9,1.6,5.9,z,.3);L(-1.6,2.2,1.6,5.9,z,.12);L(-1.6,5.9,1.6,2.2,z,.12);}
+  for(const x of[-1.6,1.6])L(x,5.9,x,5.9,0,.3),cr.push([B(.3,.3,3.5),'#ffffff',MT(x,5.9,0)]);
+  for(const z of[-.55,.55]){cr.push([B(17.5,.32,.18),'#ffffff',MT(3.2,6.6,z)]);for(let x=-5;x<11.5;x+=1.1)L(x,6.45,x+1.1,6.75,z,.06);}   // boom girders with lattice
+  for(let x=-5;x<12;x+=2.2)cr.push([B(.08,.08,1.1),'#ffffff',MT(x,6.75,0)]);
+  cr.push([B(2.6,1.3,2),'#e2e5e7',MT(-4.1,7.45,0)],[B(1,.3,1.6),'#5a5e62',MT(-4.1,8.2,0)]);   // machinery house
+  for(const z of[-.5,.5]){L(-.2,6.7,1.1,10.2,z,.2);L(1.1,10.2,2.4,6.7,z,.2);L(1.1,10.2,11.8,6.75,z,.06,'#2a2c2e');L(1.1,10.2,-4.8,7.4,z,.06,'#2a2c2e');}
+  cr.push([B(1.2,.6,1.3),'#dfe3e6',MT(7,6.15,0)],[B(.8,.5,.7),'#9fb4c4',MT(7,5.65,.75)]);for(const z of[-.35,.35])cr.push([B(.04,3,.04),'#222222',MT(7,4.4,z)]);cr.push([B(1.9,.22,.55),'#d8b030',MT(7,2.85,0)]);   // trolley, cab, cables, spreader
+  PROPS.crane={geo:merge(cr),mat:metal,cap:12};}
  const dr=[];for(const s of[-1,1])dr.push([B(.12,3.2,.12),'#2b2b2b',MT(s*.6,1.5,0,0,0,s*.18)]);dr.push([B(2.6,.3,.3),'#2b2b2b',MT(.4,3,0,0,0,.2)],[B(.6,.6,.6),'#c23b3b',MT(-.9,.3,0)]);
  PROPS.derrick={geo:merge(dr),mat:metal,cap:10};
  PROPS.tankf={geo:merge([[Cy(1.2,1.2,1.4,14),'#ffffff',MT(0,.7,0)]]),mat:metal,cap:20};
@@ -319,6 +344,15 @@ function buildProps(){const veg=new T3.MeshStandardMaterial({vertexColors:true,f
  bg.setAttribute('color',new T3.BufferAttribute(new Float32Array(bg.attributes.position.count*3).fill(1),3));
  cityMat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.6,metalness:.3,emissiveMap:wt,emissive:col('#ffffff'),emissiveIntensity:1.4});
  PROPS.build={geo:bg,mat:cityMat,cap:420};
+ // roof kit on every tower (unit footprint, stretched to the roof): membrane, parapet, HVAC units, stair/lift house,
+ // water tank, antenna mast, solar rows and vents
+ {const k=[[B(.98,.03,.98),'#2e3034',MT(0,.015,0)]];for(const[x,z,w,d]of[[0,.485,1,.03],[0,-.485,1,.03],[.485,0,.03,1],[-.485,0,.03,1]])k.push([B(w,.12,d),'#55585e',MT(x,.06,z)]);
+  k.push([B(.24,.22,.2),'#6a6e74',MT(-.2,.11,-.18)],[B(.12,.03,.1),'#3a3d42',MT(-.2,.235,-.18)]);for(let i=0;i<3;i++)k.push([B(.12,.08,.12),'#9aa0a6',MT(.18+(i%2)*.14,.04,.12+i*.1)],[new T3.CylinderGeometry(.04,.04,.01,10),'#2a2c30',MT(.18+(i%2)*.14,.085,.12+i*.1)]);
+  k.push([new T3.CylinderGeometry(.09,.09,.16,12),'#7a6a58',MT(.25,.2,-.25)]);for(const[a,b]of[[.19,-.19],[.31,-.19],[.19,-.31],[.31,-.31]])k.push([B(.015,.12,.015),'#3a3a3a',MT(a,.06,b)]);
+  k.push([B(.012,.6,.012),'#8a8e94',MT(-.35,.3,.33)]);for(let i=0;i<4;i++)k.push([B(.3,.01,.06),'#1e2a3c',MT(-.15,.04,.22+i*.075,-.3)]);
+  for(let i=0;i<4;i++)k.push([B(.03,.05,.03),'#8a8e94',MT(-.4+i*.08,.025,-.4)]);
+  PROPS.roofkit={geo:merge(k),mat:plain,cap:420};}
+ PROPS.beacon={geo:new T3.SphereGeometry(.12,6,4),mat:new T3.MeshBasicMaterial({color:col('#ff3030')}),cap:200,noShadow:1};
  // CC0 KayKit City Builder Bits models (js/assets/kaykit.js): low-rise buildings, cars, street lights, water tower
  if(typeof SF!=='undefined'&&SF.KK){kkMat=new T3.MeshStandardMaterial({vertexColors:true,flatShading:true,roughness:.7,metalness:.05});
   kkMat.onBeforeCompile=sh=>{sh.uniforms.kkGlow=KKGLOW;sh.fragmentShader='uniform float kkGlow;\n'+sh.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n totalEmissiveRadiance+=vColor*kkGlow*smoothstep(.08,.3,vColor.b-vColor.r);');};
@@ -370,6 +404,7 @@ function loadGround(){const L=new T3.TextureLoader(),mk=(f,srgb,r)=>{const t=L.l
  GTX.sand={map:mk('tex_sand.jpg',1,.22),n:mk('tex_sand_n.jpg',0,.22),ns:.7,rough:.97};
  GTX.grass={map:mk('tex_grass.jpg',1,.4),n:mk('tex_grass_n.jpg',0,.4),ns:.8,rough:.95};
  GTX.rock={map:mk('tex_rock.jpg',1,1),n:mk('tex_rock_n.jpg',0,1)};
+ GTX.concrete={map:mk('tex_concrete.jpg',1,.16),n:mk('tex_concrete_n.jpg',0,.16),ns:.6,rough:.9};   // Steel Docks apron (tools/port_tex.py)
  GTX.L=L;}
 function initTerrain(){DETAIL=detailTex();RIPPLE=rippleTex();if(!GTX.L)loadGround();WNORM=waterNormal();LAVA=lavaTex();SCORCH=scorchTex();CLOUDT=cloudTex();
  TER.mat=new T3.MeshStandardMaterial({vertexColors:true,roughness:.92,metalness:0,map:DETAIL});
