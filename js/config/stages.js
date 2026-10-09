@@ -43,7 +43,7 @@ SF.STAGE_DEFS=[
   {at:72,g:'armorColumn',x:'road'},{at:74,f:'wedgeLeader'},{at:80,w:'hornet',n:2},{at:84,g:'depotYard',x:.7},{at:86,f:'crossing',e:'swift'},
   {at:92,f:'mixedRaid',mode:'hard'},{at:94,w:'brute',n:1,mode:'extreme'}],
   obj:_O(['killPct:70','killType:hawk*6','setups:3','combo:15','bossParts'],['killPct:80','killType:hawk*10','setups:5','hull:60','bossParts'],['killPct:90','setups:6','combo:50','noHit','bossTime:75'])},
- // 4 · Pine Ridge ─ forest valley with a river
+ // 4 · Jungle Ridge ─ jungle valley with a river
  {len:108,road:null,timeline:[
   {at:3,f:'lineHover',e:'gunboat'},{at:9,f:'snake',e:'dart'},{at:14,g:'towerPair',x:.3},{at:16,w:'drone',n:6},
   {at:22,f:'ringSpin',e:'aegis'},{at:28,g:'missileSite',x:.7},{at:30,w:'hornet',n:2},{at:36,f:'pincer',e:'swift'},
