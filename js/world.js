@@ -182,7 +182,7 @@ const BIOME={
     for(let k=0;k<4;k++)put('acacia',vx+R()*26-13,vz+R()*26-13,1+R()*.4,R()*6,'#4e6a2e');}
    if(R()<.3){const x=(R()<.5?-1:1)*(22+R()*16),z=z0-R()*TL;put('derrick',x,z,1.1,R()*3,null);put('tankf',x+4,z+2,1,0,'#e8e8e8');}
    for(let i=0;i<10;i++){const x=R()*150-75,z=z0-R()*TL;if(off(x,6))continue;put('rock',x,z,.35+R()*.5,R()*6,pick(['#9a6a44','#8a5e3c','#a47450']));}}},
- forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.55],exp:.95,water:{c:'#1e4a46',op:.66},wl:-.8,clouds:5,pbr:1,
+ forest:{sky:['#5d93cf','#e3ecef','#86a07e'],fog:'#bfcfc8',fogN:.8,sun:['#ffecc8',2.9],sunDir:[-.5,.62,-.48],hemi:['#cfdcef','#3a4228',.55],exp:.95,water:{c:'#1e4a46',op:.66},wl:-.8,clouds:5,pbr:{tex:["ph_grass","ph_soil","ph_rockmoss","ph_moss","ph_gravel"]},
   // Jungle Ridge (Phase 1 realistic terrain, js/terrain_pbr.js): grassy river valley between rocky uplands that break into
   // terraced ledges and steep, irregular cliff faces; textured soil/grass/rock/moss/gravel chosen by slope, height and noise
   HF(x,z){const rx=7+7*Math.sin(z*.011)+2*Math.sin(z*.037),bank=Math.abs(x-rx);
