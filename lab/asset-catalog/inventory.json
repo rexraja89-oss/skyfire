@@ -1,0 +1,1136 @@
+{
+ "version": 1,
+ "branch": "skyfire-asset-catalog-lab",
+ "files": [
+  {
+   "id": "card_falcon",
+   "file": "art/card_falcon.jpg",
+   "bytes": 33130,
+   "w": 467,
+   "h": 373,
+   "gpuMB": 0.9,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "card_phantom",
+   "file": "art/card_phantom.jpg",
+   "bytes": 129947,
+   "w": 550,
+   "h": 600,
+   "gpuMB": 1.7,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "card_titan",
+   "file": "art/card_titan.jpg",
+   "bytes": 101058,
+   "w": 536,
+   "h": 600,
+   "gpuMB": 1.6,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "card_viper",
+   "file": "art/card_viper.jpg",
+   "bytes": 40723,
+   "w": 640,
+   "h": 640,
+   "gpuMB": 2.1,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "fx_fire",
+   "file": "art/fx_fire.png",
+   "bytes": 104028,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "10 Explosions/fire/smoke",
+   "source": "original, tools/fx_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "fx_smoke",
+   "file": "art/fx_smoke.png",
+   "bytes": 199895,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "10 Explosions/fire/smoke",
+   "source": "original, tools/fx_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "jet_falcon",
+   "file": "art/jet_falcon.png",
+   "bytes": 316213,
+   "w": 807,
+   "h": 545,
+   "gpuMB": 2.2,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "jet_phantom",
+   "file": "art/jet_phantom.png",
+   "bytes": 1010863,
+   "w": 788,
+   "h": 796,
+   "gpuMB": 3.2,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "jet_titan",
+   "file": "art/jet_titan.png",
+   "bytes": 608865,
+   "w": 732,
+   "h": 780,
+   "gpuMB": 2.9,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "jet_viper",
+   "file": "art/jet_viper.png",
+   "bytes": 321494,
+   "w": 547,
+   "h": 700,
+   "gpuMB": 1.9,
+   "category": "1 Player jets",
+   "source": "Rex's own pictures (owner)",
+   "license": "Owner",
+   "state": "integrated"
+  },
+  {
+   "id": "k_explosion1",
+   "file": "art/snd/k_explosion1.ogg",
+   "bytes": 20938,
+   "category": "12 Audio",
+   "source": "Kenney (via PyPI arcade 2.6.17)",
+   "license": "CC0",
+   "state": "integrated"
+  },
+  {
+   "id": "k_explosion2",
+   "file": "art/snd/k_explosion2.ogg",
+   "bytes": 18041,
+   "category": "12 Audio",
+   "source": "Kenney (via PyPI arcade 2.6.17)",
+   "license": "CC0",
+   "state": "integrated"
+  },
+  {
+   "id": "k_rockHit2",
+   "file": "art/snd/k_rockHit2.ogg",
+   "bytes": 6495,
+   "category": "12 Audio",
+   "source": "Kenney (via PyPI arcade 2.6.17)",
+   "license": "CC0",
+   "state": "integrated"
+  },
+  {
+   "id": "pregame",
+   "file": "art/snd/pregame.ogg",
+   "bytes": 1102866,
+   "category": "12 Audio",
+   "source": "original, tools/pregame_music.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "storm",
+   "file": "art/snd/storm.ogg",
+   "bytes": 674752,
+   "category": "12 Audio",
+   "source": "original, tools/storm_sound.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "spr_acacia",
+   "file": "art/spr_acacia.png",
+   "bytes": 281263,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/foliage_tex.py / foliage2_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "spr_canopy",
+   "file": "art/spr_canopy.png",
+   "bytes": 208839,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/foliage_tex.py / foliage2_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "spr_canopy2",
+   "file": "art/spr_canopy2.png",
+   "bytes": 182610,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/foliage_tex.py / foliage2_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "spr_canopy3",
+   "file": "art/spr_canopy3.png",
+   "bytes": 216902,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/foliage_tex.py / foliage2_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "spr_fern",
+   "file": "art/spr_fern.png",
+   "bytes": 51294,
+   "w": 256,
+   "h": 256,
+   "gpuMB": 0.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/foliage_tex.py / foliage2_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "spr_palm",
+   "file": "art/spr_palm.png",
+   "bytes": 184069,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/foliage_tex.py / foliage2_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_ash",
+   "file": "art/ter_ash.jpg",
+   "bytes": 85241,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_crop",
+   "file": "art/ter_crop.jpg",
+   "bytes": 110244,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_grass",
+   "file": "art/ter_grass.jpg",
+   "bytes": 486903,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_gravel",
+   "file": "art/ter_gravel.jpg",
+   "bytes": 71015,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_ground_n",
+   "file": "art/ter_ground_n.jpg",
+   "bytes": 161154,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_macro",
+   "file": "art/ter_macro.png",
+   "bytes": 92425,
+   "w": 256,
+   "h": 256,
+   "gpuMB": 0.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_moss",
+   "file": "art/ter_moss.jpg",
+   "bytes": 40255,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_ph_ar_grav",
+   "file": "art/ter_ph_ar_grav.jpg",
+   "bytes": 210968,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/snow_03",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_ar_rock",
+   "file": "art/ter_ph_ar_rock.jpg",
+   "bytes": 227013,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/dark_rock_02",
+   "author": "Amal Kumar",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_ar_snow",
+   "file": "art/ter_ph_ar_snow.jpg",
+   "bytes": 235653,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/snow_02",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_cy_base",
+   "file": "art/ter_ph_cy_base.jpg",
+   "bytes": 512952,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/dry_ground_rocks",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_cy_grav",
+   "file": "art/ter_ph_cy_grav.jpg",
+   "bytes": 284690,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/rocky_trail",
+   "author": "Amal Kumar",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_cy_rock",
+   "file": "art/ter_ph_cy_rock.jpg",
+   "bytes": 276987,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/cliff_side",
+   "author": "James Ray Cock, Jenelle van Heerden, Dario Barresi",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_cy_scrub",
+   "file": "art/ter_ph_cy_scrub.jpg",
+   "bytes": 251282,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/withered_grass",
+   "author": "Charlotte Baglioni",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_cy_soil",
+   "file": "art/ter_ph_cy_soil.jpg",
+   "bytes": 498218,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/red_mud_stones",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_grass",
+   "file": "art/ter_ph_grass.jpg",
+   "bytes": 228857,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/rocky_terrain_02",
+   "author": "Amal Kumar",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_gravel",
+   "file": "art/ter_ph_gravel.jpg",
+   "bytes": 338291,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/rocks_ground_05",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_hb_soil",
+   "file": "art/ter_ph_hb_soil.jpg",
+   "bytes": 255692,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/aerial_ground_rock",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_is_grav",
+   "file": "art/ter_ph_is_grav.jpg",
+   "bytes": 354701,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/coral_gravel",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_is_rock",
+   "file": "art/ter_ph_is_rock.jpg",
+   "bytes": 409695,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/seaside_rock",
+   "author": "Dimitrios Savva",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_is_sand",
+   "file": "art/ter_ph_is_sand.jpg",
+   "bytes": 132123,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/aerial_beach_01",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_moss",
+   "file": "art/ter_ph_moss.jpg",
+   "bytes": 206091,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/aerial_grass_rock",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_rockmoss",
+   "file": "art/ter_ph_rockmoss.jpg",
+   "bytes": 356545,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/aerial_rocks_02",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_soil",
+   "file": "art/ter_ph_soil.jpg",
+   "bytes": 410918,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/brown_mud_leaves_01",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_vo_ash",
+   "file": "art/ter_ph_vo_ash.jpg",
+   "bytes": 402395,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/burned_ground_01",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_vo_grav",
+   "file": "art/ter_ph_vo_grav.jpg",
+   "bytes": 354584,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/ground_grey",
+   "author": "Rob Tuytel",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_ph_vo_rock",
+   "file": "art/ter_ph_vo_rock.jpg",
+   "bytes": 293711,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain",
+   "source": "Poly Haven: https://polyhaven.com/a/dark_rock",
+   "author": "Amal Kumar",
+   "license": "CC0",
+   "state": "integrated",
+   "tool": "tools/photo_tex.py"
+  },
+  {
+   "id": "ter_rock",
+   "file": "art/ter_rock.jpg",
+   "bytes": 80824,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_rock_n",
+   "file": "art/ter_rock_n.jpg",
+   "bytes": 150427,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_sand",
+   "file": "art/ter_sand.jpg",
+   "bytes": 75115,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_snow",
+   "file": "art/ter_snow.jpg",
+   "bytes": 51196,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_soil",
+   "file": "art/ter_soil.jpg",
+   "bytes": 37941,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "ter_wheat",
+   "file": "art/ter_wheat.jpg",
+   "bytes": 46780,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/terrain_tex.py / terrain_tex2.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_concrete",
+   "file": "art/tex_concrete.jpg",
+   "bytes": 224233,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/port_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_concrete_n",
+   "file": "art/tex_concrete_n.jpg",
+   "bytes": 579017,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/port_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_grass",
+   "file": "art/tex_grass.jpg",
+   "bytes": 576650,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/forest_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_grass_n",
+   "file": "art/tex_grass_n.jpg",
+   "bytes": 154967,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/forest_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_rock",
+   "file": "art/tex_rock.jpg",
+   "bytes": 67151,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/forest_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_rock_n",
+   "file": "art/tex_rock_n.jpg",
+   "bytes": 175463,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/forest_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_sand",
+   "file": "art/tex_sand.jpg",
+   "bytes": 272738,
+   "w": 1024,
+   "h": 1024,
+   "gpuMB": 5.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/sand_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  },
+  {
+   "id": "tex_sand_n",
+   "file": "art/tex_sand_n.jpg",
+   "bytes": 139913,
+   "w": 512,
+   "h": 512,
+   "gpuMB": 1.3,
+   "category": "9 Terrain / foliage",
+   "source": "original, tools/sand_tex.py",
+   "license": "Original",
+   "state": "integrated"
+  }
+ ],
+ "codeAssets": [
+  {
+   "id": "player-jets-code",
+   "category": "1 Player jets",
+   "what": "Code-built jets per plane (MODELS.pl_*) + wingmen (dr_*); flat art sprites jet_* override",
+   "source": "original code (world.js, models/falcon.js)"
+  },
+  {
+   "id": "air-enemies",
+   "category": "1-2 Enemy aircraft / drones / helicopters",
+   "what": "fighter, fighter2, bomber, heli, hornet, drone, aegis, blink, wraith, mender, sower, hydra, lancer, bulwark",
+   "source": "original code (world.js)"
+  },
+  {
+   "id": "ground-units",
+   "category": "5-6 Turrets, tanks, bases",
+   "what": "tank, truck, aa, sam, artillery, bunker, tower, radar, depot, factory, gate, mast, stack, dome, mine, stilt, railgun, domegun, popmine, pylon",
+   "source": "original code (world.js, models/ground2.js)"
+  },
+  {
+   "id": "naval",
+   "category": "7 Ships",
+   "what": "boat, battleship, destroyer, navalTurret, navalAA",
+   "source": "original code (models/naval.js)"
+  },
+  {
+   "id": "bosses",
+   "category": "Bosses",
+   "what": "bodies: ship, dreadnought, carrier, sub, wing, throne, land, walker, gunship, segment; parts: turret, twin, launcher, gatling, beam, orb, mortar, dish, engine, hangar, armor, scythe, leg, rotor",
+   "source": "original code (bossmodels.js)"
+  },
+  {
+   "id": "props",
+   "category": "8-9 Buildings, scenery props",
+   "what": "51 instanced props incl. crane, cont (canvas-textured), ware, build+roofkit, house, lighthouse, windmill, wrecks, boulder/boulder2 (displaced mesh), basalt, floe, palm/canopy/fern/acacia sprites",
+   "source": "original code (world.js) + generated sprites"
+  },
+  {
+   "id": "kaykit",
+   "category": "8 Cities",
+   "what": "kk_building_A/C/E/G, kk_car_sedan/taxi/hatchback, kk_watertower",
+   "source": "KayKit City Builder Bits (Kay Lousberg), baked by tools/kaykit_convert.py, js/assets/kaykit.js 231 KB",
+   "license": "CC0"
+  },
+  {
+   "id": "ocean",
+   "category": "7 Ocean effects",
+   "what": "storm ocean shader (js/ocean.js), harbour/river water plane with generated normal map",
+   "source": "original code"
+  },
+  {
+   "id": "fx-overlay",
+   "category": "4,10 Weapons and explosions",
+   "what": "bullets/tracers/missiles/lasers and explosions drawn on the 2D overlay; fire/smoke flipbooks fx_fire/fx_smoke",
+   "source": "original code (engine/fx.js) + tools/fx_tex.py"
+  },
+  {
+   "id": "atmos",
+   "category": "11 Lighting/weather/post",
+   "what": "per-biome grade pass, cloud shadows, over-clouds, rays, searchlights, aurora, rain/snow/sand/storm, lightning; envCube sky reflections (no HDRI)",
+   "source": "original code (engine/atmos.js, engine/grade.js, scene.js)"
+  },
+  {
+   "id": "sfx-bank",
+   "category": "12 Audio",
+   "what": "rendered bank: boom pop bomb shot hit hurt shieldHit missile part naval thunder gear power (+ Kenney layers); synth fallbacks; engine and ambience loops",
+   "source": "original code (sfxbank.js, audio.js)"
+  },
+  {
+   "id": "canvas-tex",
+   "category": "9 Terrain/props",
+   "what": "detailTex, rippleTex, lavaTex, scorchTex, cloudTex, contTex, waterNormal, envCube (generated at runtime)",
+   "source": "original code (world.js)"
+  }
+ ],
+ "gaps": [
+  {
+   "category": "1 Player/enemy jets",
+   "state": "Code-built low-poly meshes; only the player jet has a hand-made picture. No PBR textured 3D jets.",
+   "priority": "high"
+  },
+  {
+   "category": "2 Drones/helicopters",
+   "state": "Code-built; no textured models.",
+   "priority": "medium"
+  },
+  {
+   "category": "3 Engines/afterburners",
+   "state": "2D flame sprites only (engine/thrust.js); no heat haze, no 3D nozzles.",
+   "priority": "medium"
+  },
+  {
+   "category": "4 Weapons VFX",
+   "state": "2D overlay sprites; no bloom/glow pass, no beam textures.",
+   "priority": "high"
+  },
+  {
+   "category": "5 Turrets/shields",
+   "state": "Code meshes; shield = transparent sphere.",
+   "priority": "medium"
+  },
+  {
+   "category": "6 Tanks/bases",
+   "state": "Code meshes, flat colours, no textures.",
+   "priority": "high"
+  },
+  {
+   "category": "7 Ships/ocean",
+   "state": "Code-built ships, untextured; ocean shader new (v5.14).",
+   "priority": "medium"
+  },
+  {
+   "category": "8 Cities/industry",
+   "state": "KayKit CC0 (stylised) + code towers; no destroyed-building states.",
+   "priority": "medium"
+  },
+  {
+   "category": "9 Landscapes",
+   "state": "Photo-scanned CC0 ground on 6 stages; desert/docks still generated; rocks are displaced spheres; trees are 2D cut-out sprites.",
+   "priority": "medium"
+  },
+  {
+   "category": "10 Explosions/smoke",
+   "state": "Generated 4x4 flipbooks (128 px frames); no high-res video-quality explosion sheets.",
+   "priority": "high"
+  },
+  {
+   "category": "11 Lighting/post",
+   "state": "No HDRI lighting, no bloom, no SSAO; grade pass only.",
+   "priority": "high"
+  },
+  {
+   "category": "12 Audio",
+   "state": "Synth + 3 Kenney CC0 recordings + 2 original loops; few recorded weapon sounds.",
+   "priority": "medium"
+  }
+ ],
+ "baseline": {
+  "measured": "v5.22 (catalog branch base 1f0e855 + catalog doc), headless Chromium + SwiftShader software GL at 412x915, dpr 1, Easy mode, 3.5 s into each stage",
+  "apkBytes": 22319009,
+  "apkRelease": "build-44",
+  "bootBytes": 7515214,
+  "totalBytesAllStages": 16287301,
+  "notes": [
+   "FPS not measurable here (software GPU ~10 fps); read real FPS on the phone in Workshop > Balance lab.",
+   "texMB = textures attached to the visible scene, RGBA8 + mipmaps estimate; renderer textures count is cumulative across stages (cache).",
+   "calls/tris = one scene render incl. shadow pass in HQ, excluding the 2D overlay."
+  ],
+  "stages": [
+   {
+    "si": 0,
+    "name": "Harbor Dawn",
+    "hq": {
+     "calls": 53,
+     "tris": 187214,
+     "geoms": 49,
+     "textures": 18,
+     "texMB": 16.2,
+     "heapMB": 18
+    },
+    "smooth": {
+     "calls": 53,
+     "tris": 188270,
+     "geoms": 49,
+     "textures": 17,
+     "texMB": 16.2,
+     "heapMB": 24
+    },
+    "newBytes": 3442820
+   },
+   {
+    "si": 1,
+    "name": "Storm Fleet",
+    "hq": {
+     "calls": 10,
+     "tris": 144166,
+     "geoms": 50,
+     "textures": 22,
+     "texMB": 14.9,
+     "heapMB": 43
+    },
+    "smooth": {
+     "calls": 10,
+     "tris": 85366,
+     "geoms": 50,
+     "textures": 21,
+     "texMB": 14.9,
+     "heapMB": 23
+    },
+    "newBytes": 267209
+   },
+   {
+    "si": 2,
+    "name": "Desert Highway",
+    "hq": {
+     "calls": 39,
+     "tris": 199588,
+     "geoms": 62,
+     "textures": 26,
+     "texMB": 21.5,
+     "heapMB": 28
+    },
+    "smooth": {
+     "calls": 39,
+     "tris": 199588,
+     "geoms": 62,
+     "textures": 26,
+     "texMB": 21.5,
+     "heapMB": 30
+    },
+    "newBytes": 0
+   },
+   {
+    "si": 3,
+    "name": "Jungle Ridge",
+    "hq": {
+     "calls": 48,
+     "tris": 132184,
+     "geoms": 66,
+     "textures": 31,
+     "texMB": 20.5,
+     "heapMB": 32
+    },
+    "smooth": {
+     "calls": 48,
+     "tris": 132184,
+     "geoms": 66,
+     "textures": 30,
+     "texMB": 20.5,
+     "heapMB": 34
+    },
+    "newBytes": 749209
+   },
+   {
+    "si": 4,
+    "name": "Steel Docks",
+    "hq": {
+     "calls": 62,
+     "tris": 241580,
+     "geoms": 75,
+     "textures": 35,
+     "texMB": 23.2,
+     "heapMB": 31
+    },
+    "smooth": {
+     "calls": 65,
+     "tris": 238968,
+     "geoms": 75,
+     "textures": 35,
+     "texMB": 23.2,
+     "heapMB": 32
+    },
+    "newBytes": 0
+   },
+   {
+    "si": 5,
+    "name": "Coral Isles",
+    "hq": {
+     "calls": 24,
+     "tris": 68508,
+     "geoms": 75,
+     "textures": 37,
+     "texMB": 16.5,
+     "heapMB": 36
+    },
+    "smooth": {
+     "calls": 24,
+     "tris": 68508,
+     "geoms": 75,
+     "textures": 36,
+     "texMB": 16.5,
+     "heapMB": 29
+    },
+    "newBytes": 764396
+   },
+   {
+    "si": 6,
+    "name": "Red Canyon",
+    "hq": {
+     "calls": 29,
+     "tris": 123370,
+     "geoms": 76,
+     "textures": 42,
+     "texMB": 16.2,
+     "heapMB": 32
+    },
+    "smooth": {
+     "calls": 29,
+     "tris": 123370,
+     "geoms": 76,
+     "textures": 41,
+     "texMB": 16.2,
+     "heapMB": 33
+    },
+    "newBytes": 1824129
+   },
+   {
+    "si": 7,
+    "name": "Frozen Outpost",
+    "hq": {
+     "calls": 45,
+     "tris": 153894,
+     "geoms": 81,
+     "textures": 45,
+     "texMB": 12.2,
+     "heapMB": 29
+    },
+    "smooth": {
+     "calls": 45,
+     "tris": 153894,
+     "geoms": 81,
+     "textures": 44,
+     "texMB": 12.2,
+     "heapMB": 33
+    },
+    "newBytes": 673634
+   },
+   {
+    "si": 8,
+    "name": "Neon Metropolis",
+    "hq": {
+     "calls": 83,
+     "tris": 588906,
+     "geoms": 89,
+     "textures": 47,
+     "texMB": 12.3,
+     "heapMB": 35
+    },
+    "smooth": {
+     "calls": 84,
+     "tris": 528688,
+     "geoms": 89,
+     "textures": 47,
+     "texMB": 12.3,
+     "heapMB": 37
+    },
+    "newBytes": 0
+   },
+   {
+    "si": 9,
+    "name": "Magma Citadel",
+    "hq": {
+     "calls": 34,
+     "tris": 265278,
+     "geoms": 91,
+     "textures": 51,
+     "texMB": 14.9,
+     "heapMB": 39
+    },
+    "smooth": {
+     "calls": 34,
+     "tris": 265278,
+     "geoms": 91,
+     "textures": 50,
+     "texMB": 14.9,
+     "heapMB": 32
+    },
+    "newBytes": 1050690
+   }
+  ]
+ }
+}
