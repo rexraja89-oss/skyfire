@@ -7,30 +7,30 @@
 (()=>{
 const W1=[1,1,1];
 // Harbor Dawn: meadow grass, earth, warm granite, moss, beach sand at the waterline (sea bed too)
-Object.assign(BIOME.harbor,{pbr:{tex:['grass','soil','rock','moss','sand'],tint:[[.98,1.06,.8],[1,.95,.88],[1.08,1,.9],[1,1.04,.92],[1.05,1,.92]]},
+Object.assign(BIOME.harbor,{pbr:{tex:['ph_grass','ph_hb_soil','ph_rockmoss','ph_moss','ph_is_sand'],tint:[[.98,1.06,.8],[1,.95,.88],[1.08,1,.9],[1,1.04,.92],[1.05,1,.92]]},
  splat(o,x,z,h,sl,under){const nz=fbm(x*.08+4,z*.08,2);let rock=sst(.38,.66,sl)+sst(9,16,h)*.6,sand=1-sst(.7,1.5,h),soil=sst(.2,.55,nz)*.45*(1-rock),moss=sst(1.5,4,under)*.35+sst(.18,.36,sl)*.3;
   rock=Math.min(1,rock);if(h<-.2){sand=1;rock*=.3;}const t=soil+rock+moss+sand;o[0]=soil;o[1]=rock;o[2]=moss;o[3]=sand;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  wet(x,z,h){return 1-sst(.3,1.3,h);},occ:{canopy:[.42,.5],boulder:[1,.55],boulder2:[1,.55]}});
 // Coral Isles: bright tropical grass, white beach sand ringing every island and under the shallows, dark volcanic rock, jungle moss
-Object.assign(BIOME.islands,{pbr:{tex:['grass','sand','rock','moss','gravel'],tint:[[.96,1.1,.84],[1.12,1.08,1],[.78,.72,.64],[.95,1.08,.9],[1.1,1.06,.98]],deep:[.16,.36,.5]},
+Object.assign(BIOME.islands,{pbr:{tex:['ph_grass','ph_is_sand','ph_is_rock','ph_moss','ph_is_grav'],tint:[[.96,1.1,.84],[1.12,1.08,1],[.78,.72,.64],[.95,1.08,.9],[1.1,1.06,.98]],deep:[.16,.36,.5]},
  splat(o,x,z,h,sl,under){let sand=1-sst(.9,2,h),rock=sst(.6,.95,sl)*.45,moss=sst(2,5,h)*.85*(1-rock),grav=h<.5&&h>-1.5?.25:0;if(h<0)sand=1;
   if(h<-.4){const rf=fbm(x*.09+11,z*.09,3);moss=sst(.05,.3,rf)*.9*sst(-.4,-1.5,h);rock=Math.max(rock,sst(.3,.5,rf)*.5);}   // coral reef: dark living patches and rubble on the sandy shelf
   const t=sand+rock+moss+grav;o[0]=sand;o[1]=rock;o[2]=moss;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  wet(x,z,h){return 1-sst(.2,1,h);},occ:{palmS:[.28,.35],boulder:[1,.55],boulder2:[1,.55]}});
 // Red Canyon: red sand floors, iron-red soil on the mesas, banded sandstone walls, dry scrub, red gravel at the cliff feet
-Object.assign(BIOME.canyon,{pbr:{tex:['sand','sand','rock','moss','gravel'],tint:[[.8,.48,.31],[.66,.36,.22],[.86,.46,.3],[.62,.58,.36],[.7,.45,.33]],strata:.6,sc:[1.2,.82,.66]},
+Object.assign(BIOME.canyon,{pbr:{tex:['ph_cy_base','ph_cy_soil','ph_cy_rock','ph_cy_scrub','ph_cy_grav'],tint:[[.8,.48,.31],[.66,.36,.22],[.86,.46,.3],[.62,.58,.36],[.7,.45,.33]],strata:.6,sc:[1.2,.82,.66]},
  splat(o,x,z,h,sl,under){const rv=2+6*Math.sin(z*.009),d=Math.abs(x-rv),nz=fbm(x*.07,z*.07,2);let rock=sst(.3,.55,sl),soil=sst(4,8,h)*(1-rock)*.8,scrub=sst(.25,.55,nz)*.25*(1-rock)*sst(1,3,h),grav=sst(1.5,3.5,under)*.25*(1-rock)*(1-sst(.15,.3,sl));
   if(d<4)soil*=.3;const t=soil+rock+scrub+grav;o[0]=soil;o[1]=rock;o[2]=scrub;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  wet(x,z){const rv=2+6*Math.sin(z*.009);return 1-sst(2.5,5,Math.abs(x-rv));},occ:{boulder:[1,.55],boulder2:[1,.55],canopy:[.42,.45]}});
 // Frozen Outpost: wind-packed snow, blue sea ice on the shelf, cold grey rock on steep ground, drift snow in hollows
-Object.assign(BIOME.arctic,{pbr:{tex:['snow','snow','rock','snow','gravel'],tint:[[.66,.68,.71],[.46,.55,.7],[.62,.68,.78],[.78,.8,.83],[.66,.69,.74]],ns:.8},
+Object.assign(BIOME.arctic,{pbr:{tex:['ph_ar_snow','ph_ar_snow','ph_ar_rock','ph_ar_snow','ph_ar_grav'],tint:[[.66,.68,.71],[.46,.55,.7],[.62,.68,.78],[.78,.8,.83],[.66,.69,.74]],ns:.8},
  splat(o,x,z,h,sl,under){const ic=14+3*Math.sin(z*.013),wnd=fbm(x*.035+z*.008,z*.16,3),wn2=fbm(x*.11,z*.5,2);   // streaks stretched across the wind (x)
   let ice=x>ic-2?1-sst(.3,.8,h):sst(.08,.32,wnd)*.62+sst(.2,.45,wn2)*.22,rock=sst(.32,.55,sl),drift=Math.max(sst(1.2,3,under)*.6,sst(-.05,-.3,wnd)*.55),grav=0;   // blue wind-scoured crust in streaks, fresh bright drift in the lee
   if(Math.abs(x+3)<7&&Math.abs(((z%180)+180)%180-90)<14)grav=.5;   // trodden ground round the base camp
   const t=ice+rock+drift+grav;o[0]=ice;o[1]=rock;o[2]=drift;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  occ:{rock:[1,.5]}});
 // Magma Citadel: ash plains, dark basalt, red cinders; the ground near the lava river glows
-Object.assign(BIOME.volcano,{pbr:{tex:['ash','ash','rock','gravel','gravel'],tint:[[.5,.47,.47],[.36,.33,.33],[.28,.25,.24],[.7,.38,.3],[.42,.39,.39]],ns:.8},
+Object.assign(BIOME.volcano,{pbr:{tex:['ph_vo_ash','ph_vo_ash','ph_vo_rock','ph_vo_grav','ph_vo_grav'],tint:[[.5,.47,.47],[.36,.33,.33],[.28,.25,.24],[.7,.38,.3],[.42,.39,.39]],ns:.8},
  splat(o,x,z,h,sl,under){const nz=fbm(x*.06+7,z*.06,2);let dark=sst(.1,.5,nz)*.6,rock=sst(.3,.55,sl)+sst(8,14,h)*.5,cind=sst(1,3,under)*.5,grav=sst(.45,.8,nz)*.3;
   rock=Math.min(1,rock);const t=dark+rock+cind+grav;o[0]=dark;o[1]=rock;o[2]=cind;o[3]=grav;if(t>1)for(let i=0;i<4;i++)o[i]/=t;},
  tint(o,x,z,h){const lr=-5+9*Math.sin(z*.01)+3*Math.sin(z*.033),d=Math.abs(x-lr),g=d<6?(1-d/6)**2*(1-sst(.5,3,h)):0;o[0]=1+2.6*g;o[1]=1+.9*g;o[2]=1+.2*g;},

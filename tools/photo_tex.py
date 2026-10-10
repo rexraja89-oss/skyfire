@@ -18,6 +18,25 @@ SETS = {
     'ph_rockmoss': ('aerial_rocks_02',     'rock',   1024, 1.0),
     'ph_moss':     ('aerial_grass_rock',   'moss',   1024, 1.0),
     'ph_gravel':   ('rocks_ground_05',     'gravel', 1024, 1.0),
+    # Red Canyon
+    'ph_cy_base':  ('dry_ground_rocks',    'sand',   1024, 1.0),
+    'ph_cy_soil':  ('red_mud_stones',      'sand',   1024, 1.0),
+    'ph_cy_rock':  ('cliff_side',          'rock',   1024, 1.0),
+    'ph_cy_scrub': ('withered_grass',      'moss',   1024, 1.0),
+    'ph_cy_grav':  ('rocky_trail',         'gravel', 1024, 1.0),
+    # Coral Isles / Harbor
+    'ph_is_sand':  ('aerial_beach_01',     'sand',   1024, 1.0),
+    'ph_is_rock':  ('seaside_rock',        'rock',   1024, 1.0),
+    'ph_is_grav':  ('coral_gravel',        'gravel', 1024, 1.0),
+    'ph_hb_soil':  ('aerial_ground_rock',  'soil',   1024, 1.0),
+    # Frozen Outpost
+    'ph_ar_snow':  ('snow_02',             'snow',   1024, 1.0),
+    'ph_ar_rock':  ('dark_rock_02',        'rock',   1024, 1.0),
+    'ph_ar_grav':  ('snow_03',             'gravel', 1024, 1.0),
+    # Magma Citadel
+    'ph_vo_ash':   ('burned_ground_01',    'ash',    1024, 1.0),
+    'ph_vo_rock':  ('dark_rock',           'rock',   1024, 1.0),
+    'ph_vo_grav':  ('ground_grey',         'gravel', 1024, 1.0),
 }
 
 

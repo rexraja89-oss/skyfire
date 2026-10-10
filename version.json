@@ -1,8 +1,8 @@
 {
-  "build": 42,
-  "version": "5.21",
+  "build": 43,
+  "version": "5.22",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Photo-scanned ground in Jungle Ridge"
+    "Photo-scanned ground on five more stages"
   ]
 }
