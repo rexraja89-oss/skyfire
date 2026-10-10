@@ -1,8 +1,8 @@
 {
-  "build": 43,
-  "version": "5.22",
+  "build": 44,
+  "version": "5.23",
   "apk": "https://github.com/rexraja89-oss/skyfire/releases/latest/download/Skyfire-Squadron.apk",
   "notes": [
-    "Photo-scanned ground on five more stages"
+    "Photo-scanned rocks, real sky lighting, new enemy fighter, better explosions"
   ]
 }

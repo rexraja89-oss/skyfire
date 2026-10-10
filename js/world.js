@@ -480,11 +480,12 @@ function buildLevel(si,bk){const st=STAGES[si],bkey=bk||st.biome,B=BIOME[bkey];L
  for(const t of TER.tiles)t.m.material=B.pbr&&SF.terrain?SF.terrain.mat(B):TER.mat;
  TER.mat.userData.U.uVar.value=GS&&(B.ground==='sand'||B.ground==='grass')?1:0;if(TER.mat.map!==tm||TER.mat.normalMap!==tn){TER.mat.map=tm;TER.mat.normalMap=tn;if(GS)TER.mat.normalScale.set(GS.ns,GS.ns);TER.mat.roughness=GS?GS.rough:.92;TER.mat.needsUpdate=true;}
  // environment reflections from this sky
- if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=envRT;
+ if(envRT)envRT.dispose();envRT=envCube(B,sd);scene.environment=(SF.a3d&&SF.a3d.envFor(bkey))||envRT;   // baked photo sky where approved (assets3d.js)
  TER.water.visible=!!B.water;TER.lava.visible=!!B.lava;if(B.water){TER.water.material.color.copy(col(B.water.c));TER.water.material.opacity=B.water.op;TER.water.position.y=GY+B.wl;}
  if(B.lava)TER.lava.position.y=GY+B.wl;
  if(SF.ocean){if(B.storm){SF.ocean.enable(B);TER.water.visible=false;}else SF.ocean.disable();}
  // instanced props per tile
+ if(SF.a3d)SF.a3d.level(bkey);   // photo-scanned rocks for this biome (assets3d.js)
  const used={};const probe=(type)=>{used[type]=1;};B.props(srng(1),0,(type)=>probe(type),B.HF);
  if(bkey==='city'){used.build=1;used.lamp=1;used.round=1;}for(const k of B.uses||[])if(PROPS[k])used[k]=1;for(const k in used)if(!PROPS[k])delete used[k];KKGLOW.value=B.night?.9:0;
  for(const t of TER.tiles){for(const k in t.inst){TER.g.remove(t.inst[k]);t.inst[k].dispose();}t.inst={};

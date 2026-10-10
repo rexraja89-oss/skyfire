@@ -16,7 +16,8 @@ fx.explode=(x,y,size=1,ground)=>{SF.sndX=x;   // the next sound plays from this 
  // 1 flash
  add('g',x,y,0,0,.1,'#ffffff',30*size);add('g',x,y,0,0,.22,'#fff3c4',24*size);
  // 2 fireballs: rolling balls of flame that swell and cool
- const nb=Math.min(14,Math.round((hq?4:2)+size*(hq?3:1.5)));
+ const bl=fbReady(FB.blast);if(bl){add('X',x,y,rnd(-6,6),rnd(-6,6),rnd(.62,.78)*(.9+.1*q),'',(hq?34:30)*q*(.9+Math.random()*.2),{drag:.92,scroll:sc});if(size>1.3)add('X',x+rnd(-9,9)*q,y+rnd(-9,9)*q,0,0,.85,'',20*q,{drag:.92,scroll:sc});}   // main blast
+ const nb=Math.min(14,Math.round(((hq?4:2)+size*(hq?3:1.5))*(bl?.55:1)));
  for(let i=0;i<nb;i++){const a=Math.random()*TAU,v=rnd(15,75)*q,o=rnd(0,7)*q;add('b',x+Math.cos(a)*o,y+Math.sin(a)*o,Math.cos(a)*v,Math.sin(a)*v,rnd(.55,.95)*(.85+.15*q),'',rnd(12,19)*q,{drag:.9,scroll:sc});}
  // 3 hot glow under the fire + sparks + embers
  const n=Math.min(30,(hq?6:3)+size*(hq?6:3));
@@ -52,8 +53,9 @@ fx.step=dt=>{if(fx.shake>0)fx.shake-=dt;
 // ---- drawing ----
 // animated flipbooks (art/fx_smoke.png, art/fx_fire.png from tools/fx_tex.py): 4x4 frames of 128 px played over each
 // particle's life with a fixed random rotation; smoke is tinted per colour (cached). Until they load, soft sprites below.
-const FB={smoke:new Image(),fire:new Image()},TINT={};
+const FB={smoke:new Image(),fire:new Image(),blast:new Image()},TINT={};
 FB.smoke.src='art/fx_smoke.png?v='+BUILD;FB.fire.src='art/fx_fire.png?v='+BUILD;
+FB.blast.src='art/fx_blast.png?v='+BUILD;   // v5.23: explosion sheet by Soluna Software (OpenGameArt, CC0), 4x4 frames of 128 px
 const fbReady=im=>im.complete&&im.naturalWidth>0;
 function tinted(c){if(TINT[c])return TINT[c];const im=FB.smoke,W2=im.naturalWidth,H2=im.naturalHeight,s=document.createElement('canvas');s.width=W2;s.height=H2;const g=s.getContext('2d');
  const[r,gg,b]=hexRGB(c).map(v=>Math.min(255,Math.round(v*1.9+18)));   // lift the colour: lit sides show it, shaded sides go darker
@@ -84,6 +86,7 @@ fx.drawFront=()=>{cx.globalCompositeOperation='lighter';
   if(q.k==='f')dg(PX,PY,q.r*(.6+a*.6)*PS,q.c);
   else if(q.k==='b'){if(fbReady(FB.fire)){const r=q.r*(1.5-a*.4)*PS;cx.globalCompositeOperation='source-over';cx.globalAlpha=.97;frame(FB.fire,1-a,PX,PY,r,save.hq?q.rot:0);cx.globalCompositeOperation='lighter';}
    else{const r=q.r*(1.6-a*.8)*PS,sp=fireball();cx.globalAlpha=a*a*.95;cx.drawImage(sp,PX-r,PY-r,r*2,r*2);}}
+  else if(q.k==='X'){const r=q.r*(1.05+(1-a)*.35)*PS;cx.globalCompositeOperation='source-over';cx.globalAlpha=Math.min(1,a*1.6);frame(FB.blast,1-a,PX,PY,r,save.hq?q.rot:0);cx.globalCompositeOperation='lighter';cx.globalAlpha=a*a*.5;frame(FB.blast,1-a,PX,PY,r*.8,0);}
   else if(q.k==='e'){dg(PX,PY,q.r*3*PS,q.c);}
   else if(q.k==='g')dg(PX,PY,q.r*(1.4-a*.4)*PS,q.c);
   else if(q.k==='k'){const x0=PX,y0=PY;pj(q.x-q.vx*.04,q.y-q.vy*.04);cx.strokeStyle=q.c;cx.lineWidth=1.8;cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(PX,PY);cx.stroke();}

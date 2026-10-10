@@ -70,6 +70,14 @@ const results=[];const check=(name,ok,info)=>{results.push({name,ok:!!ok,info});
  check('ocean off on the next stage',await ev(()=>!SF.ocean.on&&LV.weather!=='storm'));
  await ev(()=>{goTitle();SF.run.start({kind:'range'});});await page.waitForTimeout(1500);check('Test Range keeps the farmland',await ev(()=>LV.bk==='farm'&&!SF.ocean.on));
  check('Frozen Outpost shelf stays above the sea',await ev(()=>{const B=BIOME.arctic;for(let z=-300;z<=300;z+=3)for(let x=-40;x<10.5+3*Math.sin(z*.013);x+=1.5)if(B.HF(x,z)<.85)return false;return true;}));
+ // 9b. approved library assets (v5.23): photo rocks, sky cubes, sci-fi fighter, explosion sheet
+ for(let i=0;i<40&&!(await ev(()=>SF.a3d&&Object.keys(SF.a3d.ok).length>=7));i++)await page.waitForTimeout(500);
+ check('library assets loaded (4 rocks, 2 skies, fighter)',await ev(()=>Object.keys(SF.a3d.ok).length>=7),await ev(()=>Object.keys(SF.a3d.ok)));
+ await ev(()=>{goTitle();SF.run.start({kind:'stage',si:3,mode:'easy'});});for(let i=0;i<40&&!(await ev(()=>state==='run'&&SF.R.si===3));i++)await page.waitForTimeout(250);
+ check('Jungle Ridge uses the photo rocks and the baked day sky',await ev(()=>PROPS.boulder.geo===SF.a3d.rocks['rock-boulder01'].geo&&scene.environment===SF.a3d.env.day));
+ check('enemy fighter model is the library model',await ev(()=>MODELS.fighter.children.length===1&&!!MODELS.fighter.children[0].children.length));
+ await ev(()=>{goTitle();SF.run.start({kind:'stage',si:1,mode:'easy'});});for(let i=0;i<40&&!(await ev(()=>state==='run'&&SF.R.si===1));i++)await page.waitForTimeout(250);
+ check('Storm Fleet keeps its own painted sky',await ev(()=>scene.environment!==SF.a3d.env.day&&scene.environment!==SF.a3d.env.dawn));
  // 10. old saves with stage-2 progress still load (stage slot kept, same key)
  check('save shape unchanged (ver 3)',await ev(()=>save.ver===3&&STAGES.length===10&&STAGES[1].key===47));
  check('no unexpected page errors',errors.length===0,errors.slice(0,5));
