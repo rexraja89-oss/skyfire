@@ -10,6 +10,8 @@
 (()=>{
 const T3=THREE,A=SF.a3d={rocks:{},ok:{},env:{}};
 // which rock goes where: wet/green stages vs dry/cold/volcanic stages
+// footprint in world units per rock (the old displaced boulder was ~2.4 wide; the moss set holds six stones)
+const SIZE={'rock-boulder01':2.7,'rock-namaqua02':3,'rock-mossset01':5,'rock-09':2.8};
 const ROCKS={wet:{boulder:'rock-boulder01',boulder2:'rock-mossset01'},dry:{boulder:'rock-namaqua02',boulder2:'rock-09'}};
 const DRY={desert:1,canyon:1,arctic:1,volcano:1,farm:1};
 // baked skies per biome (others keep the painted envCube: night city, storm, volcano)
@@ -27,7 +29,7 @@ function floats(at){const n=at.count,k=at.itemSize,o=new Float32Array(n*k),d=at.
 function bounds(root){root.updateMatrixWorld(true);const b=new T3.Box3(),v=new T3.Vector3();
  root.traverse(o=>{if(!o.isMesh)return;const P=floats(o.geometry.attributes.position);for(let i=0;i<P.length;i+=3){v.set(P[i],P[i+1],P[i+2]).applyMatrix4(o.matrixWorld);b.expandByPoint(v);}});return b;}
 // one geometry + one material from a whole glTF scene, normalised like the old boulder: footprint ~2 units, base at y 0
-function rockFrom(g){g.scene.updateMatrixWorld(true);const parts=[];let mat=null;
+function rockFrom(g,fp){g.scene.updateMatrixWorld(true);const parts=[];let mat=null;
  g.scene.traverse(o=>{if(o.isMesh){parts.push(o);if(!mat)mat=o.material;}});
  const pos=[],nor=[],uv=[],idx=[];let base=0;const v=new T3.Vector3(),nm=new T3.Matrix3();
  for(const o of parts){const a=o.geometry.attributes,P=floats(a.position),Nn=a.normal?floats(a.normal):null,U=a.uv?floats(a.uv):null,cnt=a.position.count;nm.getNormalMatrix(o.matrixWorld);
@@ -36,9 +38,9 @@ function rockFrom(g){g.scene.updateMatrixWorld(true);const parts=[];let mat=null
   const ix=o.geometry.index;if(ix)for(let i=0;i<ix.count;i++)idx.push(ix.getX(i)+base);else for(let i=0;i<cnt;i++)idx.push(i+base);base+=cnt;}
  const geo=new T3.BufferGeometry();geo.setAttribute('position',new T3.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new T3.Float32BufferAttribute(uv,2));
  if(nor.length===pos.length)geo.setAttribute('normal',new T3.Float32BufferAttribute(nor,3));else geo.computeVertexNormals();geo.setIndex(idx);
- geo.computeBoundingBox();const b=geo.boundingBox,s=2/Math.max(b.max.x-b.min.x,b.max.z-b.min.z);
+ geo.computeBoundingBox();const b=geo.boundingBox,s=(fp||2)/Math.max(b.max.x-b.min.x,b.max.z-b.min.z);
  geo.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);geo.scale(s,s,s);geo.translate(0,-.12,0);   // sink slightly into the ground
- mat=mat.clone();mat.vertexColors=false;mat.envMapIntensity=.6;return{geo,mat};}
+ mat=mat.clone();mat.vertexColors=false;mat.envMapIntensity=.6;mat.color.multiplyScalar(1.25);/* photo albedo is darker than the old procedural rock */return{geo,mat};}
 // enemy fighter: nose to -z (up the screen, like the code models), length matched to the old fighter
 function fighterFrom(g){const s=g.scene;const b=bounds(s),sz=b.getSize(new T3.Vector3()),c=b.getCenter(new T3.Vector3());
  s.traverse(o=>{if(o.isMesh){o.frustumCulled=false;}});   // r128 culls quantised meshes with a wrong sphere
@@ -54,6 +56,6 @@ function refreshLevel(){if(!LV||!LV.bk)return;A.level(LV.bk);for(const t of TER.
 A.init=()=>{const L=loader();
  for(const n of['day','dawn']){const ld=new T3.CubeTextureLoader();ld.load(['px','nx','py','ny','pz','nz'].map(f=>'art/sky/'+n+'_'+f+'.jpg?v='+BUILD),t=>{t.encoding=T3.sRGBEncoding;A.env[n]=t;A.ok['sky-'+n]=1;refreshLevel();},undefined,()=>{});}
  if(!L)return;
- for(const n of['rock-boulder01','rock-namaqua02','rock-mossset01','rock-09'])L.load(url(n),g=>{try{A.rocks[n]=rockFrom(g);A.ok[n]=1;refreshLevel();}catch(e){console.warn('rock',n,e);}},undefined,e=>console.warn('asset',n,e));
+ for(const n of['rock-boulder01','rock-namaqua02','rock-mossset01','rock-09'])L.load(url(n),g=>{try{A.rocks[n]=rockFrom(g,SIZE[n]);A.ok[n]=1;refreshLevel();}catch(e){console.warn('rock',n,e);}},undefined,e=>console.warn('asset',n,e));
  L.load(url('jet-scifi-free'),g=>{try{const m=fighterFrom(g);if(POOL.fighter){for(const o of POOL.fighter)scene.remove(o);POOL.fighter.length=0;}MODELS.fighter=m;A.ok.fighter=1;}catch(e){console.warn('fighter',e);}},undefined,e=>console.warn('asset fighter',e));};
 })();
