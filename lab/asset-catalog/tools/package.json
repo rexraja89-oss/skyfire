@@ -1,0 +1,2 @@
+{"name":"skyfire-asset-lab","private":true,"description":"Asset lab toolchain (prep.mjs). npm i here, then: NODE_USE_ENV_PROXY=1 node tools/prep.mjs from lab/asset-catalog",
+ "dependencies":{"@gltf-transform/core":"4.5.1","@gltf-transform/extensions":"4.5.1","@gltf-transform/functions":"4.5.1","draco3dgltf":"1.5.7","ktx2-encoder":"0.6.0","meshoptimizer":"1.3.0","sharp":"0.35.5","three":"0.128.0","esbuild":"0.21.5"}}
