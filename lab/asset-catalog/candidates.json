@@ -24,9 +24,10 @@
    },
    "preview": "previews/rock-boulder01.jpg",
    "file": "candidates/rock-boulder01.glb",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Real photo-scan; reads as a rock from above. Replaces the displaced-sphere boulders."
+   "notes": "Real photo-scan; reads as a rock from above. Replaces the displaced-sphere boulders.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "rock-namaqua02",
@@ -50,9 +51,10 @@
    },
    "preview": "previews/rock-namaqua02.jpg",
    "file": "candidates/rock-namaqua02.glb",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Layered desert boulder; good for Desert Highway and Red Canyon."
+   "notes": "Layered desert boulder; good for Desert Highway and Red Canyon.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "rock-mossset01",
@@ -76,9 +78,10 @@
    },
    "preview": "previews/rock-mossset01.jpg",
    "file": "candidates/rock-mossset01.glb",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Six small stones in one file; scatter around jungle and harbour."
+   "notes": "Six small stones in one file; scatter around jungle and harbour.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "rock-09",
@@ -102,9 +105,10 @@
    },
    "preview": "previews/rock-09.jpg",
    "file": "candidates/rock-09.glb",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Tall cliff-side rock; good on slopes."
+   "notes": "Tall cliff-side rock; good on slopes.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "jet-scifi-free",
@@ -128,9 +132,10 @@
    },
    "preview": "previews/jet-scifi-free.jpg",
    "file": "candidates/jet-scifi-free.glb",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Clean, readable silhouette from above; light (2.6k tris, 3 textures). Good enemy interceptor. CC-BY: credit needed."
+   "notes": "Clean, readable silhouette from above; light (2.6k tris, 3 textures). Good enemy interceptor. CC-BY: credit needed.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "jet-futured",
@@ -228,9 +233,10 @@
     "note": "baked offline into a small reflection cube (no PMREM on phones)"
    },
    "preview": "previews/sky-kloofendal.jpg",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Real sky light and reflections for metal, water and glass. Must be pre-baked offline because the game cannot use PMREM on some phones."
+   "notes": "Real sky light and reflections for metal, water and glass. Must be pre-baked offline because the game cannot use PMREM on some phones.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "sky-kloppenheim06",
@@ -250,9 +256,10 @@
     "note": "baked offline into a small reflection cube (no PMREM on phones)"
    },
    "preview": "previews/sky-kloppenheim06.jpg",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Real sky light and reflections for metal, water and glass. Must be pre-baked offline because the game cannot use PMREM on some phones."
+   "notes": "Real sky light and reflections for metal, water and glass. Must be pre-baked offline because the game cannot use PMREM on some phones.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "fx-soluna-exp03",
@@ -267,9 +274,10 @@
     "gpuMB": 1.3
    },
    "preview": "previews/fx-soluna-exp03.jpg",
-   "state": "candidate",
+   "state": "integrated (dev branch, awaiting release)",
    "verdict": "recommended",
-   "notes": "Most realistic of the batch: hot core, smoke falloff. 4x4 frames, 512 px sheet."
+   "notes": "Most realistic of the batch: hot core, smoke falloff. 4x4 frames, 512 px sheet.",
+   "approved": "Rex, 10 Oct 2026"
   },
   {
    "id": "fx-soluna-exp21",
