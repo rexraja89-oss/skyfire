@@ -24,6 +24,15 @@ for f in inv['files']:
         bg.convert('RGB').save(b, 'JPEG', quality=72)
         f['thumb'] = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
 
+for c in cands.get('candidates', []):
+    pv = os.path.join(HERE, c.get('preview') or '')
+    if c.get('preview') and os.path.exists(pv):
+        im = Image.open(pv).convert('RGB')
+        im.thumbnail((360, 360))
+        b = io.BytesIO()
+        im.save(b, 'JPEG', quality=78)
+        c['thumb'] = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
+
 data = json.dumps({'inv': inv, 'cands': cands}, separators=(',', ':')).replace('</', '<\\/')
 tpl = open(os.path.join(HERE, 'page_template.html')).read()
 open(os.path.join(HERE, 'index.html'), 'w').write(tpl.replace('/*DATA*/null', data))

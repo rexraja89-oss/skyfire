@@ -1,0 +1,161 @@
+{
+ "note": "Batch 1 candidate list. tris/tex = phone budget the lab shrinks each model to. Edit here, then run tools/prep.mjs and build_page.py.",
+ "models": [
+  {
+   "id": "rock-boulder01",
+   "name": "Boulder 01",
+   "category": "9 Landscapes",
+   "src": "polyhaven",
+   "ref": "boulder_01",
+   "tris": 2500,
+   "tex": 512,
+   "role": "scatter rock, all rocky stages"
+  },
+  {
+   "id": "rock-namaqua02",
+   "name": "Namaqualand boulder 02",
+   "category": "9 Landscapes",
+   "src": "polyhaven",
+   "ref": "namaqualand_boulder_02",
+   "tris": 2500,
+   "tex": 512,
+   "role": "desert / canyon boulder"
+  },
+  {
+   "id": "rock-mossset01",
+   "name": "Mossy rock set 01",
+   "category": "9 Landscapes",
+   "src": "polyhaven",
+   "ref": "rock_moss_set_01",
+   "tris": 3000,
+   "tex": 512,
+   "role": "jungle / harbour rocks"
+  },
+  {
+   "id": "rock-09",
+   "name": "Rock 09",
+   "category": "9 Landscapes",
+   "src": "polyhaven",
+   "ref": "rock_09",
+   "tris": 2500,
+   "tex": 512,
+   "role": "cliff-side rock"
+  },
+  {
+   "id": "jet-scifi-free",
+   "name": "Free Sci-Fi Fighter",
+   "category": "1 Jets",
+   "src": "sketchfab",
+   "ref": "dca1c832ee574e2fa2cdaa06515f66a9",
+   "tris": 3000,
+   "tex": 1024,
+   "role": "enemy interceptor"
+  },
+  {
+   "id": "jet-futured",
+   "name": "Futured Jet Plane",
+   "category": "1 Jets",
+   "src": "sketchfab",
+   "ref": "b7319454acbe4fe7a09f32c847d1a8c0",
+   "tris": 8000,
+   "tex": 1024,
+   "role": "enemy / ally fighter"
+  },
+  {
+   "id": "tank-scifi",
+   "name": "Sci-fi Tank Doodad",
+   "category": "6 Tanks",
+   "src": "sketchfab",
+   "ref": "0ef0619189de4a32b6972e63cb6adec0",
+   "tris": 5000,
+   "tex": 1024,
+   "role": "ground tank"
+  },
+  {
+   "id": "vtol-gunship",
+   "name": "Heavy VTOL gunship",
+   "category": "2 Helicopters / gunships",
+   "src": "sketchfab",
+   "ref": "86d336e0fa6f40329de8cda4a71d8a17",
+   "tris": 10000,
+   "tex": 1024,
+   "role": "mini-boss gunship"
+  }
+ ],
+ "skies": [
+  {
+   "id": "sky-kloofendal",
+   "name": "Kloofendal partly cloudy",
+   "src": "polyhaven",
+   "ref": "kloofendal_48d_partly_cloudy_puresky",
+   "role": "daytime lighting/reflections"
+  },
+  {
+   "id": "sky-kloppenheim06",
+   "name": "Kloppenheim 06 sunset",
+   "src": "polyhaven",
+   "ref": "kloppenheim_06_puresky",
+   "role": "dawn/dusk lighting"
+  }
+ ],
+ "fx": [
+  {
+   "id": "fx-soluna-exp03",
+   "name": "Explosion 03 (Soluna)",
+   "file": "Explosion03.png",
+   "frames": "4x4",
+   "page": "https://opengameart.org/content/explosion-effects-and-more",
+   "author": "Soluna Software",
+   "license": "CC0 (dual CC-BY 3.0; author: no credit needed)"
+  },
+  {
+   "id": "fx-soluna-exp21",
+   "name": "Explosion 21 (Soluna)",
+   "file": "Explosion21.png",
+   "frames": "4x4",
+   "page": "https://opengameart.org/content/explosion-effects-and-more",
+   "author": "Soluna Software",
+   "license": "CC0 (dual CC-BY 3.0; author: no credit needed)"
+  },
+  {
+   "id": "fx-boom3",
+   "name": "Explosion sheet boom3",
+   "file": "boom3.png",
+   "frames": "8x8",
+   "page": "https://opengameart.org/content/explosion-sheet",
+   "author": "StumpyStrust",
+   "license": "CC0"
+  },
+  {
+   "id": "fx-blender-fire",
+   "name": "Blender volumetric fire set",
+   "file": "blender-particle-effects-preview.png",
+   "frames": "preview",
+   "page": "https://opengameart.org/content/25-special-effects-rendered-with-blender",
+   "author": "rubberduck",
+   "license": "CC0"
+  }
+ ],
+ "excluded": [
+  {
+   "name": "Jet_fighter (Ameer Studio)",
+   "why": "Mesh names show it is an F-15E (real Boeing design) and material names suggest it was ripped from another game - provenance and trademark risk"
+  },
+  {
+   "name": "OFS Kestrel",
+   "why": "Ripped from Ace Combat (Bandai Namco) - copyright"
+  },
+  {
+   "name": "X-wing, Darth Vader, MCRN Donnager, B2 droid",
+   "why": "Fan art of Star Wars / The Expanse - copyright"
+  },
+  {
+   "name": "F-35, F-16, F/A-18, F-22, MiG-23, J-10, Yamato, Gerald R. Ford, DDG-51",
+   "why": "Real military designs - manufacturer trademark/design licensing risk; ask Rex before considering"
+  },
+  {
+   "name": "Seran (DECIMATE)",
+   "why": "A character, not a vehicle"
+  }
+ ]
+}

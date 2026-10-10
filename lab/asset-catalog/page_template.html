@@ -61,7 +61,18 @@ input[type=search]{width:100%;font:15px var(--f-body);padding:10px 12px;border-r
 .cmd{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 code{font:13px var(--f-mono);background:var(--chip);padding:3px 7px;border-radius:6px;overflow-wrap:anywhere}
 .copy{font:600 12px var(--f-mono);padding:5px 9px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
-.cand{display:grid;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.cand{display:grid;grid-template-columns:160px 1fr;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.cand img{width:160px;height:160px;object-fit:cover;border-radius:8px;background:var(--chip)}
+.cbody{display:grid;gap:6px;align-content:start;min-width:0}
+.ctop{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ctop b{font:600 19px/1.15 var(--f-display)}
+.cnote{margin:0;font-size:14px}
+.cost{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0}
+.cost div{display:grid}
+.cost dt{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cost dd{margin:0;font:14px var(--f-mono);font-variant-numeric:tabular-nums}
+.cand a{color:var(--accent)}
+@media (max-width:520px){.cand{grid-template-columns:1fr}.cand img{width:100%;height:auto;aspect-ratio:1;max-width:100%}}
 footer{color:var(--muted);font-size:12.5px;display:grid;gap:4px}
 @media (prefers-reduced-motion:no-preference){nav button,.filters button{transition:background .15s,color .15s,border-color .15s}}
 </style>
@@ -130,7 +141,14 @@ const pr={high:0,medium:1,low:2};
 for(const g of [...inv.gaps].sort((a,b)=>pr[a.priority]-pr[b.priority]))$('#gapList').insertAdjacentHTML('beforeend',`<div class="gap"><h3>${esc(g.category.replace(/^[\d,\- ]+/,''))}</h3><p>${esc(g.state)}</p><span class="b ${g.priority}">${g.priority} priority</span></div>`);
 const C=D.cands.candidates||[];
 if(!C.length)$('#candList').innerHTML=`<div class="empty"><b>No candidates yet.</b><p class="note" style="margin:0">Candidate assets (photo-scanned rocks, textured jets, explosion sheets) will appear here with a preview, licence, phone cost and status. Each one passes these gates before it can enter the game:</p><ol><li>Licence verified at the original source</li><li>Top-down preview at game scale</li><li>Phone benchmark (memory, triangles, FPS on the S22)</li><li>Rex approves</li></ol><div class="cmd"><span class="note" style="margin:0">To approve one, tell Claude or Codex:</span><code id="cmdText">approve asset &lt;id&gt;</code><button class="copy" id="copyBtn">Copy</button></div></div>`;
-else $('#candList').innerHTML=C.map(c=>`<div class="cand"><b>${esc(c.name)}</b><span class="meta">${esc(c.category)} · ${esc(c.source)} · ${esc(c.license)}</span><span class="badges"><span class="b">${esc(c.state)}</span></span></div>`).join('');
+else{const vo={recommended:0,candidate:1,'needs work':2,reject:3},vc={recommended:'low',candidate:'',"needs work":'medium',reject:'high'};
+ const card=c=>{const ph=c.phone||{},rw=c.raw||{};return `<article class="cand">${c.thumb?`<img src="${c.thumb}" alt="Top-down preview of ${esc(c.name)}">`:''}<div class="cbody"><div class="ctop"><b>${esc(c.name)}</b><span class="b ${vc[c.verdict]||''}">${esc(c.verdict)}</span></div>
+  <span class="meta">${esc(c.category.replace(/^[\d ]+/,''))} · ${esc(c.role||'')}</span><p class="cnote">${esc(c.notes)}</p>
+  <dl class="cost">${rw.mb!=null?`<div><dt>Download</dt><dd>${rw.mb} MB → ${ph.mb!=null?ph.mb+' MB':'—'}</dd></div>`:(ph.mb!=null?`<div><dt>File</dt><dd>${ph.mb} MB</dd></div>`:'')}${rw.tris?`<div><dt>Triangles</dt><dd>${rw.tris.toLocaleString()} → ${(ph.tris||0).toLocaleString()}</dd></div>`:''}${ph.gpuMB!=null?`<div><dt>Phone memory</dt><dd>~${ph.gpuMB} MB</dd></div>`:''}</dl>
+  <span class="meta">${esc(c.license||'')}${c.author?' · '+esc(c.author):''}${c.source?` · <a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>`:''}</span><span class="meta">${esc(c.id)}</span></div></article>`;};
+ const X=D.cands.excluded||[];
+ $('#candList').innerHTML=`<p class="note">Batch ${D.cands.batch}: shrunk to phone budget in the lab and rendered from above with the same loaders the game would use. Nothing here is in the game.</p>`+[...C].sort((a,b)=>vo[a.verdict]-vo[b.verdict]).map(card).join('')+(X.length?`<h2>Excluded</h2><div class="tbl"><table><thead><tr><th>Asset</th><th>Why</th></tr></thead><tbody>${X.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.why)}</td></tr>`).join('')}</tbody></table></div>`:'')+
+ `<div class="cmd"><span class="note" style="margin:0">To approve one, tell Claude or Codex:</span><code id="cmdText">approve asset &lt;id&gt;</code><button class="copy" id="copyBtn">Copy</button></div>`;}
 const cb=$('#copyBtn');if(cb)cb.addEventListener('click',()=>{const t='approve asset <id>';navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>{cb.textContent='Copied';},()=>{const r=document.createRange();r.selectNodeContents($('#cmdText'));getSelection().removeAllRanges();getSelection().addRange(r);});});
 const tabs=[...document.querySelectorAll('[role=tab]')];
 function show(id){for(const t of tabs){const on=t.id===id;t.setAttribute('aria-selected',on);document.getElementById(t.getAttribute('aria-controls')).hidden=!on;}try{localStorage.setItem('hangarTab',id);}catch(e){}}

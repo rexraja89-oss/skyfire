@@ -1,0 +1,26 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#222">
+<canvas id="c" width="512" height="512"></canvas>
+<script src="vendor/three.min.js"></script><script src="vendor/GLTFLoader.js"></script><script src="vendor/ktx2loader.js"></script>
+<script src="vendor/meshopt_decoder.js"></script><script src="vendor/RGBELoader.js"></script>
+<script>
+// Lab preview: renders one candidate model from above (game-like camera, sun from the upper left, sky lighting).
+const T=THREE,cv=document.getElementById('c'),R=new T.WebGLRenderer({canvas:cv,antialias:true,preserveDrawingBuffer:true});
+R.outputEncoding=T.sRGBEncoding;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.enabled=true;R.shadowMap.type=T.PCFSoftShadowMap;
+const ktx=new T.KTX2Loader().setTranscoderPath('vendor/basis/').detectSupport(R);
+const gl=new T.GLTFLoader().setKTX2Loader(ktx).setMeshoptDecoder(MeshoptDecoder);
+let env=null;
+window.setSky=url=>new Promise(res=>new T.RGBELoader().setDataType(T.UnsignedByteType).load(url,t=>{const pm=new T.PMREMGenerator(R);env=pm.fromEquirectangular(t).texture;window.__sky=t;res(true);}));
+window.renderModel=(url,ground)=>new Promise((res,rej)=>gl.load(url,g=>{
+ const S=new T.Scene();S.background=new T.Color(ground||'#3a3d40');S.environment=env;
+ const o=g.scene;const b=new T.Box3().setFromObject(o),sz=b.getSize(new T.Vector3()),c=b.getCenter(new T.Vector3());
+ o.position.sub(c);o.position.y+=sz.y/2;const piv=new T.Group();piv.add(o);
+ const span=Math.max(sz.x,sz.z);piv.scale.setScalar(10/span);S.add(piv);
+ o.traverse(m=>{if(m.isMesh){m.castShadow=m.receiveShadow=true;}});
+ const pl=new T.Mesh(new T.PlaneGeometry(60,60),new T.MeshStandardMaterial({color:ground||'#3a3d40',roughness:.95}));pl.rotation.x=-Math.PI/2;pl.receiveShadow=true;S.add(pl);
+ S.add(new T.HemisphereLight(0xdfe8ff,0x40352a,env?.35:.9));const sun=new T.DirectionalLight(0xfff1dd,2.6);sun.position.set(-8,14,-6);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+ Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10});S.add(sun);
+ const cam=new T.PerspectiveCamera(30,1,.1,500);cam.position.set(0,34,9);cam.lookAt(0,0,0);   // top-down with a slight tilt, like the game camera
+ const tris=(()=>{let t=0;o.traverse(m=>{if(m.isMesh){const gi=m.geometry;t+=(gi.index?gi.index.count:gi.attributes.position.count)/3;}});return t;})();
+ R.render(S,cam);res({img:cv.toDataURL('image/jpeg',.88),tris,size:[sz.x,sz.y,sz.z].map(v=>+v.toFixed(2))});},undefined,e=>rej(String(e))));
+window.renderSky=()=>{const S=new T.Scene();window.__sky.mapping=T.EquirectangularReflectionMapping;S.background=window.__sky;const cam=new T.PerspectiveCamera(100,1,.1,10);cam.lookAt(1,.35,0);R.render(S,cam);return cv.toDataURL('image/jpeg',.88);};
+</script>
