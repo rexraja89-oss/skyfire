@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Mega-Boss Viewer</title>
+<style>
+:root{--bg:#0d0e13;--panel:rgba(18,19,27,.92);--line:#2b2d3a;--txt:#e9e7f2;--dim:#9a97ad;--acc:#a04dff;--red:#ff2436}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font:13px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden;touch-action:none}
+canvas{display:block;width:100%;height:100%}
+#stats{position:fixed;left:8px;top:8px;padding:6px 8px;background:var(--panel);border:1px solid var(--line);border-radius:8px;font:12px/1.4 ui-monospace,Menlo,monospace;pointer-events:none;white-space:pre}
+#stats b{color:#7dffa8}
+#bar{position:fixed;right:8px;top:8px;display:flex;gap:6px}
+button,.seg button{background:#22232f;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;min-height:36px}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#panel{position:fixed;left:0;right:0;bottom:0;max-height:52vh;overflow:auto;background:var(--panel);border-top:1px solid var(--line);padding:10px 16px 16px;transform:translateY(0);transition:transform .2s}
+#panel.hide{transform:translateY(calc(100% - 44px))}
+#ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.row{display:flex;align-items:center;gap:8px;margin:5px 0}.row label{flex:0 0 112px;color:var(--dim)}.row input[type=range]{flex:1;accent-color:var(--acc)}.row output{flex:0 0 40px;text-align:right;font:12px ui-monospace,monospace}
+.seg{display:flex;gap:4px;flex-wrap:wrap}.seg button{padding:6px 9px;min-height:32px}
+#load{position:fixed;inset:0;display:grid;place-items:center;color:var(--dim)}
+.note{color:var(--dim);font-size:12px;margin:6px 0 0}
+</style></head>
+<body>
+<canvas id="c"></canvas>
+<div id="load">Loading model…</div>
+<div id="stats"></div>
+<div id="bar"><button id="bLOD" class="on">HQ</button><button id="bCam">Orbit</button></div>
+<div id="panel" class="hide">
+ <div id="ph"><strong>Mega-Boss · Stage 10 prototype</strong><button id="bPanel">Controls ▲</button></div>
+ <h3>View</h3>
+ <div class="row"><label>Camera</label><div class="seg" data-k="cam"><button data-v="orbit" class="on">Orbit</button><button data-v="game">Game top-down</button><button data-v="top">Straight down</button></div></div>
+ <div class="row"><label>Background</label><div class="seg" data-k="bg"><button data-v="studio" class="on">Studio</button><button data-v="magma">Magma ground</button><button data-v="sky">Light ground</button></div></div>
+ <div class="row"><label>Look preset</label><div class="seg" data-k="preset"><button data-v="studio" class="on">Studio white</button><button data-v="ingame">Warm stage (in-game)</button></div></div>
+ <div class="row"><label>Motion</label><div class="seg" data-k="motion"><button data-v="still" class="on">Still</button><button data-v="spin">Spin</button><button data-v="sway">Boss sway</button></div></div>
+ <h3>Quality</h3>
+ <div class="row"><label>Model</label><div class="seg" data-k="lod"><button data-v="hq" class="on">HQ ~24k</button><button data-v="smooth">Smooth ~8k</button></div></div>
+ <div class="row"><label>Pixel ratio</label><div class="seg" data-k="dpr"><button data-v="auto" class="on">Auto (game)</button><button data-v="1">1</button><button data-v="2">2</button></div></div>
+ <div class="row"><label>Toggles</label><div class="seg" data-k="tog"><button data-v="strips" class="on">Strips</button><button data-v="engines" class="on">Engines</button><button data-v="details" class="on">Details</button><button data-v="clearcoat">Clearcoat (HQ)</button><button data-v="shadows">Shadows</button><button data-v="markers">Weapon markers</button><button data-v="wire">Wireframe</button></div></div>
+ <h3>Hull</h3>
+ <div class="row"><label>Roughness</label><input type="range" min="0" max="1" step=".01" data-p="hull.roughness"><output></output></div>
+ <div class="row"><label>Metalness</label><input type="range" min="0" max="1" step=".01" data-p="hull.metalness"><output></output></div>
+ <div class="row"><label>Reflections</label><input type="range" min="0" max="2" step=".05" data-p="hull.envIntensity"><output></output></div>
+ <div class="row"><label>Panel seams</label><input type="range" min="0" max="1" step=".05" data-p="details.panel"><output></output></div>
+ <div class="row"><label>Boss key light</label><input type="range" min="0" max="1.2" step=".05" data-p="details.key"><output></output></div>
+ <div class="row"><label>Canopy glow</label><input type="range" min="0" max="1.5" step=".05" data-p="details.canopy"><output></output></div>
+ <h3>Strips &amp; engines</h3>
+ <div class="row"><label>Strip brightness</label><input type="range" min="0" max="2.5" step=".05" data-p="strips.intensity"><output></output></div>
+ <div class="row"><label>Strip halo</label><input type="range" min="0" max="1.5" step=".05" data-p="strips.glow"><output></output></div>
+ <div class="row"><label>Pulse</label><input type="range" min="0" max="1" step=".05" data-p="strips.pulse"><output></output></div>
+ <div class="row"><label>Flame length</label><input type="range" min="0" max="14" step=".5" data-p="engines.flameLength"><output></output></div>
+ <div class="row"><label>Engine glow</label><input type="range" min="0" max="2" step=".05" data-p="engines.glow"><output></output></div>
+ <h3>Lighting</h3>
+ <div class="row"><label>Sun</label><input type="range" min="0" max="4" step=".05" data-l="sun"><output></output></div>
+ <div class="row"><label>Sun angle</label><input type="range" min="0" max="360" step="1" data-l="az"><output></output></div>
+ <div class="row"><label>Ambient</label><input type="range" min="0" max="2" step=".05" data-l="amb"><output></output></div>
+ <div class="row"><label>Exposure</label><input type="range" min=".4" max="2" step=".05" data-l="exp"><output></output></div>
+ <p class="note">Prototype only, not part of the game. Base mesh: "Neon Valkyrie" made with Meshy AI (free plan, CC BY 4.0). Skyfire world units; nose faces the player.</p>
+</div>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/OrbitControls.js"></script>
+<script src="megaboss_fx.js"></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),T=THREE,CFG=JSON.parse(JSON.stringify(MegaBossFX.CFG));
+const S={preset:'studio',cam:'orbit',bg:'studio',motion:'still',lod:'hq',dpr:'auto',tog:{strips:true,engines:true,details:true,clearcoat:false,shadows:false,markers:false,wire:false},L:{sun:2,az:300,amb:.6,exp:1.05}};
+const R=new T.WebGLRenderer({canvas:$('c'),antialias:true,powerPreference:'high-performance'});
+R.outputEncoding=T.sRGBEncoding;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.type=T.PCFSoftShadowMap;
+const scene=new T.Scene(),hemi=new T.HemisphereLight(0xffffff,0x444455,.6),sun=new T.DirectionalLight(0xffffff,2);scene.add(hemi,sun,sun.target);
+const sc=sun.shadow.camera;sc.left=-30;sc.right=30;sc.top=30;sc.bottom=-30;sc.near=1;sc.far=200;sun.shadow.mapSize.set(1024,1024);sun.shadow.bias=-.0008;sun.shadow.normalBias=.04;
+scene.environment=MegaBossFX.envCube();
+const cam=new T.PerspectiveCamera(40,1,.5,2400),orbit=new T.OrbitControls(cam,R.domElement);orbit.enableDamping=true;orbit.target.set(0,0,0);cam.position.set(46,48,70);orbit.minDistance=12;orbit.maxDistance=160;
+// backgrounds: studio gradient, or a ground plane at the game's ground height (GY=-25)
+const grounds={};function groundTex(a,b,c){const cv=document.createElement('canvas');cv.width=cv.height=256;const g=cv.getContext('2d');g.fillStyle=a;g.fillRect(0,0,256,256);
+ for(let i=0;i<2600;i++){g.fillStyle=Math.random()<.5?b:a;g.globalAlpha=Math.random()*.45;const r=Math.random()*9+1;g.beginPath();g.arc(Math.random()*256,Math.random()*256,r,0,6.3);g.fill();}
+ if(c)for(let i=0;i<10;i++){const x=Math.random()*256,y=Math.random()*256,r=8+Math.random()*16,gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,c);gr.addColorStop(1,'rgba(0,0,0,0)');g.globalAlpha=.35;g.fillStyle=gr;g.fillRect(x-r,y-r,2*r,2*r);}
+ const t=new T.CanvasTexture(cv);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(6,12);t.encoding=T.sRGBEncoding;return t;}
+for(const [k,a,b,c] of[['magma','#2a1612','#140a08','#ff5a1a'],['sky','#9fb7a0','#7f9a82',null]]){const m=new T.Mesh(new T.PlaneGeometry(240,480),new T.MeshStandardMaterial({map:groundTex(a,b,c),roughness:.95,metalness:0,emissive:k==='magma'?0x220800:0}));m.rotation.x=-Math.PI/2;m.position.y=-25;m.receiveShadow=true;m.visible=false;scene.add(m);grounds[k]=m;}
+function setBg(){for(const k in grounds)grounds[k].visible=S.bg===k;if(S.bg==='studio'){scene.background=new T.Color('#15161d');scene.fog=null;}else{const c=S.bg==='magma'?'#3a1c16':'#c9d6dc';scene.background=new T.Color(c);scene.fog=new T.Fog(c,200,700);}}
+// models
+const loader=new T.GLTFLoader(),M={};
+function loadOne(k){return new Promise((ok,no)=>{if(window.__GLB){const b=atob(window.__GLB[k]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);loader.parse(u.buffer,'',g=>ok(g.scene),no);}
+ else loader.load('../out/megaboss_'+k+'.glb',g=>ok(g.scene),null,no);});}
+const holder=new T.Group();scene.add(holder);let A=null;
+function useLOD(){holder.clear();const g=M[S.lod];holder.add(g);A=g.userData.fx||(g.userData.fx=MegaBossFX.build(g,CFG,{hq:S.lod==='hq'}));applyAll();$('bLOD').textContent=S.lod==='hq'?'HQ':'Smooth';}
+function applyAll(){CFG.strips.on=S.tog.strips;CFG.engines.on=S.tog.engines;CFG.markers.show=S.tog.markers;
+ CFG.hull.clearcoat=S.tog.clearcoat&&S.lod==='hq'?.8:0;CFG.details.canopy=S.tog.details?(CFG._canopy??CFG.details.canopy):0;
+ if(A){A.apply(CFG);A.meshes.hull.material.wireframe=S.tog.wire;A.meshes.hull.castShadow=S.tog.shadows;}
+ if(R.shadowMap.enabled!==S.tog.shadows){R.shadowMap.enabled=S.tog.shadows;sun.castShadow=S.tog.shadows;scene.traverse(o=>{if(o.isMesh)o.material.needsUpdate=true;});}   // recompile only when shadows flip
+ hemi.intensity=S.L.amb;sun.intensity=S.L.sun;const a=S.L.az*Math.PI/180;sun.position.set(Math.cos(a)*40,60,Math.sin(a)*40);R.toneMappingExposure=S.L.exp;setBg();resize();}
+// cameras: game = Skyfire's fitCamera (fov 40, 30 deg tilt, 40 world units across the ground at y=0); boss sits near the top
+let game={pos:new T.Vector3(),z:0};
+function fitGame(asp){const c=new T.PerspectiveCamera(40,asp,2,2400),t=30*Math.PI/180;c.position.set(0,Math.cos(t),Math.sin(t));c.lookAt(0,0,0);c.updateMatrixWorld();
+ const v=new T.Vector3(),hit=(nx,ny)=>{v.set(nx,ny,.5).unproject(c).sub(c.position).normalize();const k=-c.position.y/v.y;return c.position.clone().addScaledVector(v,k);};
+ const bl=hit(-1,-1),tp=hit(0,1),bt=hit(0,-1),s=40/(2*Math.abs(bl.x));game.pos.copy(c.position).multiplyScalar(s);game.Zt=tp.z*s;game.Zb=bt.z*s;game.z=game.Zt+.26*(game.Zb-game.Zt);}
+function resize(){const w=innerWidth,h=innerHeight,dpr=S.dpr==='auto'?Math.min(devicePixelRatio||1,S.lod==='hq'?2:1.25):+S.dpr;R.setPixelRatio(dpr);R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();fitGame(w/h);}
+addEventListener('resize',resize);
+// UI
+document.querySelectorAll('.seg').forEach(sg=>sg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=sg.dataset.k,v=b.dataset.v;
+ if(k==='tog'){S.tog[v]=!S.tog[v];b.classList.toggle('on',S.tog[v]);}else{S[k]=v;sg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));}
+ if(k==='preset'){const P=MegaBossFX.merge(MegaBossFX.CFG,v==='ingame'?MegaBossFX.INGAME:{});for(const g in P)Object.assign(CFG[g],P[g]);CFG._canopy=CFG.details.canopy;
+  if(v==='ingame'){S.L.sun=2.2;S.L.amb=.5;hemi.color.set(0xffb27a);sun.color.set(0xffa060);}else{S.L.sun=2;S.L.amb=.6;hemi.color.set(0xffffff);sun.color.set(0xffffff);}syncInputs();}
+ if(k==='lod')useLOD();else applyAll();if(k==='cam')setCam();}));
+const get=(o,p)=>p.split('.').reduce((a,k)=>a[k],o),set=(o,p,v)=>{const ks=p.split('.'),l=ks.pop();ks.reduce((a,k)=>a[k],o)[l]=v;};
+function syncInputs(){document.querySelectorAll('input[data-p],input[data-l]').forEach(i=>{const p=i.dataset.p,l=i.dataset.l;i.value=p?get(CFG,p):S.L[l];i.nextElementSibling.value=(+i.value).toFixed(2);});}syncInputs();
+document.querySelectorAll('input[data-p],input[data-l]').forEach(i=>{const p=i.dataset.p,l=i.dataset.l;
+ i.addEventListener('input',()=>{const v=+i.value;i.nextElementSibling.value=v.toFixed(2);if(p){set(CFG,p,v);if(p==='details.canopy')CFG._canopy=v;}else S.L[l]=v;applyAll();});});
+$('bPanel').onclick=()=>{$('panel').classList.toggle('hide');$('bPanel').textContent=$('panel').classList.contains('hide')?'Controls ▲':'Controls ▼';};
+$('bLOD').onclick=()=>document.querySelector(`.seg[data-k=lod] button[data-v=${S.lod==='hq'?'smooth':'hq'}]`).click();
+$('bCam').onclick=()=>{const order=['orbit','game','top'],n=order[(order.indexOf(S.cam)+1)%3];document.querySelector(`.seg[data-k=cam] button[data-v=${n}]`).click();};
+function setCam(){orbit.enabled=S.cam==='orbit';$('bCam').textContent={orbit:'Orbit',game:'Game view',top:'Top'}[S.cam];if(S.cam==='orbit'){cam.position.set(46,48,70);orbit.target.set(0,0,0);}}
+// stats
+let fN=0,fT=0,fps=0,ms=0,last=performance.now();const st=$('stats');
+function stats(){const i=R.info;st.innerHTML=`<b>${fps.toFixed(0)}</b> fps · ${ms.toFixed(1)} ms\ndraw calls ${i.render.calls}\ntriangles ${i.render.triangles.toLocaleString()}\nprograms ${i.programs.length} · tex ${i.memory.textures} · geo ${i.memory.geometries}\n${S.lod.toUpperCase()} · dpr ${R.getPixelRatio().toFixed(2)}`;}
+// loop
+const clock=new T.Clock();
+function frame(){requestAnimationFrame(frame);const now=performance.now(),dt=now-last;last=now;fN++;fT+=dt;if(fT>=1000){fps=fN*1000/fT;ms=fT/fN;fN=0;fT=0;stats();}
+ const t=clock.getElapsedTime();holder.position.set(0,0,0);holder.rotation.set(0,0,0);
+ if(S.motion==='spin')holder.rotation.y=t*.4;
+ if(S.cam==='game'||S.cam==='top'){holder.position.z=game.z;if(S.motion==='sway'){holder.position.x=Math.sin(t*.4*6.28*.25)*5;holder.rotation.z=-Math.cos(t*.4*6.28*.25)*.06;}
+  if(S.cam==='game'){cam.position.copy(game.pos);cam.lookAt(0,0,0);}else{cam.position.set(0,game.pos.length(),game.z+.001);cam.lookAt(0,0,game.z);}}
+ else if(S.motion==='sway'){holder.position.x=Math.sin(t*.63)*5;holder.rotation.z=-Math.cos(t*.63)*.06;}
+ if(S.cam==='orbit')orbit.update();if(A)A.update(t);R.render(scene,cam);}
+Promise.all([loadOne('hq'),loadOne('smooth')]).then(([hq,sm])=>{M.hq=hq;M.smooth=sm;$('load').remove();resize();useLOD();setCam();frame();window.__ready=true;})
+ .catch(e=>{$('load').textContent='Could not load the model: '+e;});
+window.__viewer={S,CFG,R,get A(){return A},applyAll,useLOD,setCam};
+</script>
+</body></html>

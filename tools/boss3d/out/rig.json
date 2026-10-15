@@ -1,0 +1,199 @@
+{
+ "about": "Mega-boss rig (game frame: +X right, +Z nose/screen-down, +Y up; world units, K=0.1)",
+ "engines": [
+  {
+   "id": "eng_R",
+   "pos": [
+    -6.871126413345337,
+    -0.007554888725280762,
+    -15.508384704589844
+   ],
+   "radius": 1.188,
+   "dir": [
+    0,
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "eng_C",
+   "pos": [
+    0.00445932149887085,
+    -0.009890079498291016,
+    -18.2570858001709
+   ],
+   "radius": 1.298,
+   "dir": [
+    0,
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "eng_L",
+   "pos": [
+    6.869386672973633,
+    -0.004839479923248291,
+    -15.5077486038208
+   ],
+   "radius": 1.18,
+   "dir": [
+    0,
+    0,
+    -1
+   ]
+  }
+ ],
+ "markers": [
+  {
+   "id": "wb_missile_L",
+   "bay": "wing missile bay",
+   "side": "L",
+   "pos": [
+    11.5,
+    2.119,
+    3.2
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "wb_missile_R",
+   "bay": "wing missile bay",
+   "side": "R",
+   "pos": [
+    -11.5,
+    2.123,
+    3.2
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "wb_drone_L",
+   "bay": "drone bay",
+   "side": "L",
+   "pos": [
+    11.2,
+    2.398,
+    -3
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "wb_drone_R",
+   "bay": "drone bay",
+   "side": "R",
+   "pos": [
+    -11.2,
+    2.404,
+    -3
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "wb_cannon_L",
+   "bay": "cannon storage",
+   "side": "L",
+   "pos": [
+    6.4,
+    2.641,
+    -9.5
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "wb_cannon_R",
+   "bay": "cannon storage",
+   "side": "R",
+   "pos": [
+    -6.4,
+    2.628,
+    -9.5
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "id": "wb_central",
+   "bay": "central weapon system",
+   "side": "C",
+   "pos": [
+    0,
+    2.856,
+    -12.8
+   ],
+   "onSurface": true,
+   "deploy": [
+    0,
+    1,
+    0
+   ]
+  }
+ ],
+ "strips": [
+  {
+   "id": "red_chevron",
+   "color": "red"
+  },
+  {
+   "id": "red_spine",
+   "color": "red"
+  },
+  {
+   "id": "red_canopy",
+   "color": "red"
+  },
+  {
+   "id": "red_nosespike",
+   "color": "red"
+  },
+  {
+   "id": "vio_wingrear",
+   "color": "violet"
+  },
+  {
+   "id": "vio_wingfront",
+   "color": "violet"
+  },
+  {
+   "id": "vio_finfront",
+   "color": "violet"
+  },
+  {
+   "id": "vio_finrear",
+   "color": "violet"
+  },
+  {
+   "id": "vio_canopy",
+   "color": "violet"
+  }
+ ]
+}

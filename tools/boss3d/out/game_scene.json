@@ -1,0 +1,124 @@
+{
+ "note": "SwiftShader software GL: frame ms are relative only",
+ "runs": [
+  {
+   "without": {
+    "frames": 14,
+    "frameMsMed": 537.5999999996275,
+    "drawCalls": 83,
+    "triangles": 269612
+   },
+   "with": {
+    "frames": 15,
+    "frameMsMed": 597.5999999996275,
+    "drawCalls": 122,
+    "triangles": 297666
+   },
+   "enemies": 6,
+   "bullets": 284,
+   "particles": 572,
+   "hq": true,
+   "dpr": 1,
+   "programs": 24,
+   "delta": {
+    "drawCalls": 39,
+    "triangles": 28054,
+    "frameMsPct": 11.2
+   },
+   "label": "hq: stage 10, boss on alternate frames"
+  },
+  {
+   "without": {
+    "frames": 21,
+    "frameMsMed": 373.39999999990687,
+    "drawCalls": 114,
+    "triangles": 271126
+   },
+   "with": {
+    "frames": 21,
+    "frameMsMed": 398.39999999990687,
+    "drawCalls": 129,
+    "triangles": 280590
+   },
+   "enemies": 6,
+   "bullets": 255,
+   "particles": 245,
+   "hq": false,
+   "dpr": 1,
+   "programs": 38,
+   "delta": {
+    "drawCalls": 15,
+    "triangles": 9464,
+    "frameMsPct": 6.7
+   },
+   "label": "smooth: stage 10, boss on alternate frames"
+  }
+ ],
+ "place_hq": {
+  "zWorld": -44.81,
+  "Zt": -78.58,
+  "Zb": 51.29
+ },
+ "exact_hq": [
+  {
+   "calls": 17,
+   "tris": 26674
+  },
+  {
+   "calls": 17,
+   "tris": 26674
+  },
+  {
+   "calls": 17,
+   "tris": 26674
+  },
+  {
+   "calls": 17,
+   "tris": 26674
+  },
+  {
+   "calls": 17,
+   "tris": 26674
+  }
+ ],
+ "place_smooth": {
+  "zWorld": -44.81,
+  "Zt": -78.58,
+  "Zb": 51.29
+ },
+ "exact_smooth": [
+  {
+   "calls": 15,
+   "tris": 9464
+  },
+  {
+   "calls": 15,
+   "tris": 9464
+  },
+  {
+   "calls": 15,
+   "tris": 9464
+  },
+  {
+   "calls": 15,
+   "tris": 9464
+  },
+  {
+   "calls": 15,
+   "tris": 9464
+  }
+ ],
+ "delta": {
+  "hq": {
+   "drawCalls": 39,
+   "triangles": 28054,
+   "frameMsPct": 11.2
+  },
+  "smooth": {
+   "drawCalls": 15,
+   "triangles": 9464,
+   "frameMsPct": 6.7
+  }
+ },
+ "errors": []
+}

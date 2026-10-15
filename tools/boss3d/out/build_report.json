@@ -1,0 +1,370 @@
+{
+ "source": {
+  "file": "src/megaboss_meshy_original.glb",
+  "sha256": "39cf4e83269db6dbcd4b70bb30886efa5ec5798edaa2c9cf39f1ec3e21c5231d",
+  "tris": 188372,
+  "verts": 94136,
+  "boundaryEdges": 0,
+  "nonManifoldEdges": 0,
+  "degenerate": 0,
+  "signedVolume": 2618.092,
+  "downFacingPct": 38.3,
+  "scaleToGame": 19.2198,
+  "bbox": {
+   "min": [
+    -15,
+    -4.768894195556641,
+    -18.2570858001709
+   ],
+   "max": [
+    15,
+    4.768894195556641,
+    18.2570858001709
+   ],
+   "size": [
+    30,
+    9.537788391113281,
+    36.5141716003418
+   ],
+   "center": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ "lods": {
+  "hq": {
+   "file": "out/megaboss_hq.glb",
+   "bytes": 718884,
+   "targetTris": 24000,
+   "creaseDeg": 38,
+   "hull": {
+    "tris": 24000,
+    "verts": 11950,
+    "boundaryEdges": 0,
+    "nonManifoldEdges": 0,
+    "degenerate": 0,
+    "signedVolume": 2603.893,
+    "downFacingPct": 24.1,
+    "vertsAfterNormalSplit": 32143,
+    "hardEdgeVerts": 7994,
+    "badNormals": 0,
+    "flippedCorners": 0
+   },
+   "simplifyError": {
+    "passA": 0.0713,
+    "passB": 0.2079
+   },
+   "strips": {
+    "runs": {
+     "red": 9,
+     "violet": 9
+    },
+    "tris": 2416
+   },
+   "markers": [
+    {
+     "id": "wb_missile_L",
+     "bay": "wing missile bay",
+     "side": "L",
+     "pos": [
+      11.5,
+      2.119,
+      3.2
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_missile_R",
+     "bay": "wing missile bay",
+     "side": "R",
+     "pos": [
+      -11.5,
+      2.123,
+      3.2
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_drone_L",
+     "bay": "drone bay",
+     "side": "L",
+     "pos": [
+      11.2,
+      2.398,
+      -3
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_drone_R",
+     "bay": "drone bay",
+     "side": "R",
+     "pos": [
+      -11.2,
+      2.404,
+      -3
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_cannon_L",
+     "bay": "cannon storage",
+     "side": "L",
+     "pos": [
+      6.4,
+      2.641,
+      -9.5
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_cannon_R",
+     "bay": "cannon storage",
+     "side": "R",
+     "pos": [
+      -6.4,
+      2.628,
+      -9.5
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_central",
+     "bay": "central weapon system",
+     "side": "C",
+     "pos": [
+      0,
+      2.856,
+      -12.8
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    }
+   ]
+  },
+  "smooth": {
+   "file": "out/megaboss_smooth.glb",
+   "bytes": 289232,
+   "targetTris": 8000,
+   "creaseDeg": 42,
+   "hull": {
+    "tris": 8000,
+    "verts": 3955,
+    "boundaryEdges": 0,
+    "nonManifoldEdges": 21,
+    "degenerate": 0,
+    "signedVolume": 2571.79,
+    "downFacingPct": 23.5,
+    "vertsAfterNormalSplit": 12462,
+    "hardEdgeVerts": 3234,
+    "badNormals": 0,
+    "flippedCorners": 0
+   },
+   "simplifyError": {
+    "passA": 0.257,
+    "passB": 1.4143
+   },
+   "strips": {
+    "runs": {
+     "red": 9,
+     "violet": 9
+    },
+    "tris": 1206
+   },
+   "markers": [
+    {
+     "id": "wb_missile_L",
+     "bay": "wing missile bay",
+     "side": "L",
+     "pos": [
+      11.5,
+      2.127,
+      3.2
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_missile_R",
+     "bay": "wing missile bay",
+     "side": "R",
+     "pos": [
+      -11.5,
+      2.133,
+      3.2
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_drone_L",
+     "bay": "drone bay",
+     "side": "L",
+     "pos": [
+      11.2,
+      2.398,
+      -3
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_drone_R",
+     "bay": "drone bay",
+     "side": "R",
+     "pos": [
+      -11.2,
+      2.407,
+      -3
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_cannon_L",
+     "bay": "cannon storage",
+     "side": "L",
+     "pos": [
+      6.4,
+      2.624,
+      -9.5
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_cannon_R",
+     "bay": "cannon storage",
+     "side": "R",
+     "pos": [
+      -6.4,
+      2.587,
+      -9.5
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    },
+    {
+     "id": "wb_central",
+     "bay": "central weapon system",
+     "side": "C",
+     "pos": [
+      0,
+      2.941,
+      -12.8
+     ],
+     "onSurface": true,
+     "deploy": [
+      0,
+      1,
+      0
+     ]
+    }
+   ]
+  }
+ },
+ "engines": [
+  {
+   "id": "eng_R",
+   "pos": [
+    -6.871126413345337,
+    -0.007554888725280762,
+    -15.508384704589844
+   ],
+   "radius": 1.188,
+   "dir": [
+    0,
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "eng_C",
+   "pos": [
+    0.00445932149887085,
+    -0.009890079498291016,
+    -18.2570858001709
+   ],
+   "radius": 1.298,
+   "dir": [
+    0,
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "eng_L",
+   "pos": [
+    6.869386672973633,
+    -0.004839479923248291,
+    -15.5077486038208
+   ],
+   "radius": 1.18,
+   "dir": [
+    0,
+    0,
+    -1
+   ]
+  }
+ ]
+}

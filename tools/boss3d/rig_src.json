@@ -1,0 +1,26 @@
+{
+ "_about": "Hand-authored rig for the Stage 10 mega-boss, in Skyfire world units (game frame: +X screen right, +Z screen down = nose, +Y up; 1 unit = 10 logic px). Strip paths are top-down (x,z) polylines projected onto the hull by build.cjs. 'mirror' adds the x-mirrored copy. Ship's left = +X (nose faces +Z).",
+ "span": 30,
+ "strips": [
+  {"id":"red_chevron","color":"red","mirror":true,"w":0.22,"pts":[[7.6,-15.2],[7.6,-7.2],[14.1,-1.4],[12.3,2.0]]},
+  {"id":"red_spine","color":"red","mirror":false,"w":0.2,"pts":[[0,-17.2],[0,-10.6]]},
+  {"id":"red_canopy","color":"red","mirror":true,"w":0.18,"pts":[[0,-10.6],[2.3,-8.2],[2.6,3.5],[1.2,9.5],[0,12.5]]},
+  {"id":"red_nosespike","color":"red","mirror":true,"w":0.18,"pts":[[7.3,5.5],[7.1,10.5],[6.7,13.8]]},
+  {"id":"vio_wingrear","color":"violet","mirror":true,"w":0.22,"pts":[[8.4,-9.4],[12.8,-5.4]]},
+  {"id":"vio_wingfront","color":"violet","mirror":true,"w":0.22,"pts":[[14.4,0.6],[10.9,5.0]]},
+  {"id":"vio_finfront","color":"violet","mirror":true,"w":0.24,"pts":[[10.75,5.6],[10.85,11.0]]},
+  {"id":"vio_finrear","color":"violet","mirror":true,"w":0.2,"pts":[[9.3,-11.2],[9.3,-14.8]]},
+  {"id":"vio_canopy","color":"violet","mirror":false,"w":0.2,"loop":true,"ellipse":{"cx":0,"cz":-1.5,"rx":1.35,"rz":6.2,"n":28}}
+ ],
+ "markers": [
+  {"id":"wb_missile_L","bay":"wing missile bay","side":"L","xz":[11.5,3.2]},
+  {"id":"wb_missile_R","bay":"wing missile bay","side":"R","xz":[-11.5,3.2]},
+  {"id":"wb_drone_L","bay":"drone bay","side":"L","xz":[11.2,-3.0]},
+  {"id":"wb_drone_R","bay":"drone bay","side":"R","xz":[-11.2,-3.0]},
+  {"id":"wb_cannon_L","bay":"cannon storage","side":"L","xz":[6.4,-9.5]},
+  {"id":"wb_cannon_R","bay":"cannon storage","side":"R","xz":[-6.4,-9.5]},
+  {"id":"wb_central","bay":"central weapon system","side":"C","xz":[0,-12.8]}
+ ],
+ "lods": {"hq":{"targetTris":24000,"crease":38},"smooth":{"targetTris":8000,"crease":42}},
+ "underside": {"downNy":-0.35,"keepFrac":0.55}
+}

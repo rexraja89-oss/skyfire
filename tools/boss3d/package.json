@@ -1,0 +1,22 @@
+{
+ "name": "skyfire-boss3d",
+ "private": true,
+ "description": "Stage 10 mega-boss asset pipeline + viewer (prototype, not shipped)",
+ "devDependencies": {
+  "@gltf-transform/core": "4.1.1",
+  "@gltf-transform/extensions": "4.1.1",
+  "@gltf-transform/functions": "4.1.1",
+  "gltf-validator": "2.0.0-dev.3.10",
+  "meshoptimizer": "0.22.0",
+  "playwright": "1.56.1",
+  "three": "0.128.0"
+ },
+ "scripts": {
+  "build": "node build.cjs",
+  "validate": "node validate.cjs",
+  "shots": "node shots.cjs",
+  "game": "node game_scene.cjs",
+  "bundle": "node bundle.cjs",
+  "all": "node build.cjs && node validate.cjs && node shots.cjs && node game_scene.cjs && node bundle.cjs"
+ }
+}

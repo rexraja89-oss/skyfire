@@ -1,0 +1,125 @@
+{
+ "validator": {
+  "megaboss_full.glb": {
+   "errors": 0,
+   "warnings": 0,
+   "infos": 0,
+   "messages": []
+  },
+  "megaboss_hq.glb": {
+   "errors": 0,
+   "warnings": 0,
+   "infos": 4,
+   "messages": []
+  },
+  "megaboss_smooth.glb": {
+   "errors": 0,
+   "warnings": 0,
+   "infos": 2,
+   "messages": []
+  }
+ },
+ "lods": {
+  "hq": {
+   "topIoU": 0.9974,
+   "rearIoU": 0.9915,
+   "gameCamIoU": 0.9979,
+   "regions": {
+    "cockpit": {
+     "iou": 1,
+     "relief": {
+      "meanAbs": 0.016,
+      "over025pct": 0.11
+     }
+    },
+    "wingL": {
+     "iou": 0.998,
+     "relief": {
+      "meanAbs": 0.01,
+      "over025pct": 0.07
+     }
+    },
+    "wingR": {
+     "iou": 0.9978,
+     "relief": {
+      "meanAbs": 0.012,
+      "over025pct": 0.07
+     }
+    },
+    "thrusters": {
+     "iou": 0.9924,
+     "relief": {
+      "meanAbs": 0.02,
+      "over025pct": 0.37
+     }
+    },
+    "noseSpikes": {
+     "iou": 0.993,
+     "relief": {
+      "meanAbs": 0.017,
+      "over025pct": 0.51
+     }
+    }
+   },
+   "relief": {
+    "meanAbs": 0.014,
+    "over025pct": 0.19
+   },
+   "pass": true
+  },
+  "smooth": {
+   "topIoU": 0.9934,
+   "rearIoU": 0.9652,
+   "gameCamIoU": 0.9939,
+   "regions": {
+    "cockpit": {
+     "iou": 1,
+     "relief": {
+      "meanAbs": 0.041,
+      "over025pct": 0.22
+     }
+    },
+    "wingL": {
+     "iou": 0.9947,
+     "relief": {
+      "meanAbs": 0.028,
+      "over025pct": 0.19
+     }
+    },
+    "wingR": {
+     "iou": 0.9944,
+     "relief": {
+      "meanAbs": 0.03,
+      "over025pct": 0.28
+     }
+    },
+    "thrusters": {
+     "iou": 0.9815,
+     "relief": {
+      "meanAbs": 0.059,
+      "over025pct": 1.48
+     }
+    },
+    "noseSpikes": {
+     "iou": 0.982,
+     "relief": {
+      "meanAbs": 0.043,
+      "over025pct": 1.43
+     }
+    }
+   },
+   "relief": {
+    "meanAbs": 0.039,
+    "over025pct": 0.77
+   },
+   "pass": true
+  }
+ },
+ "noseCheck": {
+  "noseScreenY": 0.368,
+  "enginesScreenY": -0.364,
+  "noseBelowEngines": true,
+  "leftWingScreenX": 0.832
+ },
+ "errors": []
+}

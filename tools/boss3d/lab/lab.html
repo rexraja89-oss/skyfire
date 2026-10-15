@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000">
+<script src="../viewer/vendor/three.min.js"></script><script src="../viewer/vendor/GLTFLoader.js"></script>
+<script>
+// Headless render lab: orthographic/perspective masks and shaded shots used by validate.cjs.
+const R=new THREE.WebGLRenderer({antialias:false,preserveDrawingBuffer:true});document.body.appendChild(R.domElement);
+const L=new THREE.GLTFLoader(),cache={};
+window.load=url=>new Promise((ok,no)=>cache[url]?ok(1):L.load(url,g=>{cache[url]=g.scene;ok(1);},null,no));
+function cam(view,size){const h=size;let c;
+  if(view==='top'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(0,50,0);c.up.set(0,0,-1);c.lookAt(0,0,0);}       // screen up = -Z (game)
+  else if(view==='rear'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(0,0,-50);c.lookAt(0,0,0);}
+  else if(view==='side'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(50,0,0);c.lookAt(0,0,0);}
+  else if(view==='game'){c=new THREE.PerspectiveCamera(40,1,2,2400);const t=30*Math.PI/180;c.position.set(0,Math.cos(t),Math.sin(t)).multiplyScalar(window.gameDist||110);c.lookAt(0,0,0);}
+  return c;}
+// mask: per-pixel coverage of a model -> Uint8 array (1 = covered); returns base64 of bytes
+window.mask=(url,view,px,size)=>{R.setSize(px,px);const s=new THREE.Scene(),m=cache[url].clone();
+  m.traverse(o=>{if(o.isMesh)o.material=new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});if(o.isMesh&&o.name!=='hull'&&!o.name.startsWith('hull'))o.visible=false;});s.add(m);
+  R.setClearColor(0,1);R.render(s,cam(view,size));const g=R.getContext(),b=new Uint8Array(px*px*4);g.readPixels(0,0,px,px,g.RGBA,g.UNSIGNED_BYTE,b);
+  const o=new Uint8Array(px*px);for(let i=0;i<px*px;i++)o[i]=b[i*4]>127?1:0;let s2='';for(let i=0;i<o.length;i+=8192)s2+=String.fromCharCode.apply(null,o.subarray(i,i+8192));return btoa(s2);};
+// shaded shot with optional grid (world units) for tracing
+window.shot=(url,view,px,size,grid)=>{R.setSize(px,px);R.outputEncoding=THREE.sRGBEncoding;const s=new THREE.Scene(),m=cache[url].clone();
+  m.traverse(o=>{if(o.isMesh&&o.name==='hull')o.material=new THREE.MeshStandardMaterial({color:0x9a9ca2,roughness:.6,metalness:0});if(o.isMesh&&o.name.startsWith('glow'))o.visible=false;});s.add(m);
+  s.add(new THREE.HemisphereLight(0xffffff,0x303040,.35));const d=new THREE.DirectionalLight(0xffffff,1.1);d.position.set(-14,18,10);s.add(d);
+  if(grid){const gh=new THREE.GridHelper(40,40/grid,0xff3030,0x40a0ff);gh.position.y=20;s.add(gh);}
+  R.setClearColor(0x202228,1);R.render(s,cam(view,size));return R.domElement.toDataURL('image/png');};
+// height map (top view): world-space y of the top surface, encoded 16-bit in R,G; B=coverage
+window.height=(url,px,size)=>{R.setSize(px,px);const s=new THREE.Scene(),m=cache[url].clone();
+  const mat=new THREE.ShaderMaterial({vertexShader:'varying float vy;void main(){vec4 w=modelMatrix*vec4(position,1.);vy=w.y;gl_Position=projectionMatrix*viewMatrix*w;}',
+    fragmentShader:'varying float vy;void main(){float h=clamp((vy+10.)/20.,0.,1.)*65535.;gl_FragColor=vec4(floor(h/256.)/255.,mod(h,256.)/255.,1.,1.);}'});
+  m.traverse(o=>{if(o.isMesh){o.material=mat;if(o.name!=='hull')o.visible=false;}});s.add(m);R.setClearColor(0,0);R.render(s,cam('top',size));
+  const g=R.getContext(),b=new Uint8Array(px*px*4);g.readPixels(0,0,px,px,g.RGBA,g.UNSIGNED_BYTE,b);const o=new Float32Array(px*px);
+  for(let i=0;i<px*px;i++)o[i]=b[i*4+2]>127?((b[i*4]*256+b[i*4+1])/65535*20-10):NaN;return Array.from(o);};
+window.ready=true;
+</script>
