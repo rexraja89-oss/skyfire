@@ -1,0 +1,430 @@
+{
+ "fixture": true,
+ "limits": {
+  "top": 0.98,
+  "game": 0.98,
+  "rear": 0.95,
+  "side": 0.95,
+  "glance": 0.95,
+  "bottom": 0.93,
+  "regionIoU": 0.95,
+  "regionMissPct": 2,
+  "regionMinPx": 500,
+  "reliefMean": 0.1,
+  "reliefP95": 0.3,
+  "outwardPct": 97,
+  "stripBuriedPct": 1,
+  "stripFloatPct": 3,
+  "markerGap": 0.05,
+  "mirror": 0.01,
+  "drawCalls": {
+   "hq": 6,
+   "smooth": 5,
+   "fixture": 6
+  }
+ },
+ "validator": {
+  "ref": {
+   "errors": 0,
+   "warnings": 0,
+   "messages": []
+  },
+  "fixture": {
+   "errors": 0,
+   "warnings": 0,
+   "messages": []
+  }
+ },
+ "lods": {
+  "fixture": {
+   "views": {
+    "top": {
+     "iou": 0.8181,
+     "refPx": 426014,
+     "missPct": 14.67,
+     "extraPct": 4.31
+    },
+    "game": {
+     "iou": 0.8219,
+     "refPx": 94907,
+     "missPct": 14.47,
+     "extraPct": 4.06
+    },
+    "rear": {
+     "iou": 0.858,
+     "refPx": 103161,
+     "missPct": 12.97,
+     "extraPct": 1.43
+    },
+    "side": {
+     "iou": 0.9542,
+     "refPx": 153472,
+     "missPct": 4.49,
+     "extraPct": 0.09
+    },
+    "glance": {
+     "iou": 0.9259,
+     "refPx": 171307,
+     "missPct": 7.1,
+     "extraPct": 0.34
+    },
+    "bottom": {
+     "iou": 0.8181,
+     "refPx": 426007,
+     "missPct": 14.67,
+     "extraPct": 4.31
+    }
+   },
+   "regions": {
+    "cockpit": {
+     "iou": 1,
+     "refPx": 63140,
+     "missPct": 0,
+     "extraPct": 0,
+     "reliefTop": {
+      "n": 15580,
+      "mean": 0.157,
+      "p95": 0.505,
+      "max": 1.534
+     }
+    },
+    "wingL": {
+     "iou": 0.7239,
+     "refPx": 48355,
+     "missPct": 26.71,
+     "extraPct": 1.24,
+     "reliefTop": {
+      "n": 8951,
+      "mean": 0.235,
+      "p95": 0.663,
+      "max": 2.664
+     }
+    },
+    "wingR": {
+     "iou": 0.7246,
+     "refPx": 48312,
+     "missPct": 26.72,
+     "extraPct": 1.14,
+     "reliefTop": {
+      "n": 8947,
+      "mean": 0.239,
+      "p95": 0.673,
+      "max": 2.611
+     }
+    },
+    "thrusters": {
+     "iou": 0.745,
+     "refPx": 24276,
+     "missPct": 16.81,
+     "extraPct": 11.66,
+     "reliefTop": {
+      "n": 5125,
+      "mean": 0.23,
+      "p95": 0.669,
+      "max": 2.576
+     }
+    },
+    "noseSpikes": {
+     "iou": 0.6536,
+     "refPx": 67202,
+     "missPct": 25.36,
+     "extraPct": 14.19,
+     "reliefTop": {
+      "n": 12640,
+      "mean": 0.243,
+      "p95": 0.62,
+      "max": 3.919
+     }
+    }
+   },
+   "relief": {
+    "top": {
+     "n": 90902,
+     "mean": 0.255,
+     "p95": 0.753,
+     "max": 3.919
+    },
+    "bottom": {
+     "n": 90901,
+     "mean": 0.43,
+     "p95": 1.088,
+     "max": 3.704
+    }
+   },
+   "geometry": {
+    "tris": 8066,
+    "verts": 12641,
+    "weldedVerts": 3985,
+    "boundary": 0,
+    "nonManifold": 0,
+    "degenerate": 0,
+    "badNormals": 0,
+    "flippedCorners": 0,
+    "outwardPct": 99.58,
+    "outwardTested": 1200,
+    "bbox": {
+     "min": [
+      -13.486,
+      -3.864,
+      -18.255
+     ],
+     "max": [
+      13.45,
+      4.769,
+      18.22
+     ]
+    },
+    "strip": {
+     "n": 276,
+     "buried": 7,
+     "floating": 8
+    },
+    "anchors": {
+     "eng": [
+      {
+       "name": "eng_R",
+       "pos": [
+        -6.871126413345337,
+        -0.007554888725280762,
+        -15.508384704589844
+       ],
+       "kind": "engine",
+       "radius": 1.188,
+       "dir": [
+        0,
+        0,
+        -1
+       ]
+      },
+      {
+       "name": "eng_C",
+       "pos": [
+        0.00445932149887085,
+        -0.009890079498291016,
+        -18.2570858001709
+       ],
+       "kind": "engine",
+       "radius": 1.298,
+       "dir": [
+        0,
+        0,
+        -1
+       ]
+      },
+      {
+       "name": "eng_L",
+       "pos": [
+        6.869386672973633,
+        -0.004839479923248291,
+        -15.5077486038208
+       ],
+       "kind": "engine",
+       "radius": 1.18,
+       "dir": [
+        0,
+        0,
+        -1
+       ]
+      }
+     ],
+     "wb": [
+      {
+       "name": "wb_missile_L",
+       "pos": [
+        11.5,
+        2.127,
+        3.2
+       ],
+       "surfaceGap": null,
+       "kind": "weaponBay",
+       "bay": "wing missile bay",
+       "side": "L",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      },
+      {
+       "name": "wb_missile_R",
+       "pos": [
+        -11.5,
+        2.133,
+        3.2
+       ],
+       "surfaceGap": null,
+       "kind": "weaponBay",
+       "bay": "wing missile bay",
+       "side": "R",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      },
+      {
+       "name": "wb_drone_L",
+       "pos": [
+        11.2,
+        2.898,
+        -3
+       ],
+       "surfaceGap": 0.5158,
+       "kind": "weaponBay",
+       "bay": "drone bay",
+       "side": "L",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      },
+      {
+       "name": "wb_drone_R",
+       "pos": [
+        -11.2,
+        2.407,
+        -3
+       ],
+       "surfaceGap": 0.0776,
+       "kind": "weaponBay",
+       "bay": "drone bay",
+       "side": "R",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      },
+      {
+       "name": "wb_cannon_L",
+       "pos": [
+        6.4,
+        2.624,
+        -9.5
+       ],
+       "surfaceGap": 0.4094,
+       "kind": "weaponBay",
+       "bay": "cannon storage",
+       "side": "L",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      },
+      {
+       "name": "wb_cannon_R",
+       "pos": [
+        -6.4,
+        2.587,
+        -9.5
+       ],
+       "surfaceGap": 0.3524,
+       "kind": "weaponBay",
+       "bay": "cannon storage",
+       "side": "R",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      },
+      {
+       "name": "wb_central",
+       "pos": [
+        0,
+        2.941,
+        -12.8
+       ],
+       "surfaceGap": 0.001,
+       "kind": "weaponBay",
+       "bay": "central weapon system",
+       "side": "C",
+       "deploy": [
+        0,
+        1,
+        0
+       ],
+       "hidden": true
+      }
+     ]
+    },
+    "meshes": [
+     "hull",
+     "strip_red",
+     "strip_violet"
+    ]
+   },
+   "fx": {
+    "top": [
+     [
+      159,
+      92,
+      222
+     ],
+     [
+      244,
+      244,
+      245
+     ]
+    ],
+    "rear": [
+     [
+      232,
+      171,
+      247
+     ]
+    ],
+    "ring": [
+     [
+      190,
+      81,
+      255
+     ]
+    ],
+    "info": {
+     "calls": 2,
+     "programs": 7
+    },
+    "drawables": 5
+   }
+  }
+ },
+ "r128RawRead": {
+  "normalized": true,
+  "type": "Int16Array",
+  "rawX": 5424
+ },
+ "noseCheck": {
+  "noseScreenY": 0.368,
+  "enginesScreenY": -0.364
+ },
+ "browserErrors": [],
+ "failed": [
+  "fixture: top outline overlap >= 0.98",
+  "fixture: game outline overlap >= 0.98",
+  "fixture: rear outline overlap >= 0.95",
+  "fixture: glance outline overlap >= 0.95",
+  "fixture: bottom outline overlap >= 0.93",
+  "fixture: cockpit height error mean < 0.1, p95 < 0.3",
+  "fixture: wingL overlap >= 0.95, missing < 2%",
+  "fixture: wingL height error mean < 0.1, p95 < 0.3",
+  "fixture: wingR overlap >= 0.95, missing < 2%",
+  "fixture: wingR height error mean < 0.1, p95 < 0.3",
+  "fixture: thrusters overlap >= 0.95, missing < 2%",
+  "fixture: thrusters height error mean < 0.1, p95 < 0.3",
+  "fixture: noseSpikes overlap >= 0.95, missing < 2%",
+  "fixture: noseSpikes height error mean < 0.1, p95 < 0.3",
+  "fixture: whole top surface height error p95 < 0.3",
+  "fixture: strips buried < 1%, floating < 3%",
+  "fixture: markers on the hull surface (gap < 0.05)"
+ ],
+ "passed": false
+}

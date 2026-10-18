@@ -12,11 +12,13 @@
   "three": "0.128.0"
  },
  "scripts": {
+  "lint": "node lint_glsl.cjs",
   "build": "node build.cjs",
   "validate": "node validate.cjs",
+  "test:negative": "node fixture.cjs && node validate.cjs --fixture; test $? -eq 1 && echo \"NEGATIVE TEST OK: broken fixture was rejected\"",
   "shots": "node shots.cjs",
   "game": "node game_scene.cjs",
   "bundle": "node bundle.cjs",
-  "all": "node build.cjs && node validate.cjs && node shots.cjs && node game_scene.cjs && node bundle.cjs"
+  "all": "node lint_glsl.cjs && node build.cjs && node validate.cjs && npm run test:negative && node shots.cjs && node game_scene.cjs && node bundle.cjs"
  }
 }

@@ -36,7 +36,7 @@
  "lods": {
   "hq": {
    "file": "out/megaboss_hq.glb",
-   "bytes": 718884,
+   "bytes": 718996,
    "targetTris": 24000,
    "creaseDeg": 38,
    "hull": {
@@ -55,6 +55,10 @@
    "simplifyError": {
     "passA": 0.0713,
     "passB": 0.2079
+   },
+   "pinchRepairs": {
+    "passA": [],
+    "passB": []
    },
    "strips": {
     "runs": {
@@ -180,25 +184,140 @@
   },
   "smooth": {
    "file": "out/megaboss_smooth.glb",
-   "bytes": 289232,
+   "bytes": 292608,
    "targetTris": 8000,
    "creaseDeg": 42,
    "hull": {
-    "tris": 8000,
-    "verts": 3955,
+    "tris": 8066,
+    "verts": 3985,
     "boundaryEdges": 0,
-    "nonManifoldEdges": 21,
+    "nonManifoldEdges": 0,
     "degenerate": 0,
-    "signedVolume": 2571.79,
+    "signedVolume": 2554.29,
     "downFacingPct": 23.5,
-    "vertsAfterNormalSplit": 12462,
-    "hardEdgeVerts": 3234,
+    "vertsAfterNormalSplit": 12641,
+    "hardEdgeVerts": 3269,
     "badNormals": 0,
     "flippedCorners": 0
    },
    "simplifyError": {
-    "passA": 0.257,
-    "passB": 1.4143
+    "passA": 0.2713,
+    "passB": 1.8056
+   },
+   "pinchRepairs": {
+    "passA": [
+     {
+      "iter": 0,
+      "pinchVerts": 29,
+      "at": [
+       [
+        -3.3,
+        0.8,
+        11.8
+       ],
+       [
+        -3.2,
+        0.9,
+        11.8
+       ],
+       [
+        -3.3,
+        -1.1,
+        8.3
+       ],
+       [
+        -3.3,
+        -1.3,
+        8.2
+       ],
+       [
+        3.4,
+        -0.3,
+        -7.6
+       ],
+       [
+        3.4,
+        -0.3,
+        -7.9
+       ]
+      ]
+     },
+     {
+      "iter": 1,
+      "pinchVerts": 5,
+      "at": [
+       [
+        -4.2,
+        0.8,
+        -12.7
+       ],
+       [
+        -4.1,
+        0.8,
+        -12.7
+       ],
+       [
+        -4.1,
+        0.8,
+        -12.8
+       ],
+       [
+        4,
+        0.2,
+        -13.4
+       ],
+       [
+        4,
+        0.1,
+        -13.6
+       ]
+      ]
+     },
+     {
+      "iter": 2,
+      "pinchVerts": 2,
+      "at": [
+       [
+        3.9,
+        0.1,
+        -13.6
+       ],
+       [
+        3.9,
+        0.2,
+        -13.6
+       ]
+      ]
+     }
+    ],
+    "passB": [
+     {
+      "iter": 0,
+      "pinchVerts": 4,
+      "at": [
+       [
+        1.4,
+        -3.2,
+        3.6
+       ],
+       [
+        1.7,
+        -3.3,
+        2.3
+       ],
+       [
+        -2.1,
+        -3.3,
+        0.4
+       ],
+       [
+        -1.6,
+        -3.4,
+        -2
+       ]
+      ]
+     }
+    ]
    },
    "strips": {
     "runs": {

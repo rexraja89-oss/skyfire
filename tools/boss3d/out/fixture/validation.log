@@ -1,0 +1,47 @@
+PASS ref: GLB exists
+PASS ref: glTF validator 0 errors  0
+PASS fixture: GLB exists
+PASS fixture: glTF validator 0 errors  0
+--- fixture
+FAIL fixture: top outline overlap >= 0.98  0.8181
+FAIL fixture: game outline overlap >= 0.98  0.8219
+FAIL fixture: rear outline overlap >= 0.95  0.858
+PASS fixture: side outline overlap >= 0.95  0.9542
+FAIL fixture: glance outline overlap >= 0.95  0.9259
+FAIL fixture: bottom outline overlap >= 0.93  0.8181
+PASS fixture: cockpit has coverage (>= 500 px)  63140
+PASS fixture: cockpit overlap >= 0.95, missing < 2%  [1,0]
+FAIL fixture: cockpit height error mean < 0.1, p95 < 0.3  [0.157,0.505,1.534]
+PASS fixture: wingL has coverage (>= 500 px)  48355
+FAIL fixture: wingL overlap >= 0.95, missing < 2%  [0.7239,26.71]
+FAIL fixture: wingL height error mean < 0.1, p95 < 0.3  [0.235,0.663,2.664]
+PASS fixture: wingR has coverage (>= 500 px)  48312
+FAIL fixture: wingR overlap >= 0.95, missing < 2%  [0.7246,26.72]
+FAIL fixture: wingR height error mean < 0.1, p95 < 0.3  [0.239,0.673,2.611]
+PASS fixture: thrusters has coverage (>= 500 px)  24276
+FAIL fixture: thrusters overlap >= 0.95, missing < 2%  [0.745,16.81]
+FAIL fixture: thrusters height error mean < 0.1, p95 < 0.3  [0.23,0.669,2.576]
+PASS fixture: noseSpikes has coverage (>= 500 px)  67202
+FAIL fixture: noseSpikes overlap >= 0.95, missing < 2%  [0.6536,25.36]
+FAIL fixture: noseSpikes height error mean < 0.1, p95 < 0.3  [0.243,0.62,3.919]
+FAIL fixture: whole top surface height error p95 < 0.3  [0.255,0.753,3.919]
+INFO fixture: underside height error (thinned on purpose) {"n":90901,"mean":0.43,"p95":1.088,"max":3.704}
+PASS fixture: watertight (0 boundary edges)  0
+PASS fixture: manifold (0 edges with >2 faces)  0
+PASS fixture: 0 degenerate triangles  0
+PASS fixture: normals unit length after dequantization  0
+PASS fixture: 0 corner normals facing away from their face  0
+PASS fixture: outward winding >= 97% (ray parity, 1200 faces)  99.58
+PASS fixture: strips sampled (276 verts)  276
+FAIL fixture: strips buried < 1%, floating < 3%  [2.54,2.9]
+PASS fixture: 3 engine anchors at the rear, pointing -Z  [-15.51,-18.26,-15.51]
+PASS fixture: 7 weapon-bay markers, hidden, with deploy direction  7
+FAIL fixture: markers on the hull surface (gap < 0.05)  [null,null,0.5158,0.0776,0.4094,0.3524,0.001]
+PASS fixture: L/R markers mirror each other
+PASS fixture: canopy mask renders dark violet glass (darker than hull, blue > green)  {"canopy":[159,92,222],"hull":[244,244,245]}
+PASS fixture: nozzle heat (hull shader, engine FX hidden) renders violet  [232,171,247]
+PASS fixture: engine disc renders violet from behind  [190,81,255]
+PASS fixture: look layer draw objects <= 6  5
+INFO r128 CPU read of quantized position[0].x (raw, not de-normalized): {"normalized":true,"type":"Int16Array","rawX":5424}
+PASS nose toward the player (lower half), engines in the upper half  [0.368,-0.364]
+PASS no browser, shader or loader errors  0

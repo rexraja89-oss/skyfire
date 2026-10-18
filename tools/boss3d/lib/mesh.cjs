@@ -80,7 +80,7 @@ async function writeGLB(file,{hull,extras=[],empties=[],hullMat,quant=false}){co
   for(const e of extras){const m=doc.createMaterial(e.name).setBaseColorFactor([0,0,0,1]).setEmissiveFactor(e.emissive).setRoughnessFactor(1).setMetallicFactor(0);add(e.name,e.geo,m);}
   for(const e of empties){const n=doc.createNode(e.name).setTranslation(e.pos);if(e.extras)n.setExtras(e.extras);root.addChild(n);}
   const asset=doc.getRoot().getAsset();asset.generator='skyfire tools/boss3d (from Meshy AI base mesh)';
-  asset.copyright='Skyfire Squadron mega-boss. Base mesh "Neon Valkyrie" generated with Meshy AI (meshy.ai), free plan, CC BY 4.0. Optimised and rigged for Skyfire.';
+  asset.copyright='Base model "Neon Valkyrie" generated with Meshy AI (meshy.ai), free plan: licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Modified for Skyfire Squadron: re-oriented, re-scaled, simplified, re-shaded, strips/engine/weapon-bay anchors added.';
   // KHR_mesh_quantization (supported by the r128 GLTFLoader): 14-bit positions, 10-bit normals, about half the bytes
   if(quant)await doc.transform(quantize({quantizePosition:14,quantizeNormal:10,quantizeTexcoord:12}));
   fs.writeFileSync(file,await new NodeIO().registerExtensions([KHRMeshQuantization]).writeBinary(doc));}

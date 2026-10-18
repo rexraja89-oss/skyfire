@@ -1,0 +1,89 @@
+PASS ref: GLB exists
+PASS ref: glTF validator 0 errors  0
+PASS hq: GLB exists
+PASS hq: glTF validator 0 errors  0
+PASS smooth: GLB exists
+PASS smooth: glTF validator 0 errors  0
+--- hq
+PASS hq: top outline overlap >= 0.98  0.9974
+PASS hq: game outline overlap >= 0.98  0.9979
+PASS hq: rear outline overlap >= 0.95  0.9915
+PASS hq: side outline overlap >= 0.95  0.9926
+PASS hq: glance outline overlap >= 0.95  0.9954
+PASS hq: bottom outline overlap >= 0.93  0.9974
+PASS hq: cockpit has coverage (>= 500 px)  63140
+PASS hq: cockpit overlap >= 0.95, missing < 2%  [1,0]
+PASS hq: cockpit height error mean < 0.1, p95 < 0.3  [0.016,0.043,0.967]
+PASS hq: wingL has coverage (>= 500 px)  48355
+PASS hq: wingL overlap >= 0.95, missing < 2%  [0.998,0.17]
+PASS hq: wingL height error mean < 0.1, p95 < 0.3  [0.01,0.027,2.019]
+PASS hq: wingR has coverage (>= 500 px)  48312
+PASS hq: wingR overlap >= 0.95, missing < 2%  [0.9978,0.17]
+PASS hq: wingR height error mean < 0.1, p95 < 0.3  [0.012,0.032,1.628]
+PASS hq: thrusters has coverage (>= 500 px)  24276
+PASS hq: thrusters overlap >= 0.95, missing < 2%  [0.9924,0.56]
+PASS hq: thrusters height error mean < 0.1, p95 < 0.3  [0.02,0.053,1.539]
+PASS hq: noseSpikes has coverage (>= 500 px)  67202
+PASS hq: noseSpikes overlap >= 0.95, missing < 2%  [0.993,0.61]
+PASS hq: noseSpikes height error mean < 0.1, p95 < 0.3  [0.017,0.042,3.516]
+PASS hq: whole top surface height error p95 < 0.3  [0.014,0.04,3.516]
+INFO hq: underside height error (thinned on purpose) {"n":106303,"mean":0.03,"p95":0.09,"max":3.383}
+PASS hq: watertight (0 boundary edges)  0
+PASS hq: manifold (0 edges with >2 faces)  0
+PASS hq: 0 degenerate triangles  0
+PASS hq: normals unit length after dequantization  0
+PASS hq: 0 corner normals facing away from their face  0
+PASS hq: outward winding >= 97% (ray parity, 1200 faces)  99.67
+PASS hq: strips sampled (409 verts)  409
+PASS hq: strips buried < 1%, floating < 3%  [0.49,0.49]
+PASS hq: 3 engine anchors at the rear, pointing -Z  [-15.51,-18.26,-15.51]
+PASS hq: 7 weapon-bay markers, hidden, with deploy direction  7
+PASS hq: markers on the hull surface (gap < 0.05)  [0.0001,0.0007,0.0003,-0.0007,0.0008,0.0003,-0.0001]
+PASS hq: L/R markers mirror each other
+PASS hq: canopy mask renders dark violet glass (darker than hull, blue > green)  {"canopy":[148,68,220],"hull":[243,243,243]}
+PASS hq: nozzle heat (hull shader, engine FX hidden) renders violet  [225,164,243]
+PASS hq: engine disc renders violet from behind  [190,81,255]
+PASS hq: look layer draw objects <= 6  6
+--- smooth
+PASS smooth: top outline overlap >= 0.98  0.9931
+PASS smooth: game outline overlap >= 0.98  0.9937
+PASS smooth: rear outline overlap >= 0.95  0.9617
+PASS smooth: side outline overlap >= 0.95  0.9542
+PASS smooth: glance outline overlap >= 0.95  0.9865
+PASS smooth: bottom outline overlap >= 0.93  0.9932
+PASS smooth: cockpit has coverage (>= 500 px)  63140
+PASS smooth: cockpit overlap >= 0.95, missing < 2%  [1,0]
+PASS smooth: cockpit height error mean < 0.1, p95 < 0.3  [0.042,0.115,1.009]
+PASS smooth: wingL has coverage (>= 500 px)  48355
+PASS smooth: wingL overlap >= 0.95, missing < 2%  [0.9947,0.38]
+PASS smooth: wingL height error mean < 0.1, p95 < 0.3  [0.03,0.09,1.572]
+PASS smooth: wingR has coverage (>= 500 px)  48312
+PASS smooth: wingR overlap >= 0.95, missing < 2%  [0.9944,0.45]
+PASS smooth: wingR height error mean < 0.1, p95 < 0.3  [0.03,0.082,1.95]
+PASS smooth: thrusters has coverage (>= 500 px)  24276
+PASS smooth: thrusters overlap >= 0.95, missing < 2%  [0.9797,1.58]
+PASS smooth: thrusters height error mean < 0.1, p95 < 0.3  [0.059,0.157,1.902]
+PASS smooth: noseSpikes has coverage (>= 500 px)  67202
+PASS smooth: noseSpikes overlap >= 0.95, missing < 2%  [0.9816,1.58]
+PASS smooth: noseSpikes height error mean < 0.1, p95 < 0.3  [0.045,0.123,3.726]
+PASS smooth: whole top surface height error p95 < 0.3  [0.04,0.117,3.726]
+INFO smooth: underside height error (thinned on purpose) {"n":105938,"mean":0.139,"p95":0.442,"max":3.568}
+PASS smooth: watertight (0 boundary edges)  0
+PASS smooth: manifold (0 edges with >2 faces)  0
+PASS smooth: 0 degenerate triangles  0
+PASS smooth: normals unit length after dequantization  0
+PASS smooth: 0 corner normals facing away from their face  0
+PASS smooth: outward winding >= 97% (ray parity, 1200 faces)  99.58
+PASS smooth: strips sampled (409 verts)  409
+PASS smooth: strips buried < 1%, floating < 3%  [0.24,0.49]
+PASS smooth: 3 engine anchors at the rear, pointing -Z  [-15.51,-18.26,-15.51]
+PASS smooth: 7 weapon-bay markers, hidden, with deploy direction  7
+PASS smooth: markers on the hull surface (gap < 0.05)  [-0.0008,0.0004,0.0005,0.0001,0.0002,-0.0002,0.0014]
+PASS smooth: L/R markers mirror each other
+PASS smooth: canopy mask renders dark violet glass (darker than hull, blue > green)  {"canopy":[158,88,222],"hull":[242,242,243]}
+PASS smooth: nozzle heat (hull shader, engine FX hidden) renders violet  [209,152,235]
+PASS smooth: engine disc renders violet from behind  [190,81,255]
+PASS smooth: look layer draw objects <= 5  5
+INFO r128 CPU read of quantized position[0].x (raw, not de-normalized): {"normalized":true,"type":"Int16Array","rawX":5336}
+PASS nose toward the player (lower half), engines in the upper half  [0.368,-0.364]
+PASS no browser, shader or loader errors  0

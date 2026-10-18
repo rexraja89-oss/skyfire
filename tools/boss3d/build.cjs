@@ -11,16 +11,25 @@ const RIG=JSON.parse(fs.readFileSync('rig_src.json','utf8'));
 const HULL={color:[.94,.95,.97,1],roughness:.22,metalness:.08};
 const COL={red:[1,.12,.16],violet:[.62,.22,1]};
 
-function simplifyLOD(P,I,Nv,target){
+// vertices on edges shared by more than two faces (a "pinch": thin fins/spikes folded onto themselves by a collapse)
+function pinchVerts(I){const e=new Map();for(let f=0;f<I.length;f+=3)for(let k=0;k<3;k++){const a=I[f+k],b=I[f+(k+1)%3],key=a<b?a+'_'+b:b+'_'+a;e.set(key,(e.get(key)||0)+1);}
+  const v=new Set();for(const [k,c] of e)if(c>2)for(const x of k.split('_'))v.add(+x);return v;}
+// simplify, and if any pinch appears, lock those vertices and their 1-ring in the source mesh and redo the pass
+function simplifyNoPinch(I,P,Nv,lock,targetIdx,err,src,log){let out,e,it=0;
+  for(;it<12;it++){[out,e]=S.simplifyWithAttributes(I,P,3,Nv,3,[.5,.5,.5],lock,targetIdx,err,[]);const pv=pinchVerts(out);if(!pv.size)break;
+    log.push({iter:it,pinchVerts:pv.size,at:[...pv].slice(0,6).map(v=>[P[v*3],P[v*3+1],P[v*3+2]].map(x=>+x.toFixed(1)))});
+    for(const v of pv)lock[v]=1;for(let f=0;f<src.length;f+=3)if(pv.has(src[f])||pv.has(src[f+1])||pv.has(src[f+2]))for(let k=0;k<3;k++)lock[src[f+k]]=1;}
+  if(pinchVerts(out).size)throw new Error('could not remove non-manifold pinches after '+it+' retries');return [out,e];}
+function simplifyLOD(P,I,Nv,target){const repairs={passA:[],passB:[]};
   // pass A: whole mesh, normals as a light attribute so creases survive
   const frac=1-(RIG.underside.keepFrac);const down=r=>r.downFacingPct/100;
   const est=M.check(P,I);const tA=Math.round(target/(1-down(est)*frac));
-  let [IA,eA]=S.simplifyWithAttributes(I,P,3,Nv,3,[.5,.5,.5],null,tA*3,.02,[]);
-  // pass B: lock every vertex that touches a face which is not underside, then thin the underside only
-  const {N}=M.faceNormals(P,IA),lock=new Uint8Array(P.length/3);
+  const lockA=new Uint8Array(P.length/3);const [IA,eA]=simplifyNoPinch(I,P,Nv,lockA,tA*3,.02,I,repairs.passA);
+  // pass B: lock every vertex that touches a face which is not underside (plus pass-A repairs), then thin the underside only
+  const {N}=M.faceNormals(P,IA),lock=lockA.slice();
   for(let f=0;f<IA.length/3;f++)if(N[f*3+1]>RIG.underside.downNy)for(let k=0;k<3;k++)lock[IA[f*3+k]]=1;
-  const [IB,eB]=S.simplifyWithAttributes(IA,P,3,Nv,3,[.5,.5,.5],lock,target*3,.05,[]);
-  return {I:IB,errA:eA*S.getScale(P,3),errB:eB*S.getScale(P,3)};}
+  const [IB,eB]=simplifyNoPinch(IA,P,Nv,lock,target*3,.05,IA,repairs.passB);
+  return {I:IB,errA:eA*S.getScale(P,3),errB:eB*S.getScale(P,3),repairs,lockedForRepair:lockA.reduce((a,b)=>a+b,0)};}
 
 // engines: rear-most vertex clusters (3 nozzles), per-cluster rim -> centre + radius
 function findEngines(P){const pts=[];for(let i=0;i<P.length;i+=3)if(P[i+2]<-13)pts.push([P[i],P[i+1],P[i+2]]);
@@ -74,7 +83,7 @@ function ribbons(mesh,strips,widthMul,lift){const rc=new THREE.Raycaster(),down=
     const file=`out/megaboss_${name}.glb`;await M.writeGLB(file,{hull:{P:n.P,N:n.N,I:n.I},extras,empties,hullMat:HULL,quant:true});
     const stripTris=extras.reduce((a,e)=>a+e.geo.I.length/3,0);
     report.lods[name]={file,bytes:fs.statSync(file).size,targetTris:L.targetTris,creaseDeg:L.crease,hull:{...topo,vertsAfterNormalSplit:n.P.length/3,hardEdgeVerts:n.hardVerts,badNormals:nchk.badNormals,flippedCorners:nchk.flippedCorners},
-      simplifyError:{passA:+s.errA.toFixed(4),passB:+s.errB.toFixed(4)},strips:{runs:{red:core.runs.red,violet:core.runs.violet},tris:stripTris},markers};
+      simplifyError:{passA:+s.errA.toFixed(4),passB:+s.errB.toFixed(4)},pinchRepairs:s.repairs,strips:{runs:{red:core.runs.red,violet:core.runs.violet},tris:stripTris},markers};
     console.log(name,JSON.stringify(report.lods[name].hull),'strip tris',stripTris,'bytes',report.lods[name].bytes);}
   report.engines=engines;
   fs.writeFileSync('out/rig.json',JSON.stringify({about:'Mega-boss rig (game frame: +X right, +Z nose/screen-down, +Y up; world units, K=0.1)',engines,markers:report.lods.hq.markers,strips:RIG.strips.map(s=>({id:s.id,color:s.color}))},null,1));

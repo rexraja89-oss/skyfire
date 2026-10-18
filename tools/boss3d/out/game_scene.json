@@ -1,124 +1,1007 @@
 {
- "note": "SwiftShader software GL: frame ms are relative only",
+ "note": "SwiftShader software GL: frame times are development evidence only, not phone FPS",
+ "seed": 20261018,
  "runs": [
   {
+   "label": "hq control",
    "without": {
-    "frames": 14,
-    "frameMsMed": 537.5999999996275,
-    "drawCalls": 83,
-    "triangles": 269612
+    "frames": 21,
+    "frameMs": {
+     "n": 21,
+     "median": 850,
+     "p95": 916.7
+    },
+    "fullFrameCalls": {
+     "n": 21,
+     "median": 35,
+     "p95": 35
+    },
+    "fullFrameTris": {
+     "n": 21,
+     "median": 265280,
+     "p95": 265280
+    },
+    "passesPerFrame": {
+     "n": 21,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 21,
+     "median": 850,
+     "p95": 916.7
+    }
    },
    "with": {
-    "frames": 15,
-    "frameMsMed": 597.5999999996275,
-    "drawCalls": 122,
-    "triangles": 297666
+    "frames": 0,
+    "frameMs": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "fullFrameCalls": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "fullFrameTris": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "passesPerFrame": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "frameMsNoHitch": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    }
    },
-   "enemies": 6,
-   "bullets": 284,
-   "particles": 572,
-   "hq": true,
-   "dpr": 1,
-   "programs": 24,
-   "delta": {
-    "drawCalls": 39,
-    "triangles": 28054,
-    "frameMsPct": 11.2
+   "workload": {
+    "enemies": 0,
+    "bullets": 29,
+    "particles": 221
    },
-   "label": "hq: stage 10, boss on alternate frames"
+   "dpr": 2,
+   "programs": 19,
+   "slowFrames": [],
+   "control": true
   },
   {
+   "label": "hq run 1",
    "without": {
-    "frames": 21,
-    "frameMsMed": 373.39999999990687,
-    "drawCalls": 114,
-    "triangles": 271126
+    "frames": 10,
+    "frameMs": {
+     "n": 10,
+     "median": 850,
+     "p95": 883.3
+    },
+    "fullFrameCalls": {
+     "n": 10,
+     "median": 35,
+     "p95": 35
+    },
+    "fullFrameTris": {
+     "n": 10,
+     "median": 265280,
+     "p95": 265280
+    },
+    "passesPerFrame": {
+     "n": 10,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 10,
+     "median": 850,
+     "p95": 883.3
+    }
    },
    "with": {
-    "frames": 21,
-    "frameMsMed": 398.39999999990687,
-    "drawCalls": 129,
-    "triangles": 280590
+    "frames": 11,
+    "frameMs": {
+     "n": 11,
+     "median": 916.7,
+     "p95": 1000
+    },
+    "fullFrameCalls": {
+     "n": 11,
+     "median": 41,
+     "p95": 41
+    },
+    "fullFrameTris": {
+     "n": 11,
+     "median": 291948,
+     "p95": 291948
+    },
+    "passesPerFrame": {
+     "n": 11,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 11,
+     "median": 916.7,
+     "p95": 1000
+    }
    },
-   "enemies": 6,
-   "bullets": 255,
-   "particles": 245,
-   "hq": false,
-   "dpr": 1,
-   "programs": 38,
+   "workload": {
+    "enemies": 0,
+    "bullets": 20,
+    "particles": 86
+   },
+   "dpr": 2,
+   "programs": 25,
+   "slowFrames": [],
    "delta": {
-    "drawCalls": 15,
-    "triangles": 9464,
-    "frameMsPct": 6.7
+    "fullFrameCallsMedian": 6,
+    "frameMsMedianPct": 7.8,
+    "frameMsP95Pct": 13.2
+   }
+  },
+  {
+   "label": "hq run 2",
+   "without": {
+    "frames": 10,
+    "frameMs": {
+     "n": 10,
+     "median": 833.3,
+     "p95": 866.7
+    },
+    "fullFrameCalls": {
+     "n": 10,
+     "median": 35,
+     "p95": 35
+    },
+    "fullFrameTris": {
+     "n": 10,
+     "median": 265280,
+     "p95": 265280
+    },
+    "passesPerFrame": {
+     "n": 10,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 10,
+     "median": 833.3,
+     "p95": 866.7
+    }
    },
-   "label": "smooth: stage 10, boss on alternate frames"
+   "with": {
+    "frames": 11,
+    "frameMs": {
+     "n": 11,
+     "median": 933.3,
+     "p95": 1033.3
+    },
+    "fullFrameCalls": {
+     "n": 11,
+     "median": 41,
+     "p95": 41
+    },
+    "fullFrameTris": {
+     "n": 11,
+     "median": 291948,
+     "p95": 291948
+    },
+    "passesPerFrame": {
+     "n": 11,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 11,
+     "median": 933.3,
+     "p95": 1033.3
+    }
+   },
+   "workload": {
+    "enemies": 0,
+    "bullets": 20,
+    "particles": 140
+   },
+   "dpr": 2,
+   "programs": 25,
+   "slowFrames": [],
+   "delta": {
+    "fullFrameCallsMedian": 6,
+    "frameMsMedianPct": 12,
+    "frameMsP95Pct": 19.2
+   }
+  },
+  {
+   "label": "hq run 3",
+   "without": {
+    "frames": 10,
+    "frameMs": {
+     "n": 10,
+     "median": 833.4,
+     "p95": 866.7
+    },
+    "fullFrameCalls": {
+     "n": 10,
+     "median": 34,
+     "p95": 34
+    },
+    "fullFrameTris": {
+     "n": 10,
+     "median": 265278,
+     "p95": 265278
+    },
+    "passesPerFrame": {
+     "n": 10,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 10,
+     "median": 833.4,
+     "p95": 866.7
+    }
+   },
+   "with": {
+    "frames": 11,
+    "frameMs": {
+     "n": 11,
+     "median": 950,
+     "p95": 1016.7
+    },
+    "fullFrameCalls": {
+     "n": 11,
+     "median": 40,
+     "p95": 40
+    },
+    "fullFrameTris": {
+     "n": 11,
+     "median": 291946,
+     "p95": 291946
+    },
+    "passesPerFrame": {
+     "n": 11,
+     "median": 2,
+     "p95": 2
+    },
+    "frameMsNoHitch": {
+     "n": 11,
+     "median": 950,
+     "p95": 1016.7
+    }
+   },
+   "workload": {
+    "enemies": 0,
+    "bullets": 29,
+    "particles": 119
+   },
+   "dpr": 2,
+   "programs": 25,
+   "slowFrames": [],
+   "delta": {
+    "fullFrameCallsMedian": 6,
+    "frameMsMedianPct": 14,
+    "frameMsP95Pct": 17.3
+   }
+  },
+  {
+   "label": "smooth control",
+   "without": {
+    "frames": 52,
+    "frameMs": {
+     "n": 52,
+     "median": 350,
+     "p95": 383.3
+    },
+    "fullFrameCalls": {
+     "n": 52,
+     "median": 55,
+     "p95": 111
+    },
+    "fullFrameTris": {
+     "n": 52,
+     "median": 267844,
+     "p95": 271120
+    },
+    "passesPerFrame": {
+     "n": 52,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 52,
+     "median": 350,
+     "p95": 383.3
+    }
+   },
+   "with": {
+    "frames": 0,
+    "frameMs": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "fullFrameCalls": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "fullFrameTris": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "passesPerFrame": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    },
+    "frameMsNoHitch": {
+     "n": 0,
+     "median": null,
+     "p95": null
+    }
+   },
+   "workload": {
+    "enemies": 6,
+    "bullets": 63,
+    "particles": 28
+   },
+   "dpr": 1.25,
+   "programs": 28,
+   "slowFrames": [],
+   "control": true
+  },
+  {
+   "label": "smooth run 1",
+   "without": {
+    "frames": 25,
+    "frameMs": {
+     "n": 25,
+     "median": 350,
+     "p95": 383.4
+    },
+    "fullFrameCalls": {
+     "n": 25,
+     "median": 112,
+     "p95": 112
+    },
+    "fullFrameTris": {
+     "n": 25,
+     "median": 271122,
+     "p95": 271122
+    },
+    "passesPerFrame": {
+     "n": 25,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 25,
+     "median": 350,
+     "p95": 383.4
+    }
+   },
+   "with": {
+    "frames": 25,
+    "frameMs": {
+     "n": 25,
+     "median": 383.3,
+     "p95": 416.7
+    },
+    "fullFrameCalls": {
+     "n": 25,
+     "median": 109,
+     "p95": 117
+    },
+    "fullFrameTris": {
+     "n": 25,
+     "median": 280514,
+     "p95": 280646
+    },
+    "passesPerFrame": {
+     "n": 25,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 25,
+     "median": 383.3,
+     "p95": 416.7
+    }
+   },
+   "workload": {
+    "enemies": 6,
+    "bullets": 59,
+    "particles": 124
+   },
+   "dpr": 1.25,
+   "programs": 34,
+   "slowFrames": [],
+   "delta": {
+    "fullFrameCallsMedian": -3,
+    "frameMsMedianPct": 9.5,
+    "frameMsP95Pct": 8.7
+   }
+  },
+  {
+   "label": "smooth run 2",
+   "without": {
+    "frames": 23,
+    "frameMs": {
+     "n": 23,
+     "median": 350,
+     "p95": 383.4
+    },
+    "fullFrameCalls": {
+     "n": 23,
+     "median": 105,
+     "p95": 113
+    },
+    "fullFrameTris": {
+     "n": 23,
+     "median": 270992,
+     "p95": 271124
+    },
+    "passesPerFrame": {
+     "n": 23,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 23,
+     "median": 350,
+     "p95": 383.4
+    }
+   },
+   "with": {
+    "frames": 25,
+    "frameMs": {
+     "n": 25,
+     "median": 383.4,
+     "p95": 466.7
+    },
+    "fullFrameCalls": {
+     "n": 25,
+     "median": 98,
+     "p95": 118
+    },
+    "fullFrameTris": {
+     "n": 25,
+     "median": 280308,
+     "p95": 280648
+    },
+    "passesPerFrame": {
+     "n": 25,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 25,
+     "median": 383.4,
+     "p95": 466.7
+    }
+   },
+   "workload": {
+    "enemies": 6,
+    "bullets": 65,
+    "particles": 189
+   },
+   "dpr": 1.25,
+   "programs": 34,
+   "slowFrames": [],
+   "delta": {
+    "fullFrameCallsMedian": -7,
+    "frameMsMedianPct": 9.5,
+    "frameMsP95Pct": 21.7
+   }
+  },
+  {
+   "label": "smooth run 3",
+   "without": {
+    "frames": 24,
+    "frameMs": {
+     "n": 24,
+     "median": 350,
+     "p95": 383.3
+    },
+    "fullFrameCalls": {
+     "n": 24,
+     "median": 105,
+     "p95": 113
+    },
+    "fullFrameTris": {
+     "n": 24,
+     "median": 270992,
+     "p95": 271124
+    },
+    "passesPerFrame": {
+     "n": 24,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 24,
+     "median": 350,
+     "p95": 383.3
+    }
+   },
+   "with": {
+    "frames": 25,
+    "frameMs": {
+     "n": 25,
+     "median": 383.3,
+     "p95": 416.6
+    },
+    "fullFrameCalls": {
+     "n": 25,
+     "median": 88,
+     "p95": 118
+    },
+    "fullFrameTris": {
+     "n": 25,
+     "median": 279136,
+     "p95": 280648
+    },
+    "passesPerFrame": {
+     "n": 25,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 25,
+     "median": 383.3,
+     "p95": 416.6
+    }
+   },
+   "workload": {
+    "enemies": 6,
+    "bullets": 58,
+    "particles": 196
+   },
+   "dpr": 1.25,
+   "programs": 34,
+   "slowFrames": [],
+   "delta": {
+    "fullFrameCallsMedian": -17,
+    "frameMsMedianPct": 9.5,
+    "frameMsP95Pct": 8.7
+   }
   }
  ],
- "place_hq": {
+ "load_hq": {
+  "lod": "hq",
+  "loadParseMs": 819.9,
+  "buildMs": 7.9,
+  "firstRenderMs": 118.5,
+  "secondRenderMs": 1.3,
   "zWorld": -44.81,
-  "Zt": -78.58,
-  "Zb": 51.29
+  "firstGameFrames": [
+   {
+    "frame": 58,
+    "dt": 850,
+    "programs": 19
+   },
+   {
+    "frame": 59,
+    "dt": 800,
+    "programs": 25
+   },
+   {
+    "frame": 60,
+    "dt": 3250,
+    "programs": 25
+   },
+   {
+    "frame": 61,
+    "dt": 950,
+    "programs": 25
+   }
+  ],
+  "steadyFrameMsBefore": [
+   917,
+   817,
+   817,
+   817,
+   833,
+   817
+  ]
  },
+ "hitch_hq": [
+  {
+   "firstFrameMs": 850,
+   "programsAfter": [
+    19,
+    25,
+    25,
+    25
+   ],
+   "framesBefore": [
+    917,
+    817,
+    817,
+    817,
+    833,
+    817
+   ]
+  },
+  {
+   "firstFrameMs": 833,
+   "programsAfter": [
+    19,
+    25,
+    25,
+    25
+   ],
+   "framesBefore": [
+    917,
+    833,
+    800,
+    850,
+    900,
+    850
+   ]
+  },
+  {
+   "firstFrameMs": 883,
+   "programsAfter": [
+    19,
+    25,
+    25,
+    25
+   ],
+   "framesBefore": [
+    917,
+    817,
+    850,
+    867,
+    833,
+    833
+   ]
+  }
+ ],
  "exact_hq": [
   {
-   "calls": 17,
-   "tris": 26674
+   "calls": 6,
+   "tris": 26668
   },
   {
-   "calls": 17,
-   "tris": 26674
+   "calls": 6,
+   "tris": 26668
   },
   {
-   "calls": 17,
-   "tris": 26674
+   "calls": 6,
+   "tris": 26668
   },
   {
-   "calls": 17,
-   "tris": 26674
+   "calls": 6,
+   "tris": 26668
   },
   {
-   "calls": 17,
-   "tris": 26674
+   "calls": 6,
+   "tris": 26668
   }
  ],
- "place_smooth": {
+ "load_smooth": {
+  "lod": "smooth",
+  "loadParseMs": 380.7,
+  "buildMs": 1.5,
+  "firstRenderMs": 93.2,
+  "secondRenderMs": 1,
   "zWorld": -44.81,
-  "Zt": -78.58,
-  "Zb": 51.29
+  "firstGameFrames": [
+   {
+    "frame": 258,
+    "dt": 350,
+    "programs": 28
+   },
+   {
+    "frame": 259,
+    "dt": 383,
+    "programs": 33
+   },
+   {
+    "frame": 260,
+    "dt": 1550,
+    "programs": 33
+   },
+   {
+    "frame": 261,
+    "dt": 433,
+    "programs": 33
+   }
+  ],
+  "steadyFrameMsBefore": [
+   350,
+   350,
+   367,
+   350,
+   350,
+   350
+  ]
  },
+ "hitch_smooth": [
+  {
+   "firstFrameMs": 350,
+   "programsAfter": [
+    28,
+    33,
+    33,
+    33
+   ],
+   "framesBefore": [
+    350,
+    350,
+    367,
+    350,
+    350,
+    350
+   ]
+  },
+  {
+   "firstFrameMs": 350,
+   "programsAfter": [
+    29,
+    34,
+    34,
+    34
+   ],
+   "framesBefore": [
+    333,
+    333,
+    350,
+    350,
+    333,
+    333
+   ]
+  },
+  {
+   "firstFrameMs": 367,
+   "programsAfter": [
+    29,
+    34,
+    34,
+    34
+   ],
+   "framesBefore": [
+    350,
+    367,
+    367,
+    350,
+    350,
+    383
+   ]
+  }
+ ],
  "exact_smooth": [
   {
-   "calls": 15,
-   "tris": 9464
+   "calls": 5,
+   "tris": 9524
   },
   {
-   "calls": 15,
-   "tris": 9464
+   "calls": 5,
+   "tris": 9524
   },
   {
-   "calls": 15,
-   "tris": 9464
+   "calls": 5,
+   "tris": 9524
   },
   {
-   "calls": 15,
-   "tris": 9464
+   "calls": 5,
+   "tris": 9524
   },
   {
-   "calls": 15,
-   "tris": 9464
+   "calls": 5,
+   "tris": 9524
   }
  ],
- "delta": {
-  "hq": {
-   "drawCalls": 39,
-   "triangles": 28054,
-   "frameMsPct": 11.2
-  },
-  "smooth": {
-   "drawCalls": 15,
-   "triangles": 9464,
-   "frameMsPct": 6.7
-  }
+ "resources": {
+  "cycles": [
+   {
+    "lod": "hq",
+    "before": 64,
+    "whileShown": 70,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 30.8
+   },
+   {
+    "lod": "smooth",
+    "before": 64,
+    "whileShown": 69,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 31.7
+   },
+   {
+    "lod": "hq",
+    "before": 64,
+    "whileShown": 70,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 33.3
+   },
+   {
+    "lod": "smooth",
+    "before": 64,
+    "whileShown": 69,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 34
+   },
+   {
+    "lod": "hq",
+    "before": 64,
+    "whileShown": 70,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 36.2
+   },
+   {
+    "lod": "smooth",
+    "before": 64,
+    "whileShown": 69,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 29.4
+   },
+   {
+    "lod": "hq",
+    "before": 64,
+    "whileShown": 70,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 31.2
+   },
+   {
+    "lod": "smooth",
+    "before": 64,
+    "whileShown": 69,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 31.2
+   }
+  ],
+  "switches": [
+   {
+    "hq": true,
+    "firstRenderMs": 83.4,
+    "geoDelta": 0,
+    "texDelta": 0
+   },
+   {
+    "hq": false,
+    "firstRenderMs": 73.8,
+    "geoDelta": 0,
+    "texDelta": 0
+   },
+   {
+    "hq": true,
+    "firstRenderMs": 75.3,
+    "geoDelta": 0,
+    "texDelta": 0
+   },
+   {
+    "hq": false,
+    "firstRenderMs": 63.9,
+    "geoDelta": 0,
+    "texDelta": 0
+   },
+   {
+    "hq": true,
+    "firstRenderMs": 87.6,
+    "geoDelta": 0,
+    "texDelta": 0
+   },
+   {
+    "hq": false,
+    "firstRenderMs": 63.9,
+    "geoDelta": 0,
+    "texDelta": 0
+   }
+  ]
  },
- "errors": []
+ "errors": [],
+ "summary_hq": {
+  "runs": 3,
+  "frameMsMedianPct": [
+   7.8,
+   12,
+   14
+  ],
+  "frameMsP95Pct": [
+   13.2,
+   19.2,
+   17.3
+  ],
+  "frameMsNoHitchMedianPct": [
+   7.8,
+   12,
+   14
+  ],
+  "slowFrames": [
+   [],
+   [],
+   []
+  ],
+  "control": [
+   []
+  ],
+  "fullFrameCallsAdded": [
+   6,
+   6,
+   6
+  ],
+  "samples": [
+   [
+    10,
+    11
+   ],
+   [
+    10,
+    11
+   ],
+   [
+    10,
+    11
+   ]
+  ]
+ },
+ "summary_smooth": {
+  "runs": 3,
+  "frameMsMedianPct": [
+   9.5,
+   9.5,
+   9.5
+  ],
+  "frameMsP95Pct": [
+   8.7,
+   21.7,
+   8.7
+  ],
+  "frameMsNoHitchMedianPct": [
+   9.5,
+   9.5,
+   9.5
+  ],
+  "slowFrames": [
+   [],
+   [],
+   []
+  ],
+  "control": [
+   []
+  ],
+  "fullFrameCallsAdded": [
+   -3,
+   -7,
+   -17
+  ],
+  "samples": [
+   [
+    25,
+    25
+   ],
+   [
+    23,
+    25
+   ],
+   [
+    24,
+    25
+   ]
+  ]
+ },
+ "failed": [],
+ "passed": true
 }

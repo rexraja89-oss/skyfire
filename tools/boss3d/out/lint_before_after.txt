@@ -1,0 +1,11 @@
+== before (9a1371a viewer/megaboss_fx.js)
+FAIL megaboss_fx_9a1371a.js:41 smoothstep(1.,.6,…) has edge0 >= edge1
+FAIL megaboss_fx_9a1371a.js:43 smoothstep(.32,.0,…) has edge0 >= edge1
+FAIL megaboss_fx_9a1371a.js:43 smoothstep(1.,.35,…) has edge0 >= edge1
+FAIL megaboss_fx_9a1371a.js:48 smoothstep(uNoz[i].z+1.6,uNoz[i].z+.1,…) has edge0 >= edge1
+FAIL megaboss_fx_9a1371a.js:49 smoothstep(1.,.35,…) has edge0 >= edge1
+lint_glsl: 8 smoothstep calls checked, 5 reversed
+exit=1
+== after (working tree)
+lint_glsl: 9 smoothstep calls checked, 0 reversed
+exit=0

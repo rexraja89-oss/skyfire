@@ -1,89 +1,128 @@
-# Mega-boss prototype: validation and performance report
+# Mega-boss prototype: validation and performance report (round 2)
 
-Source: `Meshy_AI_Neon_Valkyrie_1015062249_generate.glb`, SHA-256 `39cf4e83…231d`, **unchanged**.
+Prototype only: nothing here is loaded by the game. Round 2 answers the Codex review (`skyforce-analysis`, branch `skyfire-phase1-review`, `skyfire-megaboss-review/megaboss-review.md`).
 
-## 1. Source model
-| Check | Result |
-|---|---|
-| Format | glTF 2.0 binary, 3.39 MB. Validator: 0 errors, 0 warnings |
-| Geometry | 188,372 triangles, 94,136 vertices; one closed watertight piece: 0 boundary edges, 0 non-manifold edges, 0 degenerate triangles |
-| Missing | No materials, UVs, normals or textures (Meshy's "generate" stage) |
-| Orientation | Y up, nose −X. Turned +90° about Y so the nose faces +Z, toward the player |
-| Size | Scaled ×19.22 to a 30-unit wingspan (30 × 9.5 × 36.5 world units) |
-| Underside | 38% of triangles face down |
+Source: Rex's Meshy 6 Lite GLB, SHA-256 `39cf4e83…231d`, **unchanged**. Every build checks it.
 
-## 2. LODs
+Reproduce: `cd tools/boss3d && npm i && npm run all`, then `node capture.cjs hq 10` and `node capture.cjs smooth 6`.
+
+All logs are written before any non-zero exit:
+- `out/validation.log`
+- `out/fixture/validation.log` (negative test)
+- `out/game_scene.log`
+
+## 1. Models
 | | HQ | Smooth |
 |---|---|---|
-| Hull triangles | **24,000** (target 24k) | **8,000** (target 8k) |
-| Hull vertices (welded → after hard-edge split) | 11,950 → 32,143 | 3,955 → 12,462 |
-| Hard-edge crease angle | 38° | 42° |
-| Watertight | yes (0 boundary, 0 non-manifold) | 0 boundary, **21 non-manifold edges** (simplifier artefact on the underside, not visible) |
-| Bad or flipped normals | 0 / 0 | 0 / 0 |
-| Underside (share of faces pointing down) | 38% → 24% | 38% → 24% |
-| Strip ribbons | 2,416 triangles (core + halo) | 1,206 triangles (core only) |
-| File size (quantized) | **0.72 MB** | **0.29 MB** |
+| Hull triangles | 24,000 | 8,066 (target 8k; pinch repair locks some vertices) |
+| Manifold / watertight | **0 non-manifold**, 0 boundary edges | **0 non-manifold** (was 21), 0 boundary edges |
+| Pinch repair | not needed | 4 retries, about 250 vertices locked |
+| Degenerate triangles / bad or flipped normals | 0 / 0 / 0 | 0 / 0 / 0 |
+| Outward winding (ray parity, 1,200 sampled faces) | 99.67% | 99.58% |
+| File size (KHR_mesh_quantization) | 0.72 MB | 0.29 MB |
 | glTF validator | 0 errors / 0 warnings | 0 errors / 0 warnings |
 
-Method: meshoptimizer `simplifyWithAttributes` (normals as an attribute) over the whole hull, then a second pass. The second pass locks every vertex touching a non-underside face, so only the hidden underside is thinned. The underside stays closed.
+The pinches came from aggressive simplification folding thin fins and spikes onto themselves. The repair: when a simplify pass creates edges shared by more than two faces, those vertices and their neighbours in the source mesh are locked and the pass is redone, until there are none.
 
-## 3. Silhouette and region checks (against the full 188k mesh)
-Top-down masks are 1024 px over 40 units. Relief is the mean height difference of the top surface, in world units (0.01 = 0.1 game px).
+The outward-winding checks are run on the exported GLB, as the r128 loader delivers it. 99.6% is not 100%: the AI mesh has small overlapping shells, so self-intersection is not ruled out.
 
-| | HQ | Smooth | Requirement |
+## 2. Shape against the full 188k original
+Outline overlap (IoU), 1024 px masks:
+
+| View | HQ | Smooth | Limit |
 |---|---|---|---|
-| Top-down silhouette overlap (IoU) | **99.74%** | **99.34%** | ≥ 98% ✅ |
-| Game-camera silhouette overlap | 99.79% | 99.39% | |
-| Rear view (3 nozzles) overlap | 99.15% | 96.52% | |
-| Cockpit: overlap / relief | 100% / 0.016 | 100% / 0.041 | ✅ |
-| Left wing | 99.80% / 0.010 | 99.47% / 0.028 | ✅ |
-| Right wing | 99.78% / 0.012 | 99.44% / 0.030 | ✅ |
-| Thrusters | 99.24% / 0.020 | 98.15% / 0.059 | ✅ |
-| Nose spikes | 99.30% / 0.017 | 98.20% / 0.043 | ✅ |
+| Top | 99.74% | 99.31% | ≥ 98% |
+| Game camera | 99.79% | 99.37% | ≥ 98% |
+| Rear | 99.15% | 96.17% | ≥ 95% |
+| Side | 99.26% | 95.42% | ≥ 95% |
+| Low rear-quarter | 99.54% | 98.65% | ≥ 95% |
+| Bottom | 99.74% | 99.32% | ≥ 93% |
 
-The cockpit lies inside the outline, so its overlap score is always 100%; the relief (height) check is what validates its shape. Difference images: `review/silhouette_diff_*.jpg`.
+Per region: overlap / missing pixels / top-surface height error (mean · p95 · max), in world units (0.1 = 1 game px).
 
-**Nose direction** in Skyfire's real camera (fov 40, 30° tilt): nose at screen y +0.37 (lower half), engines at −0.36 (upper half). ✅
-
-## 4. Enhancement layer (`viewer/megaboss_fx.js`, one config)
-- **Hull:** MeshStandardMaterial, glossy white (roughness 0.22, metalness 0.08), lit by a painted env cube (no PMREM). Clearcoat (MeshPhysicalMaterial) is a separate HQ-only toggle.
-- **Object-local shader details:**
-  - dark glass canopy with a violet core line
-  - swept panel seams
-  - violet heat inside the nozzles
-  - optional boss-only cool key light (`details.key`)
-- **Strips:** separate geometry projected onto each LOD's own surface (9 red and 9 violet runs). Unlit, with a pulse; HQ adds additive halo ribbons. Paths are in `rig_src.json`.
-- **Engines:** 3 anchors found automatically (radius about 1.2; centre engine 2.7 units further back). Each has a disc, a hot core, a flickering additive flame and a glow sprite.
-- **Weapon bays:** 7 hidden markers on the hull surface: wing missile L/R, drone bay L/R, cannon storage L/R, central weapon system. Each has a deploy direction for future animations.
-
-## 5. Performance
-Exact cost of the boss in a Stage 10 frame (same frame rendered with and without it, 5 samples, identical each time):
-
-| | Added draw calls | Added triangles |
+| Region | HQ | Smooth |
 |---|---|---|
-| HQ | **+17** | **+26,674** |
-| Smooth | **+15** | **+9,464** |
+| Cockpit | 100% / 0% / 0.016 · 0.043 · 0.97 | 100% / 0% / 0.042 · 0.115 · 1.01 |
+| Wing L | 99.80% / 0.17% / 0.010 · 0.027 · 2.02 | 99.47% / 0.38% / 0.030 · 0.090 · 1.57 |
+| Wing R | 99.78% / 0.17% / 0.012 · 0.032 · 1.63 | 99.44% / 0.45% / 0.030 · 0.082 · 1.95 |
+| Thrusters | 99.24% / 0.56% / 0.020 · 0.053 · 1.54 | 97.97% / 1.58% / 0.059 · 0.157 · 1.90 |
+| Nose spikes | 99.30% / 0.61% / 0.017 · 0.042 · 3.52 | 98.16% / 1.58% / 0.045 · 0.123 · 3.73 |
 
-For scale: the Stage 10 scene itself is about 34–114 draw calls and about 270k triangles (mostly terrain).
+Limits: overlap ≥ 95%, missing < 2%, mean < 0.1, p95 < 0.3, at least 500 pixels covered in the region.
 
-Frame time, measured as the boss toggled on and off every other frame during busy combat (about 250–290 enemy bullets, 250–650 particles, explosions every 0.25 s):
-- HQ: +11% frame time
-- Smooth: +7% frame time
+- **Max errors** (1–3.7 units) are single pixels on outline edges and thin spike tips, where one surface is replaced by the one below it. They are reported but not asserted, since p95 is the robust measure.
+- **Underside** (thinned on purpose): mean error 0.03 (HQ) and 0.14 (Smooth), p95 0.09 and 0.44.
 
-⚠️ The test browser renders on the CPU (SwiftShader), so these percentages are only a rough upper-bound signal, not phone FPS. **The real number has to come from the viewer's FPS counter on the S22.**
+## 3. Placement, strips, anchors, look layer (asserted)
+- **Nose direction**, checked in Skyfire's real camera: nose at screen y +0.37, engines at −0.36.
+- **Strips:** 409 sampled vertices per model, all on the hull. Buried: 2 (HQ) and 1 (Smooth). Floating: 2 and 2. Limits: < 1% buried, < 3% floating.
+- **Engine anchors:** 3, at the rear, pointing −Z.
+- **Weapon-bay markers:** 7, hidden, each with a deploy direction. Gap to the hull < 0.05, and L/R pairs mirror within 0.01.
+- **Look layer**, rendered and sampled in a test render:
+  - Canopy: dark violet glass (148,68,220) against white hull (243,243,243).
+  - Nozzle interior heat, with the engine effects hidden: violet.
+  - Engine discs: violet.
+- **Draw objects:** HQ 6, Smooth 5 (were 17 and 15).
 
-Mobile notes:
-- No textures are added except one 64 px glow sprite and a 64² env cube.
-- The in-game test adds **no new light**. A new light makes three.js recompile every material in the game; the boss can borrow one of the game's 3 explosion point lights instead. The viewer's HQ engine light is optional.
-- Shader programs added: hull, halo, flame and sprite (about 4–9, compiled once).
+## 4. Fixes for the Codex findings
+| # | Finding | Fix | Proof |
+|---|---|---|---|
+| 1 | Reversed `smoothstep` edges (undefined GLSL) | All 5 now `1.-smoothstep(lo,hi,x)` with the same falloff. New `lint_glsl.cjs` rejects reversed literal or same-expression edges | Lint fails on the old file (5 hits, exit 1) and passes the new one. Compile errors are fatal in validation. Mask colours asserted |
+| 2 | Validation exited 0 on failures | `validate.cjs` and `game_scene.cjs` assert every check (validator errors, outlines incl. game camera, regions with coverage, finite values, run state, sample counts, browser and shader errors) and exit 1. Logs are written first | `npm run test:negative`: the broken fixture (hull 10% narrower, one marker lifted) fails 17 checks, exit 1 |
+| 3 | Performance numbers not a safety bound | "Upper bound" wording removed. New method: §5 | — |
+| 4 | 21 non-manifold edges (Smooth) | Pinch repair in `build.cjs` | 0 in both models; manifold and watertight asserted on the exported GLB |
+| 5 | Per-frame `Matrix4` allocation, no disposal | Scratch matrix reused. `A.dispose()` releases all per-instance geometry, materials and the light; the glow texture is shared on purpose. Ownership is documented in `megaboss_fx.js` | 8 load/unload cycles and 6 quality switches: geometry and texture counts return to baseline (§5) |
 
-## 6. Visual findings (review/)
-- In the studio views the hull reads as glossy white, with crisp red and violet strips and purple engines (`viewer_*.jpg`).
-- **In Stage 10 (Magma Citadel)**, the orange sun plus the colour grade turn a plain white hull **peach/orange**, and the red strips get lost (`ingame_colour_presets.jpg`, left). The `INGAME` preset fixes most of this: cooler base, softer reflections, boss-only key light, brighter strips (`game_*_boss.jpg`, `ingame_colour_presets.jpg` 3rd panel). A slight pink cast remains from the stage grade. Fully neutral white would need a Stage 10 grade tweak, which is an art-direction choice for Rex.
-- At game size the boss spans about 75% of the lane width and about 40% of the screen height, with the nose toward the player and flames off the top.
+**New defect found while fixing #5 (and in Codex's question D).** three.js r128's `BufferAttribute` getters return raw integers for normalized (quantized) attributes. The GPU path is correct. Any CPU-side use of the quantized GLB therefore gets integer-scale coordinates: merging, raycasts, hit tests, computed bounds. The new strip merge de-normalizes (`rd()` in `megaboss_fx.js`), and so do all lab checks (`deq()`).
 
-## 7. Open items before game integration
-1. Rex checks FPS and the look on the S22 with `out/megaboss_viewer.html`.
-2. Decide on the Stage 10 look: keep it warm-lit, use the `INGAME` preset, or tweak the grade.
-3. Tune the strip paths and marker positions in `rig_src.json` if wanted.
-4. Integration plan (separate approval): a loader in `js/`, a boss data entry in `config/bosses.js`, parts mapped to the `wb_*` markers, bay-door meshes for deployment, the GLB added to `sw.js` and the APK copy, a version bump.
+The validation log records it: position[0].x reads as raw Int16 `5336` instead of a de-normalized value. Game integration must never raycast the raw quantized mesh.
+
+## 5. Performance (development evidence only)
+**Setup**
+- Real game, stage 10, headless Chromium at the S22 Ultra's CSS size (412 × 915) and DPR 2.625. The game caps the canvas at 2 (HQ) and 1.25 (Smooth).
+- Seeded workload: the stage's own waves, plus 10 extra enemy bullets and 1 explosion every 8 frames.
+- Per mode: 1 boss-free control run, then 3 runs with the boss shown on alternate frame pairs.
+
+**Frames are drawn by SwiftShader on the CPU (about 0.35–0.9 s per frame), so nothing here predicts phone FPS. The mobile gate stays pending until Rex measures on the S22.**
+
+| | HQ | Smooth |
+|---|---|---|
+| Fixed-frame boss cost (same frame with and without the boss; scene render incl. shadow pass; 5 identical repeats) | **+6 draw calls, +26,668 triangles** (was +17) | **+5 draw calls, +9,464 triangles** (was +15) |
+| Full-frame draw calls added (median of all passes per frame, A/B) | +6, +6, +6 | −3, −7, −17 |
+| Samples per bucket (without / with), 3 runs | 10/11, 10/11, 10/11 | 25/25, 23/25, 24/25 |
+| Steady-state frame time, median change | +7.8%, +12.0%, +14.0% | +9.5%, +9.5%, +9.5% |
+| Steady-state frame time, p95 change | +13.2%, +19.2%, +17.3% | +8.7%, +21.7%, +8.7% |
+| Slow frames (> 2.5× median) during sampling | none in 3 runs; none in the control | none in 3 runs; none in the control |
+
+Smooth's full-frame call counts swing because the game's own object count varies frame to frame. The fixed-frame row is the exact boss cost.
+
+**First-appearance hitch (real issue for integration).**
+- The first gameplay frame with the boss takes about 3.2–3.4 s (HQ, vs about 0.85 s normal) and about 1.4–1.55 s (Smooth, vs about 0.35 s), in every run.
+- three.js compiles all 6 boss programs during the warm-up render (HQ 19 → 25, Smooth 28 → 33 before that frame), so the extra time is the driver (here SwiftShader) setting up pipelines the first time the boss is drawn through the game's real path: grade render target, shadow pass, additive blending.
+- Phones have the same kind of first-use cost, though much shorter.
+- **Integration requirement:** pre-warm the boss through the game's own render path during the stage intro or mission title, before it can be seen. Then measure the first-appearance frame on the S22.
+
+**Load:** GLB fetch + parse about 0.82–0.95 s (HQ) and 0.34–0.39 s (Smooth) on this CPU renderer. Look-layer build 1–8 ms.
+
+**Resources:** paused-frame cycles, measured in a paused frame because the running game creates its own objects.
+- 8 load/unload cycles: 64 geometries → 69–70 while shown → back to 64 every time. Textures stay at 22.
+- 6 HQ/Smooth switches: 0 geometry and 0 texture left behind.
+- JS heap 31–36 MB throughout.
+
+## 6. Visual evidence (`review/`)
+- **`megaboss_hq_stage10.mp4`** (10 s) and **`megaboss_smooth_stage10.mp4`** (6 s), in the review share folder (kept out of this repo; regenerate with `capture.cjs`): normal-speed motion in the real stage 10. A virtual 30 fps clock makes playback match game time. No audio; the boss adds no sound in this phase.
+- **`compare_concept_viewer_game.jpg`:** concept top view (nose down) | HQ straight down | stage 10 gameplay camera | the identical frozen frame without the boss.
+- Viewer shots, outline difference images, colour presets.
+- **Stage 10 colour (Codex B):** the boss-local in-game preset is kept, and the stage grade is unchanged. The hull still reads slightly pink in stage 10. The final choice is Rex's, from the matched frames and motion.
+
+## 7. Licence (Codex F)
+Meshy Terms of Use (https://www.meshy.ai/terms-of-use, last updated 19 Sep 2026, section 3.2): free-plan output is owned by Meshy and licensed CC BY 4.0 with credit. It is not Skyfire's property.
+
+Credit text and the modification notice are in `README.md`. An in-game credits screen is required at integration. Rex still has to confirm where the concept sheets come from.
+
+## 8. Gates (unchanged by this round unless stated)
+- **Correctness:** all confirmed findings fixed and asserted. Ready for Codex re-review.
+- **Visual target:** pending a direct comparison by Rex and Codex (matched frames + motion supplied).
+- **Phone performance:** pending S22 measurement, plus the first-appearance pre-warm at integration.
+- **Licence:** source verified (Meshy ToS §3.2); the concept-sheet origin is pending Rex.
+- **Gameplay integration:** not implemented, not approved.

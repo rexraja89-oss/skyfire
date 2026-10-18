@@ -1,19 +1,24 @@
 <!doctype html><meta charset="utf-8"><body style="margin:0;background:#000">
-<script src="../viewer/vendor/three.min.js"></script><script src="../viewer/vendor/GLTFLoader.js"></script>
+<script src="../viewer/vendor/three.min.js"></script><script src="../viewer/vendor/GLTFLoader.js"></script><script src="../viewer/megaboss_fx.js"></script>
 <script>
-// Headless render lab: orthographic/perspective masks and shaded shots used by validate.cjs.
+// Headless render lab used by validate.cjs: coverage masks, height maps, shaded shots, exported-GLB geometry checks
+// (topology, normals, outward winding, strips, anchors) and a look-layer render check.
 const R=new THREE.WebGLRenderer({antialias:false,preserveDrawingBuffer:true});document.body.appendChild(R.domElement);
+R.debug.checkShaderErrors=true;
 const L=new THREE.GLTFLoader(),cache={};
-window.load=url=>new Promise((ok,no)=>cache[url]?ok(1):L.load(url,g=>{cache[url]=g.scene;ok(1);},null,no));
+window.load=url=>new Promise((ok,no)=>cache[url]?ok(1):L.load(url,g=>{cache[url]=g.scene;ok(1);},null,e=>no(String(e))));
 function cam(view,size){const h=size;let c;
   if(view==='top'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(0,50,0);c.up.set(0,0,-1);c.lookAt(0,0,0);}       // screen up = -Z (game)
+  else if(view==='bottom'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(0,-50,0);c.up.set(0,0,-1);c.lookAt(0,0,0);}
   else if(view==='rear'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(0,0,-50);c.lookAt(0,0,0);}
   else if(view==='side'){c=new THREE.OrthographicCamera(-h,h,h,-h,-100,100);c.position.set(50,0,0);c.lookAt(0,0,0);}
+  else if(view==='glance'){c=new THREE.OrthographicCamera(-h,h,h,-h,-200,200);c.position.set(40,12,-30);c.lookAt(0,0,0);}       // low rear-quarter view
   else if(view==='game'){c=new THREE.PerspectiveCamera(40,1,2,2400);const t=30*Math.PI/180;c.position.set(0,Math.cos(t),Math.sin(t)).multiplyScalar(window.gameDist||110);c.lookAt(0,0,0);}
   return c;}
-// mask: per-pixel coverage of a model -> Uint8 array (1 = covered); returns base64 of bytes
-window.mask=(url,view,px,size)=>{R.setSize(px,px);const s=new THREE.Scene(),m=cache[url].clone();
-  m.traverse(o=>{if(o.isMesh)o.material=new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});if(o.isMesh&&o.name!=='hull'&&!o.name.startsWith('hull'))o.visible=false;});s.add(m);
+const hullOnly=m=>{m.traverse(o=>{if(o.isMesh&&o.name!=='hull')o.visible=false;});return m;};
+// mask: per-pixel coverage of the hull -> base64 of a Uint8 array (1 = covered)
+window.mask=(url,view,px,size)=>{R.setSize(px,px);const s=new THREE.Scene(),m=hullOnly(cache[url].clone());
+  m.traverse(o=>{if(o.isMesh)o.material=new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});});s.add(m);
   R.setClearColor(0,1);R.render(s,cam(view,size));const g=R.getContext(),b=new Uint8Array(px*px*4);g.readPixels(0,0,px,px,g.RGBA,g.UNSIGNED_BYTE,b);
   const o=new Uint8Array(px*px);for(let i=0;i<px*px;i++)o[i]=b[i*4]>127?1:0;let s2='';for(let i=0;i<o.length;i+=8192)s2+=String.fromCharCode.apply(null,o.subarray(i,i+8192));return btoa(s2);};
 // shaded shot with optional grid (world units) for tracing
@@ -21,13 +26,59 @@ window.shot=(url,view,px,size,grid)=>{R.setSize(px,px);R.outputEncoding=THREE.sR
   m.traverse(o=>{if(o.isMesh&&o.name==='hull')o.material=new THREE.MeshStandardMaterial({color:0x9a9ca2,roughness:.6,metalness:0});if(o.isMesh&&o.name.startsWith('glow'))o.visible=false;});s.add(m);
   s.add(new THREE.HemisphereLight(0xffffff,0x303040,.35));const d=new THREE.DirectionalLight(0xffffff,1.1);d.position.set(-14,18,10);s.add(d);
   if(grid){const gh=new THREE.GridHelper(40,40/grid,0xff3030,0x40a0ff);gh.position.y=20;s.add(gh);}
-  R.setClearColor(0x202228,1);R.render(s,cam(view,size));return R.domElement.toDataURL('image/png');};
-// height map (top view): world-space y of the top surface, encoded 16-bit in R,G; B=coverage
-window.height=(url,px,size)=>{R.setSize(px,px);const s=new THREE.Scene(),m=cache[url].clone();
-  const mat=new THREE.ShaderMaterial({vertexShader:'varying float vy;void main(){vec4 w=modelMatrix*vec4(position,1.);vy=w.y;gl_Position=projectionMatrix*viewMatrix*w;}',
+  R.setClearColor(0x202228,1);R.render(s,cam(view,size));R.outputEncoding=THREE.LinearEncoding;return R.domElement.toDataURL('image/png');};
+// height map (top or bottom view): world-space y of the nearest hull surface, 16-bit in R,G; B = coverage
+window.height=(url,px,size,view='top')=>{R.setSize(px,px);const s=new THREE.Scene(),m=hullOnly(cache[url].clone());
+  const mat=new THREE.ShaderMaterial({side:THREE.DoubleSide,vertexShader:'varying float vy;void main(){vec4 w=modelMatrix*vec4(position,1.);vy=w.y;gl_Position=projectionMatrix*viewMatrix*w;}',
     fragmentShader:'varying float vy;void main(){float h=clamp((vy+10.)/20.,0.,1.)*65535.;gl_FragColor=vec4(floor(h/256.)/255.,mod(h,256.)/255.,1.,1.);}'});
-  m.traverse(o=>{if(o.isMesh){o.material=mat;if(o.name!=='hull')o.visible=false;}});s.add(m);R.setClearColor(0,0);R.render(s,cam('top',size));
-  const g=R.getContext(),b=new Uint8Array(px*px*4);g.readPixels(0,0,px,px,g.RGBA,g.UNSIGNED_BYTE,b);const o=new Float32Array(px*px);
-  for(let i=0;i<px*px;i++)o[i]=b[i*4+2]>127?((b[i*4]*256+b[i*4+1])/65535*20-10):NaN;return Array.from(o);};
+  m.traverse(o=>{if(o.isMesh)o.material=mat;});s.add(m);R.setClearColor(0,0);R.render(s,cam(view,size));
+  const g=R.getContext(),b=new Uint8Array(px*px*4);g.readPixels(0,0,px,px,g.RGBA,g.UNSIGNED_BYTE,b);const o=new Array(px*px);
+  for(let i=0;i<px*px;i++)o[i]=b[i*4+2]>127?((b[i*4]*256+b[i*4+1])/65535*20-10):null;return o;};
+// r128 BufferAttribute getters return raw integers for normalized (quantized) attributes: de-normalize on CPU reads
+const DIV={Int8Array:127,Uint8Array:255,Int16Array:32767,Uint16Array:65535};
+const rd=(a,i,v)=>{v.fromBufferAttribute(a,i);if(a.normalized){const d=DIV[a.array.constructor.name]||1;v.divideScalar(d);if(d===127||d===32767)v.max(new THREE.Vector3(-1,-1,-1));}return v;};
+// float copy of a (possibly quantized) geometry, so CPU raycasts see the same surface as the GPU
+const deq=(g,M)=>{const pa=g.attributes.position,P=new Float32Array(pa.count*3),v=new THREE.Vector3();for(let i=0;i<pa.count;i++){rd(pa,i,v);if(M)v.applyMatrix4(M);P[i*3]=v.x;P[i*3+1]=v.y;P[i*3+2]=v.z;}
+  const o=new THREE.BufferGeometry();o.setAttribute('position',new THREE.BufferAttribute(P,3));if(g.index)o.setIndex(g.index);o.computeBoundingSphere();o.computeBoundingBox();return o;};
+window.rawReadProblem=url=>{const h=cache[url].getObjectByName('hull');const a=h.geometry.attributes.position,v=new THREE.Vector3().fromBufferAttribute(a,0);return {normalized:a.normalized,type:a.array.constructor.name,rawX:v.x};};
+// geometry checks on the EXPORTED (quantized) GLB, in world space, as the r128 loader delivers it
+window.geom=url=>{const root=cache[url].clone();root.updateMatrixWorld(true);const meshes={},nodes={};root.traverse(o=>{if(o.isMesh)meshes[o.name]=o;else if(o.name)nodes[o.name]=o;});
+  const hull=meshes.hull,g=hull.geometry,pa=g.attributes.position,na=g.attributes.normal,idx=g.index,M=hull.matrixWorld,NM=new THREE.Matrix3().getNormalMatrix(M),v=new THREE.Vector3(),n=new THREE.Vector3();
+  const P=new Float32Array(pa.count*3),Nn=new Float32Array(pa.count*3);let badN=0;
+  for(let i=0;i<pa.count;i++){rd(pa,i,v).applyMatrix4(M);P.set([v.x,v.y,v.z],i*3);rd(na,i,n);const l=n.length();if(!(Math.abs(l-1)<.02))badN++;n.applyMatrix3(NM).normalize();Nn.set([n.x,n.y,n.z],i*3);}
+  // weld by position (normals split vertices), then edge incidence
+  const key=i=>Math.round(P[i*3]*1e3)+','+Math.round(P[i*3+1]*1e3)+','+Math.round(P[i*3+2]*1e3),wid=new Map(),W=new Uint32Array(pa.count);for(let i=0;i<pa.count;i++){const k=key(i);if(!wid.has(k))wid.set(k,wid.size);W[i]=wid.get(k);}
+  const F=idx.count/3,edges=new Map();let flipped=0,degen=0,minZ=1e9,box=new THREE.Box3();const fn=new THREE.Vector3(),a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();
+  for(let f=0;f<F;f++){const ia=idx.getX(f*3),ib=idx.getX(f*3+1),ic=idx.getX(f*3+2);a.fromArray(P,ia*3);b.fromArray(P,ib*3);c.fromArray(P,ic*3);fn.subVectors(c,b).cross(a.clone().sub(b));
+    const ar=fn.length()/2;if(ar<1e-9)degen++;fn.normalize();for(const i of[ia,ib,ic])if(Nn[i*3]*fn.x+Nn[i*3+1]*fn.y+Nn[i*3+2]*fn.z<0)flipped++;
+    const t=[W[ia],W[ib],W[ic]];for(let k=0;k<3;k++){const p=t[k],q=t[(k+1)%3],e=p<q?p+'_'+q:q+'_'+p;edges.set(e,(edges.get(e)||0)+1);}}
+  let boundary=0,nonManifold=0;for(const c2 of edges.values()){if(c2===1)boundary++;else if(c2>2)nonManifold++;}
+  box.setFromBufferAttribute(new THREE.BufferAttribute(P,3));
+  // outward winding: from sampled face centroids, a ray along the face normal must cross the surface an even number of times
+  const rc=new THREE.Raycaster(),probe=new THREE.Mesh(deq(g,M),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));probe.updateMatrixWorld();   // world-space float copy
+  const S=Math.min(1200,F),step=F/S;let outward=0,tested=0;for(let s=0;s<S;s++){const f=Math.floor(s*step),ia=idx.getX(f*3),ib=idx.getX(f*3+1),ic=idx.getX(f*3+2);
+    a.fromArray(P,ia*3);b.fromArray(P,ib*3);c.fromArray(P,ic*3);fn.subVectors(c,b).cross(a.clone().sub(b));if(fn.lengthSq()<1e-12)continue;fn.normalize();
+    const o=a.add(b).add(c).multiplyScalar(1/3).addScaledVector(fn,1e-3);rc.set(o,fn);const hits=rc.intersectObject(probe).filter(h=>h.distance>2e-3).length;tested++;if(hits%2===0)outward++;}
+  // strips: every strip vertex should sit just above the hull it was projected on (not buried, not floating)
+  const down=new THREE.Vector3(0,-1,0),strip={n:0,buried:0,floating:0};for(const k of['strip_red','strip_violet'])if(meshes[k]){const sm=meshes[k],sp=sm.geometry.attributes.position;
+    for(let i=0;i<sp.count;i+=3){rd(sp,i,v).applyMatrix4(sm.matrixWorld);rc.set(new THREE.Vector3(v.x,40,v.z),down);const h=rc.intersectObject(probe)[0];if(!h)continue;strip.n++;const d=v.y-h.point.y;if(d<-.03)strip.buried++;else if(d>.8)strip.floating++;}}
+  // anchors as the loader sees them
+  const wp=o=>new THREE.Vector3().setFromMatrixPosition(o.matrixWorld),anch={eng:[],wb:[]};
+  for(const [name,o] of Object.entries(nodes)){if(/^eng_/.test(name))anch.eng.push({name,pos:wp(o).toArray(),...o.userData});
+    else if(/^wb_/.test(name)){const p=wp(o);rc.set(new THREE.Vector3(p.x,40,p.z),down);const h=rc.intersectObject(probe)[0];anch.wb.push({name,pos:p.toArray(),surfaceGap:h?+(p.y-h.point.y).toFixed(4):null,...o.userData});}}
+  return {tris:F,verts:pa.count,weldedVerts:wid.size,boundary,nonManifold,degenerate:degen,badNormals:badN,flippedCorners:flipped,outwardPct:+(100*outward/Math.max(1,tested)).toFixed(2),outwardTested:tested,
+    bbox:{min:box.min.toArray().map(x=>+x.toFixed(3)),max:box.max.toArray().map(x=>+x.toFixed(3))},strip,anchors:anch,meshes:Object.keys(meshes)};};
+// look layer render: build the FX on a copy, render top + rear at a fixed time, sample colours at world points
+window.fxCheck=(url,hq,samples)=>{R.setSize(512,512);R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;
+  const s=new THREE.Scene(),g=cache[url].clone(true);g.traverse(o=>{if(o.isMesh){o.geometry=o.geometry.clone();o.material=o.material.clone();}});
+  s.environment=MegaBossFX.envCube();s.add(new THREE.HemisphereLight(0xffffff,0x444455,.6));const d=new THREE.DirectionalLight(0xffffff,2);d.position.set(-14,40,10);s.add(d);s.add(g);
+  const A=MegaBossFX.build(g,JSON.parse(JSON.stringify(MegaBossFX.CFG)),{hq});A.update(1.0);
+  const read=(view,pts)=>{R.setClearColor(0x000000,1);const c=cam(view,20);R.render(s,c);const gl=R.getContext(),px=new Uint8Array(4);
+    return pts.map(([x,y,z])=>{const q=new THREE.Vector3(x,y,z).project(c),sx=Math.round((q.x+1)/2*512),sy=Math.round((q.y+1)/2*512);gl.readPixels(sx,sy,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);return Array.from(px.slice(0,3));});};
+  const top=read('top',samples.top),ring=read('rear',samples.ring);
+  for(const k of['engineDiscs','engineFlames'])if(A.meshes[k])A.meshes[k].visible=false;if(A.engineGlow)A.engineGlow.visible=false;
+  const rear=read('rear',samples.rear);for(const k of['engineDiscs','engineFlames'])if(A.meshes[k])A.meshes[k].visible=true;if(A.engineGlow)A.engineGlow.visible=true;const info={calls:R.info.render.calls,programs:R.info.programs.length};
+  let drawables=0;g.traverse(o=>{if((o.isMesh||o.isPoints)&&o.visible&&o.name!=='gizmo')drawables++;});
+  s.remove(g);A.dispose();R.outputEncoding=THREE.LinearEncoding;R.toneMapping=THREE.NoToneMapping;return {top,rear,ring,info,drawables};};
 window.ready=true;
 </script>
