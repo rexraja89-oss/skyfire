@@ -4,7 +4,8 @@
 #     because the concept and the Meshy model differ in proportions (a plain scale/offset fit reached only 80% overlap)
 #  3. fill the background around the cut-out from the hull colours (so edges never pick up the dark backdrop)
 #  4. write base colour + glow textures in "texture space": u = (x + 15.5) / 31, v = (z + 18.5) / 37 in world units
-#     (game frame: +X right, +Z nose / screen down), at 1024 (HQ) and 512 (Smooth)
+#     (game frame: +X right, +Z nose / screen down); colours sampled from a 4x super-resolved copy (EDSR)
+#     HQ: 2048 base colour / 1024 glow; Smooth: 1024 / 512
 # Inputs: src/concept/concept_sheet_b.jpg, out/ref/top_mask.png (build.cjs, then mask_ref.cjs). Outputs: src/concept/tex/
 # (committed; build.cjs embeds them) and out/concept/warp_overlay.jpg. Run: npm run concept (needs .venv, see README)
 import json, os
@@ -26,6 +27,13 @@ cv2.grabCut(panel, gc, None, np.zeros((1, 65)), np.zeros((1, 65)), 8, cv2.GC_INI
 m = (gc == cv2.GC_FGD) | (gc == cv2.GC_PR_FGD); m = ndimage.binary_opening(m, iterations=1)
 lab, n = ndimage.label(m); m = lab == (1 + int(np.argmax(ndimage.sum(m, lab, range(1, n + 1))))); m = ndimage.binary_fill_holes(m)
 concept = cv2.rotate(panel, cv2.ROTATE_180); cmask = np.rot90(m, 2).copy()
+# super-resolution: EDSR x4 (Apache-2.0 weights, offline, .models/EDSR_x4.pb) + light unsharp mask. The cut-out and the
+# warp stay on the original pixel grid; only the final colour sampling reads the 4x image.
+SR = 4
+srm = cv2.dnn_superres.DnnSuperResImpl_create(); srm.readModel('.models/EDSR_x4.pb'); srm.setModel('edsr', SR)
+concept_sr = cv2.rotate(srm.upsample(panel), cv2.ROTATE_180)
+blur = cv2.GaussianBlur(concept_sr, (0, 0), 1.6); concept_sr = cv2.addWeighted(concept_sr, 1.35, blur, -.35, 0)
+cmask_sr = cv2.resize(cmask.astype(np.float32), (concept_sr.shape[1], concept_sr.shape[0]), interpolation=cv2.INTER_LINEAR) > .5
 
 # --- 3 (before warping). background fill: grow hull colours outwards so warped edges stay on-hull ------------------
 fill = concept.copy(); grow = cmask.copy()
@@ -38,6 +46,8 @@ for _ in range(40):                                                   # repeated
         fill[..., c][ring] = (acc[ring] / np.maximum(cnt[ring], 1e-3)).astype(np.uint8)
     grow = d
 fill[~grow] = np.median(concept[cmask], axis=0).astype(np.uint8)
+# 4x colour source: super-resolved ship, upscaled background fill around it
+fill_sr = np.where(cmask_sr[..., None], concept_sr, cv2.resize(fill, (concept_sr.shape[1], concept_sr.shape[0]), interpolation=cv2.INTER_CUBIC))
 
 # --- 2. landmarks: concept px (nose-down image)  ->  model top_mask px ---------------------------------------------
 L = [  # name, concept (u,v), model mask (x,y)
@@ -59,7 +69,8 @@ def bake(size):
     x = TEX['x0'] + us * (TEX['x1'] - TEX['x0']); z = TEX['z0'] + vs * (TEX['z1'] - TEX['z0'])
     mx = (x + MASK_HALF) * MASK_PPU; my = (z + MASK_HALF) * MASK_PPU
     q = tps(np.stack([mx.ravel(), my.ravel()], 1)).astype(np.float32).reshape(size, size, 2)
-    rgb = cv2.remap(fill, q[..., 0], q[..., 1], cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    qs = (q + .5) * SR - .5                                                    # original px -> 4x px (pixel centres)
+    rgb = cv2.remap(fill_sr, qs[..., 0], qs[..., 1], cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     inside = cv2.remap(cmask.astype(np.uint8), q[..., 0], q[..., 1], cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT) > 0
     return rgb, inside, (mx, my)
 
@@ -72,7 +83,8 @@ def glow_of(rgb):
 
 target = cv2.imread('out/ref/top_mask.png', cv2.IMREAD_GRAYSCALE) > 127
 report = {'landmarks': len(L), 'tpsMaxResidualPx': round(float(resid), 2), 'texWorldBox': TEX}
-for size in (1024, 512):
+SIZES = {'hq': (2048, 1024), 'smooth': (1024, 512)}   # (base colour, glow) texture sizes
+for sfx, (size, gsize) in SIZES.items():
     rgb, inside, (mx, my) = bake(size)
     # base colour: soften the concept's baked highlights a little so 3D lighting does not double them
     lab_ = cv2.cvtColor(rgb, cv2.COLOR_BGR2LAB).astype(np.float32); Lc = lab_[..., 0]
@@ -86,13 +98,14 @@ for size in (1024, 512):
     # soft halo around the light strips, like the concept's bloom (cheaper than a bloom pass on the phone)
     halo = cv2.GaussianBlur(glow.astype(np.float32), (0, 0), size / 170) * 1.8
     glow = (np.maximum(glow.astype(np.float32), halo) * k).clip(0, 255).astype(np.uint8)
-    sfx = 'hq' if size == 1024 else 'smooth'
-    cv2.imwrite(f'{TEXDIR}/albedo_{sfx}.jpg', albedo, [cv2.IMWRITE_JPEG_QUALITY, 90]); cv2.imwrite(f'{TEXDIR}/glow_{sfx}.jpg', glow, [cv2.IMWRITE_JPEG_QUALITY, 90])
+    cv2.imwrite(f'{TEXDIR}/albedo_{sfx}.jpg', albedo, [cv2.IMWRITE_JPEG_QUALITY, 90]); cv2.imwrite(f'{TEXDIR}/glow_{sfx}.jpg', cv2.resize(glow, (gsize, gsize), interpolation=cv2.INTER_AREA), [cv2.IMWRITE_JPEG_QUALITY, 90])
     # how well the warped concept covers the model's outline (in texture space)
     tm = cv2.remap(target.astype(np.uint8), mx.astype(np.float32), my.astype(np.float32), cv2.INTER_NEAREST) > 0
     report[sfx] = {'size': size, 'warpedIoU': round(float((tm & inside).sum() / max(1, (tm | inside).sum())), 4),
                    'modelCoveredByConceptPct': round(float(100 * (tm & inside).sum() / max(1, tm.sum())), 2), 'glowPct': round(float(100 * frac), 2)}
-    if size == 1024:
+    if sfx == 'hq':
+        # reference for look tuning: the warped concept itself (no fill, no de-lighting) + where it covers the model
+        cv2.imwrite(f'{OUT}/ref_hq.png', rgb); cv2.imwrite(f'{OUT}/ref_mask_hq.png', ((tm & inside) * 255).astype(np.uint8))
         ov = albedo.copy(); ov[~tm] = (ov[~tm] * .25).astype(np.uint8); e = cv2.Canny(tm.astype(np.uint8) * 255, 50, 150) > 0; ov[e] = (255, 255, 0)
         cv2.imwrite(f'{OUT}/warp_overlay.jpg', ov)
 json.dump(report, open(f'{TEXDIR}/concept_tex.json', 'w'), indent=1); print(json.dumps(report))

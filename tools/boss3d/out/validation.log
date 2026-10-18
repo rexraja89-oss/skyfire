@@ -40,9 +40,9 @@ PASS hq: 3 engine anchors at the rear, pointing -Z  [-15.51,-18.26,-15.51]
 PASS hq: 7 weapon-bay markers, hidden, with deploy direction  7
 PASS hq: markers on the hull surface (gap < 0.05)  [0.0001,0.0007,0.0003,-0.0007,0.0008,0.0003,-0.0001]
 PASS hq: L/R markers mirror each other
-PASS hq: canopy renders as dark violet glass (area mean darker than hull tops, blue > green)  {"canopy":[128,100,151],"hull":[194,192,194]}
-PASS hq: nozzle heat (hull shader, engine FX hidden) renders violet  [220,148,241]
-PASS hq: engine disc renders violet from behind  [190,81,255]
+PASS hq: canopy renders as dark violet glass (area mean darker than hull tops, blue > green)  {"canopy":[107,82,130],"hull":[177,174,177]}
+PASS hq: nozzle heat (hull shader, engine FX hidden) renders violet  [217,173,238]
+PASS hq: engine disc renders violet from behind  [188,74,255]
 PASS hq: look layer draw objects <= 6  4
 --- smooth
 PASS smooth: top outline overlap >= 0.98  0.9931
@@ -80,9 +80,9 @@ PASS smooth: 3 engine anchors at the rear, pointing -Z  [-15.51,-18.26,-15.51]
 PASS smooth: 7 weapon-bay markers, hidden, with deploy direction  7
 PASS smooth: markers on the hull surface (gap < 0.05)  [-0.0008,0.0004,0.0005,0.0001,0.0002,-0.0002,0.0014]
 PASS smooth: L/R markers mirror each other
-PASS smooth: canopy renders as dark violet glass (area mean darker than hull tops, blue > green)  {"canopy":[119,91,143],"hull":[203,201,204]}
-PASS smooth: nozzle heat (hull shader, engine FX hidden) renders violet  [206,138,235]
-PASS smooth: engine disc renders violet from behind  [190,81,255]
+PASS smooth: canopy renders as dark violet glass (area mean darker than hull tops, blue > green)  {"canopy":[105,80,128],"hull":[178,177,179]}
+PASS smooth: nozzle heat (hull shader, engine FX hidden) renders violet  [214,171,236]
+PASS smooth: engine disc renders violet from behind  [188,74,255]
 PASS smooth: look layer draw objects <= 5  4
 INFO r128 CPU read of quantized position[0].x (raw, not de-normalized): {"normalized":true,"type":"Int16Array","rawX":5336}
 PASS nose toward the player (lower half), engines in the upper half  [0.368,-0.364]

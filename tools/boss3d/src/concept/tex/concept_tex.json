@@ -8,15 +8,15 @@
   "z1": 18.5
  },
  "hq": {
+  "size": 2048,
+  "warpedIoU": 0.8448,
+  "modelCoveredByConceptPct": 91.16,
+  "glowPct": 3.36
+ },
+ "smooth": {
   "size": 1024,
   "warpedIoU": 0.8449,
   "modelCoveredByConceptPct": 91.16,
-  "glowPct": 3.39
- },
- "smooth": {
-  "size": 512,
-  "warpedIoU": 0.845,
-  "modelCoveredByConceptPct": 91.18,
-  "glowPct": 3.38
+  "glowPct": 3.36
  }
 }

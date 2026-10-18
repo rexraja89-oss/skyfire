@@ -5,31 +5,31 @@
   {
    "label": "hq control",
    "without": {
-    "frames": 20,
+    "frames": 18,
     "frameMs": {
-     "n": 20,
-     "median": 916.5,
-     "p95": 1049.9
+     "n": 18,
+     "median": 1016.6,
+     "p95": 1083.2
     },
     "fullFrameCalls": {
-     "n": 20,
+     "n": 18,
      "median": 35,
      "p95": 35
     },
     "fullFrameTris": {
-     "n": 20,
+     "n": 18,
      "median": 265280,
      "p95": 265280
     },
     "passesPerFrame": {
-     "n": 20,
+     "n": 18,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 20,
-     "median": 916.5,
-     "p95": 1049.9
+     "n": 18,
+     "median": 1016.6,
+     "p95": 1083.2
     }
    },
    "with": {
@@ -62,8 +62,8 @@
    },
    "workload": {
     "enemies": 0,
-    "bullets": 30,
-    "particles": 116
+    "bullets": 20,
+    "particles": 194
    },
    "dpr": 2,
    "programs": 19,
@@ -73,209 +73,209 @@
   {
    "label": "hq run 1",
    "without": {
-    "frames": 10,
+    "frames": 8,
     "frameMs": {
-     "n": 10,
-     "median": 866.7,
-     "p95": 883.4
+     "n": 8,
+     "median": 1000,
+     "p95": 1066.6
     },
     "fullFrameCalls": {
-     "n": 10,
+     "n": 8,
      "median": 35,
-     "p95": 53
+     "p95": 35
     },
     "fullFrameTris": {
-     "n": 10,
+     "n": 8,
      "median": 265280,
-     "p95": 267848
+     "p95": 265280
     },
     "passesPerFrame": {
-     "n": 10,
+     "n": 8,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 10,
-     "median": 866.7,
-     "p95": 883.4
+     "n": 8,
+     "median": 1000,
+     "p95": 1066.6
     }
    },
    "with": {
-    "frames": 10,
+    "frames": 9,
     "frameMs": {
-     "n": 10,
-     "median": 966.7,
-     "p95": 1049.9
+     "n": 9,
+     "median": 1116.6,
+     "p95": 1166.6
     },
     "fullFrameCalls": {
-     "n": 10,
+     "n": 9,
      "median": 39,
-     "p95": 61
+     "p95": 41
     },
     "fullFrameTris": {
-     "n": 10,
+     "n": 9,
      "median": 289532,
-     "p95": 291916
+     "p95": 289816
     },
     "passesPerFrame": {
-     "n": 10,
+     "n": 9,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 10,
-     "median": 966.7,
-     "p95": 1049.9
+     "n": 9,
+     "median": 1116.6,
+     "p95": 1166.6
     }
    },
    "workload": {
-    "enemies": 6,
+    "enemies": 7,
     "bullets": 20,
-    "particles": 215
+    "particles": 160
    },
    "dpr": 2,
    "programs": 23,
    "slowFrames": [],
    "delta": {
     "fullFrameCallsMedian": 4,
-    "frameMsMedianPct": 11.5,
-    "frameMsP95Pct": 18.8
+    "frameMsMedianPct": 11.7,
+    "frameMsP95Pct": 9.4
    }
   },
   {
    "label": "hq run 2",
    "without": {
-    "frames": 9,
+    "frames": 8,
     "frameMs": {
-     "n": 9,
-     "median": 833.3,
-     "p95": 1083.2
+     "n": 8,
+     "median": 966.7,
+     "p95": 1000
     },
     "fullFrameCalls": {
-     "n": 9,
-     "median": 34,
-     "p95": 52
+     "n": 8,
+     "median": 35,
+     "p95": 36
     },
     "fullFrameTris": {
-     "n": 9,
-     "median": 265278,
-     "p95": 267846
+     "n": 8,
+     "median": 265280,
+     "p95": 265562
     },
     "passesPerFrame": {
-     "n": 9,
+     "n": 8,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 9,
-     "median": 833.3,
-     "p95": 1083.2
+     "n": 8,
+     "median": 966.7,
+     "p95": 1000
     }
    },
    "with": {
-    "frames": 11,
+    "frames": 10,
     "frameMs": {
-     "n": 11,
-     "median": 966.6,
-     "p95": 983.4
+     "n": 10,
+     "median": 1133.3,
+     "p95": 1166.5
     },
     "fullFrameCalls": {
-     "n": 11,
-     "median": 38,
-     "p95": 70
+     "n": 10,
+     "median": 39,
+     "p95": 51
     },
     "fullFrameTris": {
-     "n": 11,
-     "median": 289530,
-     "p95": 293086
+     "n": 10,
+     "median": 289532,
+     "p95": 291006
     },
     "passesPerFrame": {
-     "n": 11,
+     "n": 10,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 11,
-     "median": 966.6,
-     "p95": 983.4
+     "n": 10,
+     "median": 1133.3,
+     "p95": 1166.5
     }
    },
    "workload": {
-    "enemies": 6,
-    "bullets": 30,
-    "particles": 257
+    "enemies": 7,
+    "bullets": 20,
+    "particles": 148
    },
    "dpr": 2,
    "programs": 23,
    "slowFrames": [],
    "delta": {
     "fullFrameCallsMedian": 4,
-    "frameMsMedianPct": 16,
-    "frameMsP95Pct": -9.2
+    "frameMsMedianPct": 17.2,
+    "frameMsP95Pct": 16.7
    }
   },
   {
    "label": "hq run 3",
    "without": {
-    "frames": 10,
+    "frames": 8,
     "frameMs": {
-     "n": 10,
-     "median": 833.3,
-     "p95": 899.9
+     "n": 8,
+     "median": 1000,
+     "p95": 1033.2
     },
     "fullFrameCalls": {
-     "n": 10,
+     "n": 8,
      "median": 34,
-     "p95": 56
+     "p95": 36
     },
     "fullFrameTris": {
-     "n": 10,
+     "n": 8,
      "median": 265278,
-     "p95": 267846
+     "p95": 265562
     },
     "passesPerFrame": {
-     "n": 10,
+     "n": 8,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 10,
-     "median": 833.3,
-     "p95": 899.9
+     "n": 8,
+     "median": 1000,
+     "p95": 1033.2
     }
    },
    "with": {
-    "frames": 11,
+    "frames": 10,
     "frameMs": {
-     "n": 11,
-     "median": 916.7,
-     "p95": 983.3
+     "n": 10,
+     "median": 1100,
+     "p95": 1199.9
     },
     "fullFrameCalls": {
-     "n": 11,
+     "n": 10,
      "median": 38,
-     "p95": 70
+     "p95": 41
     },
     "fullFrameTris": {
-     "n": 11,
+     "n": 10,
      "median": 289530,
-     "p95": 293086
+     "p95": 290334
     },
     "passesPerFrame": {
-     "n": 11,
+     "n": 10,
      "median": 2,
      "p95": 2
     },
     "frameMsNoHitch": {
-     "n": 11,
-     "median": 916.7,
-     "p95": 983.3
+     "n": 10,
+     "median": 1100,
+     "p95": 1199.9
     }
    },
    "workload": {
-    "enemies": 6,
+    "enemies": 7,
     "bullets": 20,
-    "particles": 100
+    "particles": 102
    },
    "dpr": 2,
    "programs": 23,
@@ -283,37 +283,37 @@
    "delta": {
     "fullFrameCallsMedian": 4,
     "frameMsMedianPct": 10,
-    "frameMsP95Pct": 9.3
+    "frameMsP95Pct": 16.1
    }
   },
   {
    "label": "smooth control",
    "without": {
-    "frames": 53,
+    "frames": 44,
     "frameMs": {
-     "n": 53,
-     "median": 349.9,
-     "p95": 366.7
+     "n": 44,
+     "median": 400,
+     "p95": 483.4
     },
     "fullFrameCalls": {
-     "n": 53,
-     "median": 65,
-     "p95": 112
+     "n": 44,
+     "median": 33,
+     "p95": 111
     },
     "fullFrameTris": {
-     "n": 53,
-     "median": 268832,
-     "p95": 271122
+     "n": 44,
+     "median": 265276,
+     "p95": 271120
     },
     "passesPerFrame": {
-     "n": 53,
+     "n": 44,
      "median": 1,
      "p95": 1
     },
     "frameMsNoHitch": {
-     "n": 53,
-     "median": 349.9,
-     "p95": 366.7
+     "n": 44,
+     "median": 400,
+     "p95": 483.4
     }
    },
    "with": {
@@ -346,204 +346,132 @@
    },
    "workload": {
     "enemies": 6,
-    "bullets": 65,
-    "particles": 112
+    "bullets": 51,
+    "particles": 159
    },
    "dpr": 1.25,
-   "programs": 29,
+   "programs": 28,
    "slowFrames": [],
    "control": true
   },
   {
    "label": "smooth run 1",
    "without": {
-    "frames": 24,
+    "frames": 21,
     "frameMs": {
-     "n": 24,
-     "median": 350,
-     "p95": 383.3
+     "n": 21,
+     "median": 383.4,
+     "p95": 416.6
     },
     "fullFrameCalls": {
-     "n": 24,
+     "n": 21,
      "median": 112,
-     "p95": 113
+     "p95": 112
     },
     "fullFrameTris": {
-     "n": 24,
+     "n": 21,
      "median": 271122,
-     "p95": 271124
+     "p95": 271122
     },
     "passesPerFrame": {
-     "n": 24,
+     "n": 21,
      "median": 1,
      "p95": 1
     },
     "frameMsNoHitch": {
-     "n": 24,
-     "median": 350,
-     "p95": 383.3
+     "n": 21,
+     "median": 383.4,
+     "p95": 416.6
     }
    },
    "with": {
-    "frames": 25,
+    "frames": 23,
     "frameMs": {
-     "n": 25,
-     "median": 399.9,
-     "p95": 449.9
+     "n": 23,
+     "median": 433.3,
+     "p95": 450
     },
     "fullFrameCalls": {
-     "n": 25,
+     "n": 23,
      "median": 116,
      "p95": 116
     },
     "fullFrameTris": {
-     "n": 25,
+     "n": 23,
      "median": 279440,
      "p95": 279440
     },
     "passesPerFrame": {
-     "n": 25,
+     "n": 23,
      "median": 1,
      "p95": 1
     },
     "frameMsNoHitch": {
-     "n": 25,
-     "median": 399.9,
-     "p95": 449.9
-    }
-   },
-   "workload": {
-    "enemies": 6,
-    "bullets": 58,
-    "particles": 180
-   },
-   "dpr": 1.25,
-   "programs": 33,
-   "slowFrames": [],
-   "delta": {
-    "fullFrameCallsMedian": 4,
-    "frameMsMedianPct": 14.3,
-    "frameMsP95Pct": 17.4
-   }
-  },
-  {
-   "label": "smooth run 2",
-   "without": {
-    "frames": 24,
-    "frameMs": {
-     "n": 24,
-     "median": 350.1,
-     "p95": 400
-    },
-    "fullFrameCalls": {
-     "n": 24,
-     "median": 114,
-     "p95": 114
-    },
-    "fullFrameTris": {
-     "n": 24,
-     "median": 271126,
-     "p95": 271126
-    },
-    "passesPerFrame": {
-     "n": 24,
-     "median": 1,
-     "p95": 1
-    },
-    "frameMsNoHitch": {
-     "n": 24,
-     "median": 350.1,
-     "p95": 400
-    }
-   },
-   "with": {
-    "frames": 24,
-    "frameMs": {
-     "n": 24,
-     "median": 399.9,
-     "p95": 416.6
-    },
-    "fullFrameCalls": {
-     "n": 24,
-     "median": 118,
-     "p95": 118
-    },
-    "fullFrameTris": {
-     "n": 24,
-     "median": 279444,
-     "p95": 279444
-    },
-    "passesPerFrame": {
-     "n": 24,
-     "median": 1,
-     "p95": 1
-    },
-    "frameMsNoHitch": {
-     "n": 24,
-     "median": 399.9,
-     "p95": 416.6
+     "n": 23,
+     "median": 433.3,
+     "p95": 450
     }
    },
    "workload": {
     "enemies": 6,
     "bullets": 51,
-    "particles": 110
+    "particles": 101
    },
    "dpr": 1.25,
    "programs": 33,
    "slowFrames": [],
    "delta": {
     "fullFrameCallsMedian": 4,
-    "frameMsMedianPct": 14.2,
-    "frameMsP95Pct": 4.2
+    "frameMsMedianPct": 13,
+    "frameMsP95Pct": 8
    }
   },
   {
-   "label": "smooth run 3",
+   "label": "smooth run 2",
    "without": {
-    "frames": 23,
+    "frames": 22,
     "frameMs": {
-     "n": 23,
-     "median": 366.6,
-     "p95": 400
+     "n": 22,
+     "median": 383.2,
+     "p95": 416.7
     },
     "fullFrameCalls": {
-     "n": 23,
-     "median": 114,
-     "p95": 114
+     "n": 22,
+     "median": 113,
+     "p95": 113
     },
     "fullFrameTris": {
-     "n": 23,
-     "median": 271126,
-     "p95": 271126
+     "n": 22,
+     "median": 271124,
+     "p95": 271124
     },
     "passesPerFrame": {
-     "n": 23,
+     "n": 22,
      "median": 1,
      "p95": 1
     },
     "frameMsNoHitch": {
-     "n": 23,
-     "median": 366.6,
-     "p95": 400
+     "n": 22,
+     "median": 383.2,
+     "p95": 416.7
     }
    },
    "with": {
     "frames": 24,
     "frameMs": {
      "n": 24,
-     "median": 400,
-     "p95": 466.5
+     "median": 416.7,
+     "p95": 466.7
     },
     "fullFrameCalls": {
      "n": 24,
-     "median": 118,
-     "p95": 118
+     "median": 117,
+     "p95": 117
     },
     "fullFrameTris": {
      "n": 24,
-     "median": 279444,
-     "p95": 279444
+     "median": 279442,
+     "p95": 279442
     },
     "passesPerFrame": {
      "n": 24,
@@ -552,66 +480,138 @@
     },
     "frameMsNoHitch": {
      "n": 24,
-     "median": 400,
-     "p95": 466.5
+     "median": 416.7,
+     "p95": 466.7
     }
    },
    "workload": {
     "enemies": 6,
-    "bullets": 50,
-    "particles": 76
+    "bullets": 56,
+    "particles": 134
    },
    "dpr": 1.25,
    "programs": 33,
    "slowFrames": [],
    "delta": {
     "fullFrameCallsMedian": 4,
-    "frameMsMedianPct": 9.1,
-    "frameMsP95Pct": 16.6
+    "frameMsMedianPct": 8.7,
+    "frameMsP95Pct": 12
+   }
+  },
+  {
+   "label": "smooth run 3",
+   "without": {
+    "frames": 21,
+    "frameMs": {
+     "n": 21,
+     "median": 400,
+     "p95": 433.3
+    },
+    "fullFrameCalls": {
+     "n": 21,
+     "median": 114,
+     "p95": 114
+    },
+    "fullFrameTris": {
+     "n": 21,
+     "median": 271126,
+     "p95": 271126
+    },
+    "passesPerFrame": {
+     "n": 21,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 21,
+     "median": 400,
+     "p95": 433.3
+    }
+   },
+   "with": {
+    "frames": 23,
+    "frameMs": {
+     "n": 23,
+     "median": 433.3,
+     "p95": 466.6
+    },
+    "fullFrameCalls": {
+     "n": 23,
+     "median": 118,
+     "p95": 118
+    },
+    "fullFrameTris": {
+     "n": 23,
+     "median": 279444,
+     "p95": 279444
+    },
+    "passesPerFrame": {
+     "n": 23,
+     "median": 1,
+     "p95": 1
+    },
+    "frameMsNoHitch": {
+     "n": 23,
+     "median": 433.3,
+     "p95": 466.6
+    }
+   },
+   "workload": {
+    "enemies": 6,
+    "bullets": 58,
+    "particles": 152
+   },
+   "dpr": 1.25,
+   "programs": 33,
+   "slowFrames": [],
+   "delta": {
+    "fullFrameCallsMedian": 4,
+    "frameMsMedianPct": 8.3,
+    "frameMsP95Pct": 7.7
    }
   }
  ],
  "load_hq": {
   "lod": "hq",
-  "loadParseMs": 6816.1,
-  "buildMs": 11.8,
-  "firstRenderMs": 99.4,
-  "secondRenderMs": 1.2,
+  "loadParseMs": 8923.5,
+  "buildMs": 17.6,
+  "firstRenderMs": 116.2,
+  "secondRenderMs": 1.4,
   "zWorld": -44.81,
   "firstGameFrames": [
    {
-    "frame": 67,
-    "dt": 1017,
+    "frame": 63,
+    "dt": 1150,
     "programs": 23
    },
    {
-    "frame": 68,
-    "dt": 983,
+    "frame": 64,
+    "dt": 1117,
     "programs": 23
    },
    {
-    "frame": 69,
-    "dt": 983,
+    "frame": 65,
+    "dt": 1117,
     "programs": 23
    },
    {
-    "frame": 70,
-    "dt": 1033,
+    "frame": 66,
+    "dt": 1050,
     "programs": 23
    }
   ],
   "steadyFrameMsBefore": [
-   917,
-   817,
-   850,
-   833,
-   850,
-   3217
+   1000,
+   967,
+   967,
+   967,
+   1017,
+   3883
   ]
  },
  "hitch_hq": [
   {
-   "firstFrameMs": 1017,
+   "firstFrameMs": 1150,
    "programsAfter": [
     23,
     23,
@@ -619,16 +619,16 @@
     23
    ],
    "framesBefore": [
-    917,
-    817,
-    850,
-    833,
-    850,
-    3217
+    1000,
+    967,
+    967,
+    967,
+    1017,
+    3883
    ]
   },
   {
-   "firstFrameMs": 950,
+   "firstFrameMs": 1067,
    "programsAfter": [
     23,
     23,
@@ -636,16 +636,16 @@
     23
    ],
    "framesBefore": [
-    817,
-    783,
-    833,
-    850,
-    800,
-    3133
+    1017,
+    1033,
+    1067,
+    1000,
+    950,
+    3617
    ]
   },
   {
-   "firstFrameMs": 950,
+   "firstFrameMs": 1133,
    "programsAfter": [
     23,
     23,
@@ -653,12 +653,12 @@
     23
    ],
    "framesBefore": [
-    867,
-    800,
-    867,
-    900,
-    900,
-    3300
+    933,
+    1017,
+    1050,
+    1017,
+    1067,
+    3550
    ]
   }
  ],
@@ -686,45 +686,45 @@
  ],
  "load_smooth": {
   "lod": "smooth",
-  "loadParseMs": 2817.7,
-  "buildMs": 7.8,
-  "firstRenderMs": 75.2,
-  "secondRenderMs": 1.2,
+  "loadParseMs": 3148.3,
+  "buildMs": 6.1,
+  "firstRenderMs": 80.1,
+  "secondRenderMs": 0.7,
   "zWorld": -44.81,
   "firstGameFrames": [
    {
-    "frame": 296,
-    "dt": 383,
+    "frame": 268,
+    "dt": 483,
     "programs": 33
    },
    {
-    "frame": 297,
-    "dt": 400,
+    "frame": 269,
+    "dt": 433,
     "programs": 33
    },
    {
-    "frame": 298,
-    "dt": 383,
+    "frame": 270,
+    "dt": 417,
     "programs": 33
    },
    {
-    "frame": 299,
-    "dt": 383,
+    "frame": 271,
+    "dt": 467,
     "programs": 33
    }
   ],
   "steadyFrameMsBefore": [
+   400,
+   383,
    367,
-   350,
-   350,
-   333,
    367,
-   1417
+   367,
+   1550
   ]
  },
  "hitch_smooth": [
   {
-   "firstFrameMs": 383,
+   "firstFrameMs": 483,
    "programsAfter": [
     33,
     33,
@@ -732,12 +732,12 @@
     33
    ],
    "framesBefore": [
+    400,
+    383,
     367,
-    350,
-    350,
-    333,
     367,
-    1417
+    367,
+    1550
    ]
   },
   {
@@ -749,12 +749,12 @@
     33
    ],
    "framesBefore": [
-    333,
+    350,
+    350,
+    350,
+    350,
     367,
-    333,
-    350,
-    350,
-    1367
+    1467
    ]
   },
   {
@@ -766,12 +766,12 @@
     33
    ],
    "framesBefore": [
-    383,
+    367,
     350,
     383,
     350,
-    350,
-    1417
+    383,
+    1567
    ]
   }
  ],
@@ -806,7 +806,7 @@
     "after": 64,
     "texBefore": 22,
     "texAfter": 22,
-    "heapMB": 31.2
+    "heapMB": 32.1
    },
    {
     "lod": "smooth",
@@ -815,7 +815,7 @@
     "after": 64,
     "texBefore": 22,
     "texAfter": 22,
-    "heapMB": 28.8
+    "heapMB": 31
    },
    {
     "lod": "hq",
@@ -824,7 +824,43 @@
     "after": 64,
     "texBefore": 22,
     "texAfter": 22,
-    "heapMB": 32.5
+    "heapMB": 31
+   },
+   {
+    "lod": "smooth",
+    "before": 64,
+    "whileShown": 68,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 30.2
+   },
+   {
+    "lod": "hq",
+    "before": 64,
+    "whileShown": 68,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 30.9
+   },
+   {
+    "lod": "smooth",
+    "before": 64,
+    "whileShown": 68,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 30.1
+   },
+   {
+    "lod": "hq",
+    "before": 64,
+    "whileShown": 68,
+    "after": 64,
+    "texBefore": 22,
+    "texAfter": 22,
+    "heapMB": 30.9
    },
    {
     "lod": "smooth",
@@ -834,78 +870,42 @@
     "texBefore": 22,
     "texAfter": 22,
     "heapMB": 30
-   },
-   {
-    "lod": "hq",
-    "before": 64,
-    "whileShown": 68,
-    "after": 64,
-    "texBefore": 22,
-    "texAfter": 22,
-    "heapMB": 33.4
-   },
-   {
-    "lod": "smooth",
-    "before": 64,
-    "whileShown": 68,
-    "after": 64,
-    "texBefore": 22,
-    "texAfter": 22,
-    "heapMB": 29.7
-   },
-   {
-    "lod": "hq",
-    "before": 64,
-    "whileShown": 68,
-    "after": 64,
-    "texBefore": 22,
-    "texAfter": 22,
-    "heapMB": 32.4
-   },
-   {
-    "lod": "smooth",
-    "before": 64,
-    "whileShown": 68,
-    "after": 64,
-    "texBefore": 22,
-    "texAfter": 22,
-    "heapMB": 29.8
    }
   ],
   "switches": [
    {
     "hq": true,
-    "firstRenderMs": 82.1,
+    "firstRenderMs": 126.8,
     "geoDelta": 0,
     "texDelta": 0
    },
    {
     "hq": false,
-    "firstRenderMs": 56.7,
+    "firstRenderMs": 73.1,
     "geoDelta": 0,
     "texDelta": 0
    },
    {
     "hq": true,
-    "firstRenderMs": 97,
+    "firstRenderMs": 115.2,
     "geoDelta": 0,
     "texDelta": 0
    },
    {
     "hq": false,
-    "firstRenderMs": 65.3,
+    "firstRenderMs": 72.4,
     "geoDelta": 0,
     "texDelta": 0
    },
    {
     "hq": true,
-    "firstRenderMs": 92,
+    "firstRenderMs": 125,
     "geoDelta": 0,
     "texDelta": 0
    },
    {
     "hq": false,
-    "firstRenderMs": 64.5,
+    "firstRenderMs": 78.2,
     "geoDelta": 0,
     "texDelta": 0
    }
@@ -915,18 +915,18 @@
  "summary_hq": {
   "runs": 3,
   "frameMsMedianPct": [
-   11.5,
-   16,
+   11.7,
+   17.2,
    10
   ],
   "frameMsP95Pct": [
-   18.8,
-   -9.2,
-   9.3
+   9.4,
+   16.7,
+   16.1
   ],
   "frameMsNoHitchMedianPct": [
-   11.5,
-   16,
+   11.7,
+   17.2,
    10
   ],
   "slowFrames": [
@@ -944,35 +944,35 @@
   ],
   "samples": [
    [
-    10,
+    8,
+    9
+   ],
+   [
+    8,
     10
    ],
    [
-    9,
-    11
-   ],
-   [
-    10,
-    11
+    8,
+    10
    ]
   ]
  },
  "summary_smooth": {
   "runs": 3,
   "frameMsMedianPct": [
-   14.3,
-   14.2,
-   9.1
+   13,
+   8.7,
+   8.3
   ],
   "frameMsP95Pct": [
-   17.4,
-   4.2,
-   16.6
+   8,
+   12,
+   7.7
   ],
   "frameMsNoHitchMedianPct": [
-   14.3,
-   14.2,
-   9.1
+   13,
+   8.7,
+   8.3
   ],
   "slowFrames": [
    [],
@@ -989,16 +989,16 @@
   ],
   "samples": [
    [
-    24,
-    25
+    21,
+    23
    ],
    [
-    24,
+    22,
     24
    ],
    [
-    23,
-    24
+    21,
+    23
    ]
   ]
  },

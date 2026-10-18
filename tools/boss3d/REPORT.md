@@ -28,6 +28,16 @@ Rex preferred his concept's detail (panels, cockpit glass, red/violet light line
    - The painted look is only correct from above, which is the game's camera.
 5. Validation was extended to concept mode: the canopy is checked as an area average, and nozzle heat must render violet in both LODs. This caught a real bug in my edit (a comment had swallowed the line that sets the key light and nozzle heat), which is now fixed.
 
+## 0b. Round 4: sharper, and tuned to match the concept
+1. **Sharper:** the concept top view is upscaled 4× with the EDSR super-resolution model (offline, Apache-2.0 weights), then lightly sharpened. The warp stays on the original pixel grid. Base-colour texture: HQ 2048 px (was 1024), Smooth 1024 px (was 512). Glow textures stay at 1024 / 512. Texture sharpness (Laplacian variance, cockpit and wing area): 25 → 42. GLB size: HQ 1.33 MB, Smooth 0.53 MB.
+2. **Closer to the concept, measured:**
+   - `tune.cjs` renders the boss straight down over exactly the texture area. `tune_score.py` compares each render with the warped concept, using mean CIE ΔE (colour) and edge-map correlation (detail).
+   - 288 settings over 2 rounds. The best is a mostly self-lit, matte, slightly dimmed hull with gentle glow, since the concept already has its lighting painted in.
+   - Chosen: selfLit 0.85, roughness 0.85, reflections 0.25, tint #b8b8b8, glow 0.8. **ΔE 11.3 → 7.1, edge match 0.785 → 0.866**, within 0.1 of the best score. A little real lighting is kept so the boss still shows depth when it moves.
+   - Engine flames: violet core (was near-white), length 5.5 (was 7), closer to the concept's glowing purple nozzles.
+3. **Cost after round 4 (asserting in-game test, passed):** fixed frame HQ +4 draw calls / +24,252 triangles, Smooth +4 / +8,318. Steady frame-time median change on SwiftShader: HQ +10.0–17.2%, Smooth +8.3–13.0%; no slow frames; resources back to baseline. One-file phone viewer: 3.2 MB (was 2.1 MB) because of the larger textures.
+4. **Stage 10:** 4 colour variants were compared in-game. The current preset keeps the most detail. Brighter or cooler variants wash out to pink under the stage's colour grade.
+
 ## 1. Models
 | | HQ | Smooth |
 |---|---|---|

@@ -18,6 +18,7 @@ Results and screenshots: [REPORT.md](REPORT.md).
 | `lint_glsl.cjs` | Rejects `smoothstep` calls with edge0 ≥ edge1 (undefined in GLSL) |
 | `fixture.cjs` | Deliberately broken GLB; `npm run test:negative` proves validation fails on it |
 | `concept_tex.py` | Concept texture: cuts Rex's top view out of concept sheet B, warps it onto the model's outline (thin-plate spline through 15 matched features), and bakes base colour + glow textures → `src/concept/tex/` (committed; `build.cjs` embeds them in the GLBs with top-down UVs) |
+| `tune.cjs`, `tune_score.py` | Look tuning against the concept: render the boss straight down over the texture area for many settings, score colour difference (CIE ΔE) and edge match against the warped concept |
 | `mask_ref.cjs` | Renders the full-resolution model straight down → `out/ref/top_mask.png`, the target outline for `concept_tex.py` |
 | `setup_blender.sh` | Installs Blender 4.5 LTS (checksum-verified) into `~/tools` for cinematic renders |
 | `shots.cjs`, `lab/` | Headless screenshots and render masks |
@@ -29,7 +30,8 @@ cd tools/boss3d && npm i && npm run all
 ```
 Concept texture (only when the concept, landmarks or model change; needs a Python venv):
 ```
-python3 -m venv .venv && .venv/bin/pip install "numpy<2.3" scipy opencv-python-headless pillow
+python3 -m venv .venv && .venv/bin/pip install "numpy<2.3" scipy opencv-contrib-python-headless pillow
+mkdir -p .models && curl -sSfL -o .models/EDSR_x4.pb https://raw.githubusercontent.com/Saafke/EDSR_Tensorflow/master/models/EDSR_x4.pb
 npm run concept
 ```
 
@@ -54,6 +56,8 @@ Credit text to use. For the game it must sit in a user-accessible credits/licenc
 > Stage 10 mega-boss base model generated with Meshy AI (meshy.ai), licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Modified for Skyfire: re-oriented, re-scaled, simplified into two levels of detail, re-shaded, with added light strips, engine effects and weapon-bay anchors.
 
 The credit is already in the root README and in each output GLB's `asset.copyright`. Adding the in-game credits screen is part of integration.
+
+**Super-resolution model:** the concept is upscaled 4× offline with EDSR (weights from github.com/Saafke/EDSR_Tensorflow, Apache-2.0; SHA-256 `dd35ce3c…347f`). It is a tool only and is not shipped; nothing is uploaded anywhere.
 
 **Concept texture:** since round 3, Rex's concept top view is also painted onto the hull as its texture, so the concept's own rights matter directly. **Open:** Rex to confirm where the concept sheets come from (drawn, or made with an image tool, and under what terms), since they were Meshy's input. This is not legal advice.
 

@@ -19,14 +19,15 @@
 const MEGABOSS_CFG={
  hull:{color:'#f3f4f7',roughness:.22,metalness:.08,envIntensity:1,clearcoat:0,clearcoatRoughness:.08},
  // Rex's concept painted on from above (when the GLB carries it): glow = its red/violet strips, sides = colour for steep faces
- concept:{on:true,glow:2.2,pulse:.25,sideBlend:1,sideColor:'#cfcdcb',tint:'#c9c9c9',roughness:.38,envIntensity:.5,selfLit:.12},
+ // tuned against the concept by tune.cjs + tune_score.py (colour difference dE 11.3 -> 7.1, edge match 0.785 -> 0.866)
+ concept:{on:true,glow:.8,pulse:.25,sideBlend:1,sideColor:'#c4c2c0',tint:'#b8b8b8',roughness:.85,envIntensity:.25,selfLit:.85},
  details:{canopy:.85,canopyColor:'#8a3dff',panel:.3,panelScale:2.6,nozzleHeat:1,key:0,keyColor:'#dfe8ff',keyDir:[-.35,1,.45]},
  strips:{on:false,red:'#ff2436',violet:'#a04dff',intensity:1.35,glow:.6,pulse:.35,pulseSpeed:.8},
- engines:{on:true,color:'#9d3dff',core:'#f6e3ff',flameLength:7,flicker:.25,glow:1,light:true},
+ engines:{on:true,color:'#9d3dff',core:'#d6a3ff',flameLength:5.5,flicker:.25,glow:1,light:true},
  markers:{show:false}
 };
 // preset for warm-lit stages (Magma Citadel): cooler base, softer env, boss-only key light, brighter strips
-const MEGABOSS_INGAME={hull:{color:'#e9eeff',envIntensity:.7,roughness:.28},details:{key:.55},strips:{intensity:2.1,glow:.9},engines:{light:false},concept:{glow:2.8,selfLit:.6}};
+const MEGABOSS_INGAME={hull:{color:'#e9eeff',envIntensity:.7,roughness:.28},details:{key:.55},strips:{intensity:2.1,glow:.9},engines:{light:false},concept:{glow:1.2,selfLit:.9}};
 const MegaBossFX=(()=>{const T=THREE,lin=(c,h)=>c.set(h).convertSRGBToLinear();   // same as the game's col(): sRGB hex -> linear
  // shared by every instance on the page (never disposed per instance)
  const glowTex=(()=>{let t=null;return()=>{if(t)return t;const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);
