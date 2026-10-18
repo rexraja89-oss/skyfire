@@ -3,3 +3,6 @@ frames/
 *.blend1
 megaboss_entrance.mp4
 render.log
+rise/
+megaboss_rise.mp4
+render_rise.log

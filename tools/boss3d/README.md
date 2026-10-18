@@ -24,7 +24,7 @@ Results and screenshots: [REPORT.md](REPORT.md).
 | `viewer/bay_demo.js` | Viewer-only host for the bays: 3D homing missiles, particles, synth sounds |
 | `bays_test.cjs` | Asserting bay test on a virtual clock (closed bay invisible, cycle timings, hit rules, draw calls, cleanup) + videos → `out/bays/` |
 | `bays_game.cjs` | The bay in the real Stage 10 with the game's own missiles and effects (test page only) → `out/bays/bay_stage10_hq.mp4` |
-| `cinematic/` | Blender cinematic boss entrance: scene script, render script, CC0 asset fetcher (see `cinematic/README.md`) |
+| `cinematic/` | Blender cinematics: `boss_entrance.py` (fly-in) and `boss_rise.py` (Rex's storyboard: the quake, then the boss rises from behind the mountains with flickering lights and flapping wings), render scripts, CC0 asset fetcher (see `cinematic/README.md`) |
 | `cine_glb.cjs` | Full-detail (188k triangles) textured boss for the cinematic → `out/megaboss_cine.glb` (not committed) |
 | `setup_blender.sh` | Installs Blender 4.5 LTS (checksum-verified) into `~/tools` for cinematic renders |
 | `shots.cjs`, `lab/` | Headless screenshots and render masks |

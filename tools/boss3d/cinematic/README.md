@@ -26,3 +26,8 @@ Render time on this 4-core cloud CPU (no GPU): about 40–50 s per frame at 576�
 - **Ground:** "Aerial Rocks 02" texture, Poly Haven, CC0 (Rob Tuytel).
 - Lava, mountains, flames, haze and grade are procedural, made in this script.
 - **Blender** 4.5 LTS (GPL), used as a tool only.
+
+## Rise cinematic (`boss_rise.py`, Rex's storyboard)
+A mountain ridge at dusk shakes (camera shake, rubble particles, lava cracks flare). Dust clouds billow behind the ridge, lit violet from below, with lightning flashes inside. The boss rises from behind the range, dwarfing it: rocks slide off its hull, its lights flicker on, chase waves run along its light lines, wingtip and fin strobes blink, and the wings flap (an armature with smooth wing weights). The camera pulls back from the ridge until the boss fills the frame. Finale: engines ignite, the lights flash, and a dust shockwave rolls out.
+
+Render: `cinematic/render_rise.sh [samples=24] [res=540x960]` → `cinematic/megaboss_rise.mp4`, 264 frames, 11 s at 24 fps. Resumable. About 3–4 h on 4 CPU cores.
