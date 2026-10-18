@@ -19,7 +19,9 @@
   "shots": "node shots.cjs",
   "game": "node game_scene.cjs",
   "bundle": "node bundle.cjs",
-  "all": "node lint_glsl.cjs && node build.cjs && node validate.cjs && npm run test:negative && node shots.cjs && node game_scene.cjs && node bundle.cjs",
-  "concept": "node build.cjs && node mask_ref.cjs && .venv/bin/python concept_tex.py && node build.cjs"
+  "all": "node lint_glsl.cjs && node build.cjs && node validate.cjs && npm run test:negative && node shots.cjs && node game_scene.cjs && node bays_test.cjs && node bundle.cjs",
+  "concept": "node build.cjs && node mask_ref.cjs && .venv/bin/python concept_tex.py && node build.cjs",
+  "bays": "node bays_test.cjs",
+  "bays:game": "node bays_game.cjs hq"
  }
 }

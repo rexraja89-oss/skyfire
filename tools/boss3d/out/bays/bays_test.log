@@ -1,0 +1,18 @@
+PASS viewer ready
+INFO bay rect on screen (CSS px) {"x":287,"y":148,"w":29,"h":29}
+PASS GLB marker wb_missile_L sits at the bay centre (< 0.3 units)  0
+PASS hq: closed bay blends into the hull (mean diff < 4, < 4% of bay pixels differ by > 24)  {"meanDiff":2.25,"pctOver24":3.15,"px":1936}
+PASS smooth: closed bay blends into the hull (mean diff < 4, < 4% of bay pixels differ by > 24)  {"meanDiff":2.11,"pctOver24":2.7,"px":1296}
+PASS closed bay adds 1 draw call (doors)  1
+PASS cycle state order  ["warn","open","deploy","fire","hold","retract","close","hidden"]
+PASS state durations match BAYS_CFG.timing within one frame  {"warn":0.834,"open":0.43300000000000005,"deploy":0.4670000000000001,"retract":0.4660000000000002,"close":0.367}
+PASS salvo fires 6 missiles  6
+PASS open bay adds 3 draw calls (doors, cavity, weapon)  3
+PASS weapon cannot be hit while the bay is hidden
+PASS hittable only while the weapon is up  []
+PASS bay destroyed by hits while firing  "5 hits"
+PASS destroyed bay stays dead and keeps smoking  {"ok":false,"st":"dead","smoke":26}
+PASS 4 build/dispose cycles leave no geometry behind  [[15,16,15],[15,16,15],[15,16,15],[15,16,15]]
+PASS no page or shader errors  []
+video out/bays/bay_game_view.mp4
+video out/bays/bay_closeup.mp4

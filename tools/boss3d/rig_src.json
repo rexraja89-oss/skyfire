@@ -13,8 +13,8 @@
   {"id":"vio_canopy","color":"violet","mirror":false,"w":0.2,"loop":true,"ellipse":{"cx":0,"cz":-1.5,"rx":1.35,"rz":6.2,"n":28}}
  ],
  "markers": [
-  {"id":"wb_missile_L","bay":"wing missile bay","side":"L","xz":[11.5,3.2]},
-  {"id":"wb_missile_R","bay":"wing missile bay","side":"R","xz":[-11.5,3.2]},
+  {"id":"wb_missile_L","bay":"wing missile bay","side":"L","xz":[12.7,1.0]},
+  {"id":"wb_missile_R","bay":"wing missile bay","side":"R","xz":[-12.7,1.0]},
   {"id":"wb_drone_L","bay":"drone bay","side":"L","xz":[11.2,-3.0]},
   {"id":"wb_drone_R","bay":"drone bay","side":"R","xz":[-11.2,-3.0]},
   {"id":"wb_cannon_L","bay":"cannon storage","side":"L","xz":[6.4,-9.5]},

@@ -50,9 +50,9 @@
    "bay": "wing missile bay",
    "side": "L",
    "pos": [
-    11.5,
-    2.119,
-    3.2
+    12.7,
+    2.668,
+    1
    ],
    "onSurface": true,
    "deploy": [
@@ -66,9 +66,9 @@
    "bay": "wing missile bay",
    "side": "R",
    "pos": [
-    -11.5,
-    2.123,
-    3.2
+    -12.7,
+    2.651,
+    1
    ],
    "onSurface": true,
    "deploy": [

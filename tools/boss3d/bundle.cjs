@@ -4,7 +4,7 @@
 const fs=require('fs');
 let h=fs.readFileSync('viewer/index.html','utf8');
 const inl=f=>'<script>'+fs.readFileSync(f,'utf8').replace(/<\/script/gi,'<\\/script')+'</script>';
-for(const f of['vendor/three.min.js','vendor/GLTFLoader.js','vendor/OrbitControls.js','megaboss_fx.js'])h=h.replace(`<script src="${f}"></script>`,()=>inl('viewer/'+f));
+for(const f of['vendor/three.min.js','vendor/GLTFLoader.js','vendor/OrbitControls.js','megaboss_fx.js','megaboss_bays.js','bay_demo.js'])h=h.replace(`<script src="${f}"></script>`,()=>inl('viewer/'+f));
 const glb=k=>fs.readFileSync(`out/megaboss_${k}.glb`).toString('base64');
 h=h.replace('<script>\n\'use strict\';',()=>`<script>window.__GLB={hq:"${glb('hq')}",smooth:"${glb('smooth')}"};</script>\n<script>\n'use strict';`);
 if(/<script src=/.test(h))throw new Error('external script left in bundle');

@@ -28,7 +28,7 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
 <div id="panel" class="hide">
  <div id="ph"><strong>Mega-Boss · Stage 10 prototype</strong><button id="bPanel">Controls ▲</button></div>
  <h3>View</h3>
- <div class="row"><label>Camera</label><div class="seg" data-k="cam"><button data-v="orbit" class="on">Orbit</button><button data-v="game">Game top-down</button><button data-v="top">Straight down</button></div></div>
+ <div class="row"><label>Camera</label><div class="seg" data-k="cam"><button data-v="orbit" class="on">Orbit</button><button data-v="game">Game top-down</button><button data-v="top">Straight down</button><button data-v="bay">Bay close-up</button></div></div>
  <div class="row"><label>Background</label><div class="seg" data-k="bg"><button data-v="studio" class="on">Studio</button><button data-v="magma">Magma ground</button><button data-v="sky">Light ground</button></div></div>
  <div class="row"><label>Look preset</label><div class="seg" data-k="preset"><button data-v="studio" class="on">Studio white</button><button data-v="ingame">Warm stage (in-game)</button></div></div>
  <div class="row"><label>Motion</label><div class="seg" data-k="motion"><button data-v="still" class="on">Still</button><button data-v="spin">Spin</button><button data-v="sway">Boss sway</button></div></div>
@@ -36,6 +36,9 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
  <div class="row"><label>Model</label><div class="seg" data-k="lod"><button data-v="hq" class="on">HQ ~24k</button><button data-v="smooth">Smooth ~8k</button></div></div>
  <div class="row"><label>Pixel ratio</label><div class="seg" data-k="dpr"><button data-v="auto" class="on">Auto (game)</button><button data-v="1">1</button><button data-v="2">2</button></div></div>
  <div class="row"><label>Toggles</label><div class="seg" data-k="tog"><button data-v="concept" class="on">Concept paint</button><button data-v="strips">Extra strips</button><button data-v="engines" class="on">Engines</button><button data-v="details" class="on">Details</button><button data-v="clearcoat">Clearcoat (HQ)</button><button data-v="shadows">Shadows</button><button data-v="markers">Weapon markers</button><button data-v="wire">Wireframe</button></div></div>
+ <h3>Weapon bays (left wing missile bay)</h3>
+ <div class="row"><label>Bay</label><div class="seg"><button id="bFire">Fire salvo</button><button id="bAuto">Auto cycle</button><button id="bHit">Hit weapon</button><button id="bRepair">Repair</button><button id="bSnd" class="on">Sound</button></div></div>
+ <p class="note">Tap the missile rack while it is up to damage it (it can only be hit while deployed). 6 hits destroy the bay for the rest of the fight. Sound starts after your first tap.</p>
  <h3>Hull</h3>
  <div class="row"><label>Roughness</label><input type="range" min="0" max="1" step=".01" data-p="hull.roughness"><output></output></div>
  <div class="row"><label>Metalness</label><input type="range" min="0" max="1" step=".01" data-p="hull.metalness"><output></output></div>
@@ -61,6 +64,8 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
 <script src="vendor/GLTFLoader.js"></script>
 <script src="vendor/OrbitControls.js"></script>
 <script src="megaboss_fx.js"></script>
+<script src="megaboss_bays.js"></script>
+<script src="bay_demo.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id),T=THREE,CFG=JSON.parse(JSON.stringify(MegaBossFX.CFG));
@@ -82,8 +87,8 @@ function setBg(){for(const k in grounds)grounds[k].visible=S.bg===k;if(S.bg==='s
 const loader=new T.GLTFLoader(),M={};
 function loadOne(k){return new Promise((ok,no)=>{if(window.__GLB){const b=atob(window.__GLB[k]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);loader.parse(u.buffer,'',g=>ok(g.scene),no);}
  else loader.load('../out/megaboss_'+k+'.glb',g=>ok(g.scene),null,no);});}
-const holder=new T.Group();scene.add(holder);let A=null;
-function useLOD(){holder.clear();const g=M[S.lod];holder.add(g);A=g.userData.fx||(g.userData.fx=MegaBossFX.build(g,CFG,{hq:S.lod==='hq'}));applyAll();$('bLOD').textContent=S.lod==='hq'?'HQ':'Smooth';}
+const holder=new T.Group();scene.add(holder);let A=null,W=null,auto=false,autoT=0;
+function useLOD(){holder.clear();const g=M[S.lod];holder.add(g);A=g.userData.fx||(g.userData.fx=MegaBossFX.build(g,CFG,{hq:S.lod==='hq'}));applyAll();if(W)W.reset();W=g.userData.bays||(g.userData.bays=MegaBossBays.build(A,{on:(t,d)=>demo.on(t,d)}));W.reset();demo.clear();$('bLOD').textContent=S.lod==='hq'?'HQ':'Smooth';}
 function applyAll(){CFG.concept.on=S.tog.concept;CFG.strips.on=S.tog.strips;CFG.engines.on=S.tog.engines;CFG.markers.show=S.tog.markers;
  CFG.hull.clearcoat=S.tog.clearcoat&&S.lod==='hq'?.8:0;CFG.details.canopy=S.tog.details?(CFG._canopy??CFG.details.canopy):0;
  if(A){A.apply(CFG);A.meshes.hull.material.wireframe=S.tog.wire;A.meshes.hull.castShadow=S.tog.shadows;}
@@ -94,7 +99,7 @@ let game={pos:new T.Vector3(),z:0};
 function fitGame(asp){const c=new T.PerspectiveCamera(40,asp,2,2400),t=30*Math.PI/180;c.position.set(0,Math.cos(t),Math.sin(t));c.lookAt(0,0,0);c.updateMatrixWorld();
  const v=new T.Vector3(),hit=(nx,ny)=>{v.set(nx,ny,.5).unproject(c).sub(c.position).normalize();const k=-c.position.y/v.y;return c.position.clone().addScaledVector(v,k);};
  const bl=hit(-1,-1),tp=hit(0,1),bt=hit(0,-1),s=40/(2*Math.abs(bl.x));game.pos.copy(c.position).multiplyScalar(s);game.Zt=tp.z*s;game.Zb=bt.z*s;game.z=game.Zt+.26*(game.Zb-game.Zt);}
-function resize(){const w=innerWidth,h=innerHeight,dpr=S.dpr==='auto'?Math.min(devicePixelRatio||1,S.lod==='hq'?2:1.25):+S.dpr;R.setPixelRatio(dpr);R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();fitGame(w/h);}
+function resize(){const w=innerWidth,h=innerHeight,dpr=S.dpr==='auto'?Math.min(devicePixelRatio||1,S.lod==='hq'?2:1.25):+S.dpr;R.setPixelRatio(dpr);R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();fitGame(w/h);demo.setPointScale(R.domElement.height/(2*Math.tan(20*Math.PI/180)));}
 addEventListener('resize',resize);
 // UI
 document.querySelectorAll('.seg').forEach(sg=>sg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=sg.dataset.k,v=b.dataset.v;
@@ -108,22 +113,35 @@ document.querySelectorAll('input[data-p],input[data-l]').forEach(i=>{const p=i.d
  i.addEventListener('input',()=>{const v=+i.value;i.nextElementSibling.value=v.toFixed(2);if(p){set(CFG,p,v);if(p==='details.canopy')CFG._canopy=v;}else S.L[l]=v;applyAll();});});
 $('bPanel').onclick=()=>{$('panel').classList.toggle('hide');$('bPanel').textContent=$('panel').classList.contains('hide')?'Controls ▲':'Controls ▼';};
 $('bLOD').onclick=()=>document.querySelector(`.seg[data-k=lod] button[data-v=${S.lod==='hq'?'smooth':'hq'}]`).click();
-$('bCam').onclick=()=>{const order=['orbit','game','top'],n=order[(order.indexOf(S.cam)+1)%3];document.querySelector(`.seg[data-k=cam] button[data-v=${n}]`).click();};
-function setCam(){orbit.enabled=S.cam==='orbit';$('bCam').textContent={orbit:'Orbit',game:'Game view',top:'Top'}[S.cam];if(S.cam==='orbit'){cam.position.set(46,48,70);orbit.target.set(0,0,0);}}
+$('bCam').onclick=()=>{const order=['orbit','game','top','bay'],n=order[(order.indexOf(S.cam)+1)%4];document.querySelector(`.seg[data-k=cam] button[data-v=${n}]`).click();};
+function setCam(){orbit.enabled=S.cam==='orbit'||S.cam==='bay';$('bCam').textContent={orbit:'Orbit',game:'Game view',top:'Top',bay:'Bay'}[S.cam];if(S.cam==='orbit'){cam.position.set(46,48,70);orbit.target.set(0,0,0);}
+ if(S.cam==='bay'){orbit.target.set(12.4,2,1.2);cam.position.set(23,12.5,17);}}
 // stats
 let fN=0,fT=0,fps=0,ms=0,last=performance.now();const st=$('stats');
-function stats(){const i=R.info;st.innerHTML=`<b>${fps.toFixed(0)}</b> fps · ${ms.toFixed(1)} ms\ndraw calls ${i.render.calls}\ntriangles ${i.render.triangles.toLocaleString()}\nprograms ${i.programs.length} · tex ${i.memory.textures} · geo ${i.memory.geometries}\n${S.lod.toUpperCase()} · dpr ${R.getPixelRatio().toFixed(2)}`;}
+function stats(){const i=R.info;st.innerHTML=`<b>${fps.toFixed(0)}</b> fps · ${ms.toFixed(1)} ms\ndraw calls ${i.render.calls}\ntriangles ${i.render.triangles.toLocaleString()}\nprograms ${i.programs.length} · tex ${i.memory.textures} · geo ${i.memory.geometries}\n${S.lod.toUpperCase()} · dpr ${R.getPixelRatio().toFixed(2)}${W?`\nmissile bay: ${W.state('missile_L')} · HP ${W.bay('missile_L').hp}`:''}`;}
 // loop
 const clock=new T.Clock();
-function frame(){requestAnimationFrame(frame);const now=performance.now(),dt=now-last;last=now;fN++;fT+=dt;if(fT>=1000){fps=fN*1000/fT;ms=fT/fN;fN=0;fT=0;stats();}
+// weapon bay demo: missiles home on where the player would be (game view: lower part of the screen)
+const demo=BayDemo.create(scene,{env:scene.environment,target:()=>S.cam==='orbit'||S.cam==='bay'?new T.Vector3(holder.position.x*.3,0,34):new T.Vector3(0,0,game.Zt+.8*(game.Zb-game.Zt))});
+$('bFire').onclick=()=>{demo.snd.start();W&&W.trigger('missile_L');};
+$('bAuto').onclick=e=>{demo.snd.start();auto=!auto;autoT=0;e.target.classList.toggle('on',auto);};
+$('bHit').onclick=()=>{demo.snd.start();W&&W.hit('missile_L',10);};
+$('bRepair').onclick=()=>{W&&W.reset();demo.clear();};
+$('bSnd').onclick=e=>{demo.snd.on=!demo.snd.on;e.target.classList.toggle('on',demo.snd.on);};
+// tap the raised rack to hit it (raycast against the rack mesh only while it can be hit)
+{const rc=new T.Raycaster(),v=new T.Vector2();let down=null;R.domElement.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];demo.snd.start();});
+ R.domElement.addEventListener('pointerup',e=>{if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>8||!W)return;v.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);rc.setFromCamera(v,cam);
+  const b=W.bay('missile_L');if(W.hittable('missile_L')&&rc.intersectObject(b.rack).length)W.hit('missile_L',10);});}
+function frame(){requestAnimationFrame(frame);const now=performance.now(),dt=now-last;last=now;const ds=Math.min(.05,dt/1000);fN++;fT+=dt;if(fT>=1000){fps=fN*1000/fT;ms=fT/fN;fN=0;fT=0;stats();}
  const t=clock.getElapsedTime();holder.position.set(0,0,0);holder.rotation.set(0,0,0);
  if(S.motion==='spin')holder.rotation.y=t*.4;
  if(S.cam==='game'||S.cam==='top'){holder.position.z=game.z;if(S.motion==='sway'){holder.position.x=Math.sin(t*.4*6.28*.25)*5;holder.rotation.z=-Math.cos(t*.4*6.28*.25)*.06;}
   if(S.cam==='game'){cam.position.copy(game.pos);cam.lookAt(0,0,0);}else{cam.position.set(0,game.pos.length(),game.z+.001);cam.lookAt(0,0,game.z);}}
  else if(S.motion==='sway'){holder.position.x=Math.sin(t*.63)*5;holder.rotation.z=-Math.cos(t*.63)*.06;}
- if(S.cam==='orbit')orbit.update();if(A)A.update(t);R.render(scene,cam);}
+ if(orbit.enabled)orbit.update();if(A)A.update(t);
+ if(W){if(auto&&W.state('missile_L')==='hidden'&&(autoT+=ds)>1.6){autoT=0;W.trigger('missile_L');}W.update(ds,cam);}demo.update(ds);R.render(scene,cam);}
 Promise.all([loadOne('hq'),loadOne('smooth')]).then(([hq,sm])=>{M.hq=hq;M.smooth=sm;$('load').remove();resize();useLOD();setCam();frame();window.__ready=true;})
  .catch(e=>{$('load').textContent='Could not load the model: '+e;});
-window.__viewer={S,CFG,R,get A(){return A},applyAll,useLOD,setCam};
+window.__viewer={S,CFG,R,get A(){return A},get W(){return W},demo,applyAll,useLOD,setCam,cam,holder,game};
 </script>
 </body></html>

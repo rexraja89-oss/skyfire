@@ -1,4 +1,4 @@
-# Mega-boss prototype: validation and performance report (rounds 2–3)
+# Mega-boss prototype: validation and performance report (rounds 2–5)
 
 Prototype only: nothing here is loaded by the game. Round 2 answers the Codex review (`skyforce-analysis`, branch `skyfire-phase1-review`, `skyfire-megaboss-review/megaboss-review.md`).
 
@@ -37,6 +37,36 @@ Rex preferred his concept's detail (panels, cockpit glass, red/violet light line
    - Engine flames: violet core (was near-white), length 5.5 (was 7), closer to the concept's glowing purple nozzles.
 3. **Cost after round 4 (asserting in-game test, passed):** fixed frame HQ +4 draw calls / +24,252 triangles, Smooth +4 / +8,318. Steady frame-time median change on SwiftShader: HQ +10.0–17.2%, Smooth +8.3–13.0%; no slow frames; resources back to baseline. One-file phone viewer: 3.2 MB (was 2.1 MB) because of the larger textures.
 4. **Stage 10:** 4 colour variants were compared in-game. The current preset keeps the most detail. Brighter or cooler variants wash out to pink under the stage's colour grade.
+
+## 0c. Round 5: first retractable weapon bay (left wing missile bay)
+Rex approved the weapon-bay design (warning → doors → weapon up → fire → retract; hittable only while up; destroyed bays stay dead) and asked for the first bay. Viewer and test pages only; **no game integration** (no hit boxes, damage, score or sound wired into the game).
+
+**How it is built** (`viewer/megaboss_bays.js`, all at runtime from the loaded hull, so it fits both LODs):
+- **Doors:** two leaves cut from the hull surface (ray-sampled over the bay footprint) and painted with the hull's own concept texture, UVs and shader, so a closed bay is invisible apart from a faint seam. They hinge open in the vertex shader, so all doors of all bays are one draw call.
+- **Bay interior:** a patch over the opening whose shader ray-traces a box under the surface (walls with ribs, floor plates, red lip lights, violet uplight, and the lower part of the weapon still in the bay). The hull is not cut and stays watertight.
+- **Weapon:** a vertical launch block with 2 × 3 tubes and missile noses. Fired missiles hide, red tube rings charge before a launch, and violet edge strips match the concept.
+- **Placement:** on the clean white wing panel beside the violet wing stripe, centre (±12.7, 1.0), long side parallel to the stripe. The `wb_missile_L/R` markers in the GLBs were moved there (rebuild + validation passed).
+- **Events:** the bay reports events (warn, open, deploy, missile, hold, retract, close, hit, dead, smoke, spark) with world positions. The host turns them into effects. In the viewer that is `viewer/bay_demo.js` (3D homing missiles, particles, synth sounds); in Stage 10, `bays_game.cjs` uses the game's own homing enemy missile and its explosion and smoke effects.
+
+**Cycle:** warn 0.8 s (red edge pulse on the doors) → open 0.4 s → deploy 0.45 s → salvo of 6 (0.13 s apart) → hold 0.6 s → retract 0.45 s → close 0.35 s. HP 60. The weapon can be hit only while it is up. At 0 HP: doors blown back and scorched, charred stump left tilted in the hole, embers and smoke for the rest of the fight. All values live in `BAYS_CFG`.
+
+**Asserted** (`bays_test.cjs`, virtual 30 fps clock; `out/bays/bays_test.log`):
+- **Closed bay vs no doors, same frozen frame:** mean difference 2.25 (HQ) / 2.11 (Smooth) out of 255. Pixels differing by more than 24: 3.2% / 2.7%, which is the seam.
+- **Cycle:** state order and durations match `BAYS_CFG.timing` within one frame; 6 missiles fired.
+- **Hits:** refused while hidden; the weapon can be hit only while up; hits while firing destroy the bay; a destroyed bay stays dead, can't be re-triggered and keeps smoking.
+- **Draw calls:** closed bay +1 (doors), open bay +3 (doors, interior, weapon).
+- **Cleanup:** 4 build/dispose cycles leave no geometry behind. Marker sits at the bay centre. No page or shader errors. GLSL lint covers the new shaders.
+
+**Videos:**
+- `out/bays/bay_closeup.mp4` (close-up cycle + destruction) and `out/bays/bay_game_view.mp4` (game camera).
+- `bays_game.cjs` → `out/bays/bay_stage10_hq.mp4`: the real Stage 10 with the game's own missiles. Not committed, 5.4 MB.
+- Stills: `review/bay_*.png`.
+
+**Viewer:** "Weapon bays" section with Fire salvo, Auto cycle, Hit weapon, Repair and Sound buttons, and tap-to-hit on the raised rack. New camera option "Bay close-up".
+
+**Open:**
+- In the game view the bay is small (about 29 CSS px), so the warning pulse and missile trails carry the read. Rex to judge on the phone.
+- Next bays (drones, cannons, central lance) reuse the same layers; batching all bays keeps the plan's extra 4–6 draw calls.
 
 ## 1. Models
 | | HQ | Smooth |

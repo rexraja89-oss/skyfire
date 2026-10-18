@@ -1,0 +1,73 @@
+{
+ "closed_hq": {
+  "meanDiff": 2.25,
+  "pctOver24": 3.15,
+  "px": 1936
+ },
+ "closed_smooth": {
+  "meanDiff": 2.11,
+  "pctOver24": 2.7,
+  "px": 1296
+ },
+ "cycleEvents": [
+  {
+   "t": "warn",
+   "at": 0.249
+  },
+  {
+   "t": "open",
+   "at": 1.083
+  },
+  {
+   "t": "deploy",
+   "at": 1.516
+  },
+  {
+   "t": "fire",
+   "at": 1.983
+  },
+  {
+   "t": "missile",
+   "at": 2.016
+  },
+  {
+   "t": "missile",
+   "at": 2.116
+  },
+  {
+   "t": "missile",
+   "at": 2.249
+  },
+  {
+   "t": "missile",
+   "at": 2.383
+  },
+  {
+   "t": "missile",
+   "at": 2.516
+  },
+  {
+   "t": "missile",
+   "at": 2.649
+  },
+  {
+   "t": "hold",
+   "at": 2.783
+  },
+  {
+   "t": "retract",
+   "at": 3.383
+  },
+  {
+   "t": "close",
+   "at": 3.849
+  },
+  {
+   "t": "hidden",
+   "at": 4.216
+  }
+ ],
+ "errors": [],
+ "failed": [],
+ "passed": true
+}

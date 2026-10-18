@@ -3,7 +3,7 @@
 // Run: node lint_glsl.cjs [files...]   (exit 1 on any violation)
 'use strict';
 const fs=require('fs');
-const files=process.argv.slice(2).length?process.argv.slice(2):['viewer/megaboss_fx.js','viewer/index.html','lab/lab.html'];
+const files=process.argv.slice(2).length?process.argv.slice(2):['viewer/megaboss_fx.js','viewer/megaboss_bays.js','viewer/index.html','lab/lab.html'];
 const lit=s=>{s=s.trim().replace(/^\(|\)$/g,'');const v=Number(s.replace(/(\d)\.(?!\d)/g,'$1.0').replace(/^\./,'0.').replace(/^-\./,'-0.'));return Number.isFinite(v)&&/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s.trim())?v:null;};
 const split=s=>{const m=s.trim().match(/^(.*?)([+-])\s*(\d*\.?\d+)\s*$/);return m&&/\w/.test(m[1])?{base:m[1].trim(),k:(m[2]==='-'?-1:1)*Number(m[3])}:{base:s.trim(),k:0};};
 let bad=0,count=0;

@@ -236,11 +236,11 @@
       {
        "name": "wb_missile_L",
        "pos": [
-        11.5,
-        2.119,
-        3.2
+        12.7,
+        2.668,
+        1
        ],
-       "surfaceGap": 0.0001,
+       "surfaceGap": 0.0005,
        "kind": "weaponBay",
        "bay": "wing missile bay",
        "side": "L",
@@ -254,11 +254,11 @@
       {
        "name": "wb_missile_R",
        "pos": [
-        -11.5,
-        2.123,
-        3.2
+        -12.7,
+        2.651,
+        1
        ],
-       "surfaceGap": 0.0007,
+       "surfaceGap": 0.0001,
        "kind": "weaponBay",
        "bay": "wing missile bay",
        "side": "R",
@@ -693,11 +693,11 @@
       {
        "name": "wb_missile_L",
        "pos": [
-        11.5,
-        2.127,
-        3.2
+        12.7,
+        2.69,
+        1
        ],
-       "surfaceGap": -0.0008,
+       "surfaceGap": -0.0006,
        "kind": "weaponBay",
        "bay": "wing missile bay",
        "side": "L",
@@ -711,11 +711,11 @@
       {
        "name": "wb_missile_R",
        "pos": [
-        -11.5,
-        2.133,
-        3.2
+        -12.7,
+        2.64,
+        1
        ],
-       "surfaceGap": 0.0004,
+       "surfaceGap": 0.0014,
        "kind": "weaponBay",
        "bay": "wing missile bay",
        "side": "R",

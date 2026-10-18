@@ -20,6 +20,10 @@ Results and screenshots: [REPORT.md](REPORT.md).
 | `concept_tex.py` | Concept texture: cuts Rex's top view out of concept sheet B, warps it onto the model's outline (thin-plate spline through 15 matched features), and bakes base colour + glow textures → `src/concept/tex/` (committed; `build.cjs` embeds them in the GLBs with top-down UVs) |
 | `tune.cjs`, `tune_score.py` | Look tuning against the concept: render the boss straight down over the texture area for many settings, score colour difference (CIE ΔE) and edge match against the warped concept |
 | `mask_ref.cjs` | Renders the full-resolution model straight down → `out/ref/top_mask.png`, the target outline for `concept_tex.py` |
+| `viewer/megaboss_bays.js` | Retractable weapon bays on top of the look layer: hull-painted doors (one draw call), ray-traced bay interior, rising weapon, attack cycle and destruction; reports events to the host (`BAYS_CFG`) |
+| `viewer/bay_demo.js` | Viewer-only host for the bays: 3D homing missiles, particles, synth sounds |
+| `bays_test.cjs` | Asserting bay test on a virtual clock (closed bay invisible, cycle timings, hit rules, draw calls, cleanup) + videos → `out/bays/` |
+| `bays_game.cjs` | The bay in the real Stage 10 with the game's own missiles and effects (test page only) → `out/bays/bay_stage10_hq.mp4` |
 | `cinematic/` | Blender cinematic boss entrance: scene script, render script, CC0 asset fetcher (see `cinematic/README.md`) |
 | `cine_glb.cjs` | Full-detail (188k triangles) textured boss for the cinematic → `out/megaboss_cine.glb` (not committed) |
 | `setup_blender.sh` | Installs Blender 4.5 LTS (checksum-verified) into `~/tools` for cinematic renders |

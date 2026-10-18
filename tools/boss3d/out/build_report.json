@@ -36,7 +36,7 @@
  "lods": {
   "hq": {
    "file": "out/megaboss_hq.glb",
-   "bytes": 1334112,
+   "bytes": 1334108,
    "targetTris": 24000,
    "creaseDeg": 38,
    "hull": {
@@ -73,9 +73,9 @@
      "bay": "wing missile bay",
      "side": "L",
      "pos": [
-      11.5,
-      2.119,
-      3.2
+      12.7,
+      2.668,
+      1
      ],
      "onSurface": true,
      "deploy": [
@@ -89,9 +89,9 @@
      "bay": "wing missile bay",
      "side": "R",
      "pos": [
-      -11.5,
-      2.123,
-      3.2
+      -12.7,
+      2.651,
+      1
      ],
      "onSurface": true,
      "deploy": [
@@ -184,7 +184,7 @@
   },
   "smooth": {
    "file": "out/megaboss_smooth.glb",
-   "bytes": 528552,
+   "bytes": 528548,
    "targetTris": 8000,
    "creaseDeg": 42,
    "hull": {
@@ -332,9 +332,9 @@
      "bay": "wing missile bay",
      "side": "L",
      "pos": [
-      11.5,
-      2.127,
-      3.2
+      12.7,
+      2.69,
+      1
      ],
      "onSurface": true,
      "deploy": [
@@ -348,9 +348,9 @@
      "bay": "wing missile bay",
      "side": "R",
      "pos": [
-      -11.5,
-      2.133,
-      3.2
+      -12.7,
+      2.64,
+      1
      ],
      "onSurface": true,
      "deploy": [
