@@ -18,6 +18,7 @@ const check=(n,ok,v)=>{say((ok?'PASS ':'FAIL ')+n+(v!==undefined?'  '+JSON.strin
   await page.goto('http://boss.test/viewer/index.html');for(let i=0;i<200&&!(await ev(()=>!!window.__ready));i++){await ev(()=>__step(16));await page.waitForTimeout(50);}
   check('viewer ready',await ev(()=>!!window.__ready));
   const cam=v=>ev(v=>document.querySelector(`.seg[data-k=cam] button[data-v=${v}]`).click(),v);
+  await ev(()=>document.querySelector('.seg[data-k=motion] button[data-v=still]').click());   // bay checks on a still boss
   // event log
   await ev(()=>{const V=__viewer,W=V.W;window.__ev=[];const orig=W.on;W.on=(t,d)=>{__ev.push({t,at:+(W.time).toFixed(3)});orig(t,d);};});
   await cam('game');await step(3);

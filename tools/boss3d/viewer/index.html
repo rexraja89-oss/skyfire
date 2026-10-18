@@ -31,7 +31,7 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
  <div class="row"><label>Camera</label><div class="seg" data-k="cam"><button data-v="orbit" class="on">Orbit</button><button data-v="game">Game top-down</button><button data-v="top">Straight down</button><button data-v="bay">Bay close-up</button></div></div>
  <div class="row"><label>Background</label><div class="seg" data-k="bg"><button data-v="studio" class="on">Studio</button><button data-v="magma">Magma ground</button><button data-v="sky">Light ground</button></div></div>
  <div class="row"><label>Look preset</label><div class="seg" data-k="preset"><button data-v="studio" class="on">Studio white</button><button data-v="ingame">Warm stage (in-game)</button></div></div>
- <div class="row"><label>Motion</label><div class="seg" data-k="motion"><button data-v="still" class="on">Still</button><button data-v="spin">Spin</button><button data-v="sway">Boss sway</button></div></div>
+ <div class="row"><label>Motion</label><div class="seg" data-k="motion"><button data-v="fly" class="on">Combat flight</button><button data-v="still">Still</button><button data-v="spin">Spin</button></div></div>
  <h3>Quality</h3>
  <div class="row"><label>Model</label><div class="seg" data-k="lod"><button data-v="hq" class="on">HQ ~24k</button><button data-v="smooth">Smooth ~8k</button></div></div>
  <div class="row"><label>Pixel ratio</label><div class="seg" data-k="dpr"><button data-v="auto" class="on">Auto (game)</button><button data-v="1">1</button><button data-v="2">2</button></div></div>
@@ -65,11 +65,12 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
 <script src="vendor/OrbitControls.js"></script>
 <script src="megaboss_fx.js"></script>
 <script src="megaboss_bays.js"></script>
+<script src="megaboss_motion.js"></script>
 <script src="bay_demo.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id),T=THREE,CFG=JSON.parse(JSON.stringify(MegaBossFX.CFG));
-const S={preset:'studio',cam:'orbit',bg:'studio',motion:'still',lod:'hq',dpr:'auto',tog:{concept:true,strips:false,engines:true,details:true,clearcoat:false,shadows:false,markers:false,wire:false},L:{sun:2,az:300,amb:.6,exp:1.05}};
+const S={preset:'studio',cam:'orbit',bg:'studio',motion:'fly',lod:'hq',dpr:'auto',tog:{concept:true,strips:false,engines:true,details:true,clearcoat:false,shadows:false,markers:false,wire:false},L:{sun:2,az:300,amb:.6,exp:1.05}};
 const R=new T.WebGLRenderer({canvas:$('c'),antialias:true,powerPreference:'high-performance'});
 R.outputEncoding=T.sRGBEncoding;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.type=T.PCFSoftShadowMap;
 const scene=new T.Scene(),hemi=new T.HemisphereLight(0xffffff,0x444455,.6),sun=new T.DirectionalLight(0xffffff,2);scene.add(hemi,sun,sun.target);
@@ -135,9 +136,9 @@ $('bSnd').onclick=e=>{demo.snd.on=!demo.snd.on;e.target.classList.toggle('on',de
 function frame(){requestAnimationFrame(frame);const now=performance.now(),dt=now-last;last=now;const ds=Math.min(.05,dt/1000);fN++;fT+=dt;if(fT>=1000){fps=fN*1000/fT;ms=fT/fN;fN=0;fT=0;stats();}
  const t=clock.getElapsedTime();holder.position.set(0,0,0);holder.rotation.set(0,0,0);
  if(S.motion==='spin')holder.rotation.y=t*.4;
- if(S.cam==='game'||S.cam==='top'){holder.position.z=game.z;if(S.motion==='sway'){holder.position.x=Math.sin(t*.4*6.28*.25)*5;holder.rotation.z=-Math.cos(t*.4*6.28*.25)*.06;}
+ const home={x:0,y:0,z:S.cam==='game'||S.cam==='top'?game.z:0};if(S.motion==='fly')MegaBossMotion.apply(holder,t,home);else holder.position.set(home.x,home.y,home.z);
+ if(S.cam==='game'||S.cam==='top'){
   if(S.cam==='game'){cam.position.copy(game.pos);cam.lookAt(0,0,0);}else{cam.position.set(0,game.pos.length(),game.z+.001);cam.lookAt(0,0,game.z);}}
- else if(S.motion==='sway'){holder.position.x=Math.sin(t*.63)*5;holder.rotation.z=-Math.cos(t*.63)*.06;}
  if(orbit.enabled)orbit.update();if(A)A.update(t);
  if(W){if(auto&&W.state('missile_L')==='hidden'&&(autoT+=ds)>1.6){autoT=0;W.trigger('missile_L');}W.update(ds,cam);}demo.update(ds);R.render(scene,cam);}
 Promise.all([loadOne('hq'),loadOne('smooth')]).then(([hq,sm])=>{M.hq=hq;M.smooth=sm;$('load').remove();resize();useLOD();setCam();frame();window.__ready=true;})
