@@ -4,3 +4,5 @@ out/shots/
 out/capture/
 out/fixture/*.glb
 out/megaboss_viewer.html
+.venv/
+out/concept/

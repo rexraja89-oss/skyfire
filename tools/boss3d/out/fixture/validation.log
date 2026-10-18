@@ -38,10 +38,10 @@ PASS fixture: 3 engine anchors at the rear, pointing -Z  [-15.51,-18.26,-15.51]
 PASS fixture: 7 weapon-bay markers, hidden, with deploy direction  7
 FAIL fixture: markers on the hull surface (gap < 0.05)  [null,null,0.5158,0.0776,0.4094,0.3524,0.001]
 PASS fixture: L/R markers mirror each other
-PASS fixture: canopy mask renders dark violet glass (darker than hull, blue > green)  {"canopy":[159,92,222],"hull":[244,244,245]}
-PASS fixture: nozzle heat (hull shader, engine FX hidden) renders violet  [232,171,247]
+PASS fixture: canopy renders as dark violet glass (area mean darker than hull tops, blue > green)  {"canopy":[117,89,140],"hull":[219,218,219]}
+PASS fixture: nozzle heat (hull shader, engine FX hidden) renders violet  [220,148,241]
 PASS fixture: engine disc renders violet from behind  [190,81,255]
-PASS fixture: look layer draw objects <= 6  5
+PASS fixture: look layer draw objects <= 6  4
 INFO r128 CPU read of quantized position[0].x (raw, not de-normalized): {"normalized":true,"type":"Int16Array","rawX":5424}
 PASS nose toward the player (lower half), engines in the upper half  [0.368,-0.364]
 PASS no browser, shader or loader errors  0

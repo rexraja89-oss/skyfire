@@ -17,12 +17,20 @@ Results and screenshots: [REPORT.md](REPORT.md).
 | `capture.cjs` | Normal-speed motion capture on a virtual 30 fps clock → `out/capture/*.mp4` |
 | `lint_glsl.cjs` | Rejects `smoothstep` calls with edge0 ≥ edge1 (undefined in GLSL) |
 | `fixture.cjs` | Deliberately broken GLB; `npm run test:negative` proves validation fails on it |
+| `concept_tex.py` | Concept texture: cuts Rex's top view out of concept sheet B, warps it onto the model's outline (thin-plate spline through 15 matched features), and bakes base colour + glow textures → `src/concept/tex/` (committed; `build.cjs` embeds them in the GLBs with top-down UVs) |
+| `mask_ref.cjs` | Renders the full-resolution model straight down → `out/ref/top_mask.png`, the target outline for `concept_tex.py` |
+| `setup_blender.sh` | Installs Blender 4.5 LTS (checksum-verified) into `~/tools` for cinematic renders |
 | `shots.cjs`, `lab/` | Headless screenshots and render masks |
 | `review/` | Screenshots for review |
 
 Run (needs Node 22; Chromium comes from `/opt/pw-browsers` or Playwright):
 ```
 cd tools/boss3d && npm i && npm run all
+```
+Concept texture (only when the concept, landmarks or model change; needs a Python venv):
+```
+python3 -m venv .venv && .venv/bin/pip install "numpy<2.3" scipy opencv-python-headless pillow
+npm run concept
 ```
 
 ## Conventions
@@ -47,7 +55,7 @@ Credit text to use. For the game it must sit in a user-accessible credits/licenc
 
 The credit is already in the root README and in each output GLB's `asset.copyright`. Adding the in-game credits screen is part of integration.
 
-**Open:** Rex to confirm where the concept sheets come from (drawn, or made with an image tool, and under what terms), since they were Meshy's input. This is not legal advice.
+**Concept texture:** since round 3, Rex's concept top view is also painted onto the hull as its texture, so the concept's own rights matter directly. **Open:** Rex to confirm where the concept sheets come from (drawn, or made with an image tool, and under what terms), since they were Meshy's input. This is not legal advice.
 
 ## Rollback
 This prototype only adds files under `tools/boss3d/` plus one README credit line. Rollback point: commit `1f0e855` (main at v5.22). A local tag `megaboss-proto-base` was created, but the remote refused tag pushes from this session.

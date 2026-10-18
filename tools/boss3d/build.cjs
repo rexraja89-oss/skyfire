@@ -8,6 +8,7 @@ const {MeshoptSimplifier:S}=require('meshoptimizer');
 const M=require('./lib/mesh.cjs');
 const SRC='src/megaboss_meshy_original.glb',SHA='39cf4e83269db6dbcd4b70bb30886efa5ec5798edaa2c9cf39f1ec3e21c5231d';
 const RIG=JSON.parse(fs.readFileSync('rig_src.json','utf8'));
+const CTEX=fs.existsSync('src/concept/tex/concept_tex.json')?JSON.parse(fs.readFileSync('src/concept/tex/concept_tex.json','utf8')):null;   // concept texture (npm run concept)
 const HULL={color:[.94,.95,.97,1],roughness:.22,metalness:.08};
 const COL={red:[1,.12,.16],violet:[.62,.22,1]};
 
@@ -80,7 +81,10 @@ function ribbons(mesh,strips,widthMul,lift){const rc=new THREE.Raycaster(),down=
     const extras=[{name:'strip_red',geo:core.red,emissive:COL.red},{name:'strip_violet',geo:core.violet,emissive:COL.violet}];
     if(glow)extras.push({name:'glow_red',geo:glow.red,emissive:COL.red},{name:'glow_violet',geo:glow.violet,emissive:COL.violet});
     const empties=[...engines.map(e=>({name:e.id,pos:e.pos,extras:{kind:'engine',radius:e.radius,dir:e.dir}})),...markers.map(m=>({name:m.id,pos:m.pos,extras:{kind:'weaponBay',bay:m.bay,side:m.side,deploy:m.deploy,hidden:true}}))];
-    const file=`out/megaboss_${name}.glb`;await M.writeGLB(file,{hull:{P:n.P,N:n.N,I:n.I},extras,empties,hullMat:HULL,quant:true});
+    // top-down planar UVs for the concept texture (texture box from src/concept/tex/concept_tex.json)
+    const TB=CTEX&&CTEX.texWorldBox,UV=new Float32Array(n.P.length/3*2);if(TB)for(let i=0;i<n.P.length/3;i++){UV[i*2]=Math.min(1,Math.max(0,(n.P[i*3]-TB.x0)/(TB.x1-TB.x0)));UV[i*2+1]=Math.min(1,Math.max(0,(n.P[i*3+2]-TB.z0)/(TB.z1-TB.z0)));}
+    const tex=TB?{albedo:`src/concept/tex/albedo_${name}.jpg`,glow:`src/concept/tex/glow_${name}.jpg`}:null;
+    const file=`out/megaboss_${name}.glb`;await M.writeGLB(file,{hull:{P:n.P,N:n.N,I:n.I,UV:TB?UV:null},extras,empties,hullMat:{...HULL,tex},quant:true});
     const stripTris=extras.reduce((a,e)=>a+e.geo.I.length/3,0);
     report.lods[name]={file,bytes:fs.statSync(file).size,targetTris:L.targetTris,creaseDeg:L.crease,hull:{...topo,vertsAfterNormalSplit:n.P.length/3,hardEdgeVerts:n.hardVerts,badNormals:nchk.badNormals,flippedCorners:nchk.flippedCorners},
       simplifyError:{passA:+s.errA.toFixed(4),passB:+s.errB.toFixed(4)},pinchRepairs:s.repairs,strips:{runs:{red:core.runs.red,violet:core.runs.violet},tris:stripTris},markers};

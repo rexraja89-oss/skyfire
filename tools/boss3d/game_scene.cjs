@@ -64,7 +64,7 @@ const check=(name,ok,val)=>{const fin=v=>typeof v!=='number'||Number.isFinite(v)
   for(const [hq,lod] of[[true,'hq'],[false,'smooth']]){
    check(`${lod} control: stage 10 reached run state`,await start(hq));await page.waitForTimeout(WARM_MS+1500);await measure(`${lod} control`,false);
    for(let run=1;run<=RUNS;run++){check(`${lod} run ${run}: stage 10 reached run state`,await start(hq));await page.waitForTimeout(WARM_MS);
-    const f0=await ev(()=>window.__F.frame);const ld=await addBoss(lod);
+    const ld=await addBoss(lod);const f0=await ev(()=>window.__F.frame);   // count from the moment the boss is in the scene (loading can take several frames)
     // first game frames after the boss appears: HQ renders through the colour-grade target, which needs its own shader
     // variants, so the first full frame compiles them (first-appearance hitch). Wait until 4 frames have passed.
     for(let i=0;i<120&&(await ev(f0=>window.__F.frame-f0,f0))<5;i++)await page.waitForTimeout(250);

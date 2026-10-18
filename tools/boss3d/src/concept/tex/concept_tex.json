@@ -1,0 +1,22 @@
+{
+ "landmarks": 15,
+ "tpsMaxResidualPx": 0.0,
+ "texWorldBox": {
+  "x0": -15.5,
+  "x1": 15.5,
+  "z0": -18.5,
+  "z1": 18.5
+ },
+ "hq": {
+  "size": 1024,
+  "warpedIoU": 0.8449,
+  "modelCoveredByConceptPct": 91.16,
+  "glowPct": 3.39
+ },
+ "smooth": {
+  "size": 512,
+  "warpedIoU": 0.845,
+  "modelCoveredByConceptPct": 91.18,
+  "glowPct": 3.38
+ }
+}

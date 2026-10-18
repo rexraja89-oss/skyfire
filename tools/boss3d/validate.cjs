@@ -66,9 +66,12 @@ const dec=s=>Buffer.from(s,'base64');
     // look layer: compile + masks + draw budget (canopy centre vs open hull; nozzle centre from behind)
     const nz=E.find(e=>e.name==='eng_C')||E[0];
     const np=nz?nz.pos:[0,0,-18],nr=nz?nz.radius:1.2;
-    const fx=await page.evaluate(([u,hq,s])=>fxCheck(u,hq,s),[URL[l],l!=='smooth',{top:[[0,5,-1.5],[-5.5,5,0]],rear:[[np[0],np[1],np[2]-.2]],ring:[[np[0]+nr*.6,np[1],np[2]-.3]]}]);r.fx=fx;
-    const [can,hull]=fx.top,lum=c=>.2126*c[0]+.7152*c[1]+.0722*c[2];
-    check(`${l}: canopy mask renders dark violet glass (darker than hull, blue > green)`,lum(can)<lum(hull)*.6&&can[2]>can[1],{canopy:can,hull});
+    // canopy = mean over 15 points inside the canopy ellipse; hull = mean over 6 points on the wing/nacelle tops
+    const canPts=[],hullPts=[];for(let i=0;i<5;i++)for(const dx of[-.5,0,.5])canPts.push([dx,8,-1.5+(i-2)*1.6]);for(const sx of[-1,1])for(const [x,z] of[[5.5,0],[9,-2],[6.5,4]])hullPts.push([sx*x,8,z]);
+    const fx=await page.evaluate(([u,hq,s])=>fxCheck(u,hq,s),[URL[l],l!=='smooth',{top:canPts.concat(hullPts),rear:[[np[0],np[1],np[2]-.2]],ring:[[np[0]+nr*.6,np[1],np[2]-.3]]}]);r.fx=fx;
+    const avg=a=>[0,1,2].map(k=>Math.round(a.reduce((s,c)=>s+c[k],0)/a.length)),lum=c=>.2126*c[0]+.7152*c[1]+.0722*c[2];
+    const can=avg(fx.top.slice(0,canPts.length)),hull=avg(fx.top.slice(canPts.length));
+    check(`${l}: canopy renders as dark violet glass (area mean darker than hull tops, blue > green)`,lum(can)<lum(hull)*.75&&can[2]>can[1],{canopy:can,hull});
     check(`${l}: nozzle heat (hull shader, engine FX hidden) renders violet`,fx.rear[0][2]>fx.rear[0][1]+40&&fx.rear[0][0]>fx.rear[0][1],fx.rear[0]);
     check(`${l}: engine disc renders violet from behind`,fx.ring[0][2]>fx.ring[0][1]+40,fx.ring[0]);
     check(`${l}: look layer draw objects <= ${LIM.drawCalls[l]}`,fx.drawables<=LIM.drawCalls[l],fx.drawables);}

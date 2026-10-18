@@ -35,7 +35,7 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
  <h3>Quality</h3>
  <div class="row"><label>Model</label><div class="seg" data-k="lod"><button data-v="hq" class="on">HQ ~24k</button><button data-v="smooth">Smooth ~8k</button></div></div>
  <div class="row"><label>Pixel ratio</label><div class="seg" data-k="dpr"><button data-v="auto" class="on">Auto (game)</button><button data-v="1">1</button><button data-v="2">2</button></div></div>
- <div class="row"><label>Toggles</label><div class="seg" data-k="tog"><button data-v="strips" class="on">Strips</button><button data-v="engines" class="on">Engines</button><button data-v="details" class="on">Details</button><button data-v="clearcoat">Clearcoat (HQ)</button><button data-v="shadows">Shadows</button><button data-v="markers">Weapon markers</button><button data-v="wire">Wireframe</button></div></div>
+ <div class="row"><label>Toggles</label><div class="seg" data-k="tog"><button data-v="concept" class="on">Concept paint</button><button data-v="strips">Extra strips</button><button data-v="engines" class="on">Engines</button><button data-v="details" class="on">Details</button><button data-v="clearcoat">Clearcoat (HQ)</button><button data-v="shadows">Shadows</button><button data-v="markers">Weapon markers</button><button data-v="wire">Wireframe</button></div></div>
  <h3>Hull</h3>
  <div class="row"><label>Roughness</label><input type="range" min="0" max="1" step=".01" data-p="hull.roughness"><output></output></div>
  <div class="row"><label>Metalness</label><input type="range" min="0" max="1" step=".01" data-p="hull.metalness"><output></output></div>
@@ -44,6 +44,7 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
  <div class="row"><label>Boss key light</label><input type="range" min="0" max="1.2" step=".05" data-p="details.key"><output></output></div>
  <div class="row"><label>Canopy glow</label><input type="range" min="0" max="1.5" step=".05" data-p="details.canopy"><output></output></div>
  <h3>Strips &amp; engines</h3>
+ <div class="row"><label>Concept glow</label><input type="range" min="0" max="5" step=".1" data-p="concept.glow"><output></output></div>
  <div class="row"><label>Strip brightness</label><input type="range" min="0" max="2.5" step=".05" data-p="strips.intensity"><output></output></div>
  <div class="row"><label>Strip halo</label><input type="range" min="0" max="1.5" step=".05" data-p="strips.glow"><output></output></div>
  <div class="row"><label>Pulse</label><input type="range" min="0" max="1" step=".05" data-p="strips.pulse"><output></output></div>
@@ -63,7 +64,7 @@ h3{margin:12px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercas
 <script>
 'use strict';
 const $=id=>document.getElementById(id),T=THREE,CFG=JSON.parse(JSON.stringify(MegaBossFX.CFG));
-const S={preset:'studio',cam:'orbit',bg:'studio',motion:'still',lod:'hq',dpr:'auto',tog:{strips:true,engines:true,details:true,clearcoat:false,shadows:false,markers:false,wire:false},L:{sun:2,az:300,amb:.6,exp:1.05}};
+const S={preset:'studio',cam:'orbit',bg:'studio',motion:'still',lod:'hq',dpr:'auto',tog:{concept:true,strips:false,engines:true,details:true,clearcoat:false,shadows:false,markers:false,wire:false},L:{sun:2,az:300,amb:.6,exp:1.05}};
 const R=new T.WebGLRenderer({canvas:$('c'),antialias:true,powerPreference:'high-performance'});
 R.outputEncoding=T.sRGBEncoding;R.toneMapping=T.ACESFilmicToneMapping;R.shadowMap.type=T.PCFSoftShadowMap;
 const scene=new T.Scene(),hemi=new T.HemisphereLight(0xffffff,0x444455,.6),sun=new T.DirectionalLight(0xffffff,2);scene.add(hemi,sun,sun.target);
@@ -83,7 +84,7 @@ function loadOne(k){return new Promise((ok,no)=>{if(window.__GLB){const b=atob(w
  else loader.load('../out/megaboss_'+k+'.glb',g=>ok(g.scene),null,no);});}
 const holder=new T.Group();scene.add(holder);let A=null;
 function useLOD(){holder.clear();const g=M[S.lod];holder.add(g);A=g.userData.fx||(g.userData.fx=MegaBossFX.build(g,CFG,{hq:S.lod==='hq'}));applyAll();$('bLOD').textContent=S.lod==='hq'?'HQ':'Smooth';}
-function applyAll(){CFG.strips.on=S.tog.strips;CFG.engines.on=S.tog.engines;CFG.markers.show=S.tog.markers;
+function applyAll(){CFG.concept.on=S.tog.concept;CFG.strips.on=S.tog.strips;CFG.engines.on=S.tog.engines;CFG.markers.show=S.tog.markers;
  CFG.hull.clearcoat=S.tog.clearcoat&&S.lod==='hq'?.8:0;CFG.details.canopy=S.tog.details?(CFG._canopy??CFG.details.canopy):0;
  if(A){A.apply(CFG);A.meshes.hull.material.wireframe=S.tog.wire;A.meshes.hull.castShadow=S.tog.shadows;}
  if(R.shadowMap.enabled!==S.tog.shadows){R.shadowMap.enabled=S.tog.shadows;sun.castShadow=S.tog.shadows;scene.traverse(o=>{if(o.isMesh)o.material.needsUpdate=true;});}   // recompile only when shadows flip

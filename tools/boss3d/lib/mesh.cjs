@@ -76,6 +76,9 @@ async function writeGLB(file,{hull,extras=[],empties=[],hullMat,quant=false}){co
     if(g.UV)prim.setAttribute('TEXCOORD_0',doc.createAccessor().setType('VEC2').setArray(g.UV).setBuffer(buf));
     root.addChild(doc.createNode(name).setMesh(doc.createMesh(name).addPrimitive(prim)));};
   const hm=doc.createMaterial('hull_white').setBaseColorFactor(hullMat.color).setRoughnessFactor(hullMat.roughness).setMetallicFactor(hullMat.metalness);
+  // concept texture (top-down projected): base colour + glow (emissive) maps, JPEG, sampled with the hull's TEXCOORD_0
+  if(hullMat.tex){const t=k=>doc.createTexture(k).setImage(fs.readFileSync(hullMat.tex[k])).setMimeType('image/jpeg').setURI(k+'.jpg');
+    hm.setBaseColorFactor([1,1,1,1]).setBaseColorTexture(t('albedo'));if(hullMat.tex.glow)hm.setEmissiveTexture(t('glow')).setEmissiveFactor([1,1,1]);}
   add('hull',hull,hm);
   for(const e of extras){const m=doc.createMaterial(e.name).setBaseColorFactor([0,0,0,1]).setEmissiveFactor(e.emissive).setRoughnessFactor(1).setMetallicFactor(0);add(e.name,e.geo,m);}
   for(const e of empties){const n=doc.createNode(e.name).setTranslation(e.pos);if(e.extras)n.setExtras(e.extras);root.addChild(n);}

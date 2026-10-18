@@ -36,7 +36,7 @@
  "lods": {
   "hq": {
    "file": "out/megaboss_hq.glb",
-   "bytes": 718996,
+   "bytes": 1044040,
    "targetTris": 24000,
    "creaseDeg": 38,
    "hull": {
@@ -184,7 +184,7 @@
   },
   "smooth": {
    "file": "out/megaboss_smooth.glb",
-   "bytes": 292608,
+   "bytes": 419688,
    "targetTris": 8000,
    "creaseDeg": 42,
    "hull": {

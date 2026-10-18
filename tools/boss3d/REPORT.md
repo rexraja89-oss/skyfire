@@ -1,4 +1,4 @@
-# Mega-boss prototype: validation and performance report (round 2)
+# Mega-boss prototype: validation and performance report (rounds 2–3)
 
 Prototype only: nothing here is loaded by the game. Round 2 answers the Codex review (`skyforce-analysis`, branch `skyfire-phase1-review`, `skyfire-megaboss-review/megaboss-review.md`).
 
@@ -10,6 +10,23 @@ All logs are written before any non-zero exit:
 - `out/validation.log`
 - `out/fixture/validation.log` (negative test)
 - `out/game_scene.log`
+
+## 0. Round 3: Rex's concept painted onto the 3D hull
+Rex preferred his concept's detail (panels, cockpit glass, red/violet light lines) over the plain white hull, so the concept top view is now the boss's texture.
+1. **Cut-out and fit:** `concept_tex.py` cuts the ship out of concept sheet B (GrabCut) and turns it nose-down. A plain scale/offset fit onto the model's top-down outline reached only 80% overlap, because the concept and the Meshy model differ in proportions. So the concept is warped with a thin-plate spline through 15 matched features: nose, nose spikes, wing tips, fin tips, 3 engines, cockpit ends. Result: 84.5% overlap. 91% of the model's top area is covered by concept detail; the rest (mostly thin rear fins) is plain hull white, feathered in.
+2. **Textures:** base colour and a glow map (the concept's red/violet lines plus a soft halo), 1024² for HQ and 512² for Smooth, projected from above via planar UVs. GLB size: HQ about 1.0 MB, Smooth about 0.42 MB.
+3. **Look layer, concept mode:**
+   - steep faces fade to plain hull colour, so the top-down paint doesn't smear down the sides
+   - the procedural canopy and panel seams are off (the concept has its own)
+   - the glow pulses
+   - a "self-lit" share keeps the painted colours readable under Stage 10's orange light; in-game preset 0.6, an art-directed fill
+   - the extra strip meshes are off by default
+   - boss draw calls: **4** (HQ and Smooth)
+4. **Limits:**
+   - The concept's top view is only about 390 × 480 px, so it is soft when enlarged. A larger original from Rex would sharpen it.
+   - The concept was drawn with its own lighting, which is now part of the paint.
+   - The painted look is only correct from above, which is the game's camera.
+5. Validation was extended to concept mode: the canopy is checked as an area average, and nozzle heat must render violet in both LODs. This caught a real bug in my edit (a comment had swallowed the line that sets the key light and nozzle heat), which is now fixed.
 
 ## 1. Models
 | | HQ | Smooth |
@@ -77,9 +94,9 @@ Limits: overlap ≥ 95%, missing < 2%, mean < 0.1, p95 < 0.3, at least 500 pixel
 
 The validation log records it: position[0].x reads as raw Int16 `5336` instead of a de-normalized value. Game integration must never raycast the raw quantized mesh.
 
-## 5. Performance (development evidence only)
+## 5. Performance (development evidence only; round 3 numbers, concept texture on)
 **Setup**
-- Real game, stage 10, headless Chromium at the S22 Ultra's CSS size (412 × 915) and DPR 2.625. The game caps the canvas at 2 (HQ) and 1.25 (Smooth).
+- Real game, Stage 10, headless Chromium at the S22 Ultra's CSS size (412 × 915) and DPR 2.625. The game caps the canvas at 2 (HQ) and 1.25 (Smooth).
 - Seeded workload: the stage's own waves, plus 10 extra enemy bullets and 1 explosion every 8 frames.
 - Per mode: 1 boss-free control run, then 3 runs with the boss shown on alternate frame pairs.
 
@@ -87,27 +104,24 @@ The validation log records it: position[0].x reads as raw Int16 `5336` instead o
 
 | | HQ | Smooth |
 |---|---|---|
-| Fixed-frame boss cost (same frame with and without the boss; scene render incl. shadow pass; 5 identical repeats) | **+6 draw calls, +26,668 triangles** (was +17) | **+5 draw calls, +9,464 triangles** (was +15) |
-| Full-frame draw calls added (median of all passes per frame, A/B) | +6, +6, +6 | −3, −7, −17 |
-| Samples per bucket (without / with), 3 runs | 10/11, 10/11, 10/11 | 25/25, 23/25, 24/25 |
-| Steady-state frame time, median change | +7.8%, +12.0%, +14.0% | +9.5%, +9.5%, +9.5% |
-| Steady-state frame time, p95 change | +13.2%, +19.2%, +17.3% | +8.7%, +21.7%, +8.7% |
+| Fixed-frame boss cost (same frame with and without the boss; scene render incl. shadow pass; 5 identical repeats) | **+4 draw calls, +24,252 triangles** (round 1: +17) | **+4 draw calls, +8,318 triangles** (round 1: +15) |
+| Full-frame draw calls added (median of all passes per frame, A/B) | +4, +4, +4 | +4, +4, +4 |
+| Samples per bucket (without / with), 3 runs | 10/10, 9/11, 10/11 | 24/25, 24/24, 23/24 |
+| Steady-state frame time, median change | +11.5%, +16.0%, +10.0% | +14.3%, +14.2%, +9.1% |
 | Slow frames (> 2.5× median) during sampling | none in 3 runs; none in the control | none in 3 runs; none in the control |
 
-Smooth's full-frame call counts swing because the game's own object count varies frame to frame. The fixed-frame row is the exact boss cost.
+**Load (important for integration).**
+- With the concept textures, GLB fetch + parse + texture decode takes about 6.6–6.8 s (HQ) and 2.7–2.9 s (Smooth) in this CPU browser (round 2 without textures: 0.8 s and 0.4 s). Look-layer build 1–15 ms.
+- The phone decodes JPEG far faster, but the boss **must be loaded at stage start (or behind the mission title), never when it appears**.
 
-**First-appearance hitch (real issue for integration).**
-- The first gameplay frame with the boss takes about 3.2–3.4 s (HQ, vs about 0.85 s normal) and about 1.4–1.55 s (Smooth, vs about 0.35 s), in every run.
-- three.js compiles all 6 boss programs during the warm-up render (HQ 19 → 25, Smooth 28 → 33 before that frame), so the extra time is the driver (here SwiftShader) setting up pipelines the first time the boss is drawn through the game's real path: grade render target, shadow pass, additive blending.
-- Phones have the same kind of first-use cost, though much shorter.
-- **Integration requirement:** pre-warm the boss through the game's own render path during the stage intro or mission title, before it can be seen. Then measure the first-appearance frame on the S22.
-
-**Load:** GLB fetch + parse about 0.82–0.95 s (HQ) and 0.34–0.39 s (Smooth) on this CPU renderer. Look-layer build 1–8 ms.
+**First appearance.**
+- Round 2 (no textures) showed one slow first gameplay frame (HQ about 3.3 s vs 0.85 s; Smooth about 1.5 s vs 0.35 s).
+- Round 3 measured from the moment the boss is in the scene: first 4 frames HQ 0.92–1.03 s and Smooth 0.37–0.43 s, which is the normal steady cost. No hitch frame was measured.
+- I can't fully explain why it went away (the textured model loads through a different path). **Pre-loading and a pre-warm render through the game's own frame stay integration requirements**, to be measured on the S22.
 
 **Resources:** paused-frame cycles, measured in a paused frame because the running game creates its own objects.
-- 8 load/unload cycles: 64 geometries → 69–70 while shown → back to 64 every time. Textures stay at 22.
+- 8 load/unload cycles: 64 geometries → 68 while shown → back to 64 every time. Textures back to baseline.
 - 6 HQ/Smooth switches: 0 geometry and 0 texture left behind.
-- JS heap 31–36 MB throughout.
 
 ## 6. Visual evidence (`review/`)
 - **`megaboss_hq_stage10.mp4`** (10 s) and **`megaboss_smooth_stage10.mp4`** (6 s), in the review share folder (kept out of this repo; regenerate with `capture.cjs`): normal-speed motion in the real stage 10. A virtual 30 fps clock makes playback match game time. No audio; the boss adds no sound in this phase.
